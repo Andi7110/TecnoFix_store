@@ -1,0 +1,152 @@
+:root {
+  --app-bg: #eef2ef;
+  --app-bg-deep: #dce5df;
+  --app-surface: rgba(255, 255, 255, 0.98);
+  --app-surface-border: rgba(11, 15, 13, 0.07);
+  --app-surface-shadow: rgba(15, 18, 20, 0.07);
+  --app-ink: #0f1412;
+  --app-muted: #5a6a63;
+  --app-primary: #2bd96b;
+  --app-primary-dark: #15b554;
+  --app-wash: rgba(43, 217, 107, 0.08);
+  --app-field-bg: #ffffff;
+  --app-field-border: rgba(15, 20, 18, 0.16);
+  --app-field-focus: rgba(43, 217, 107, 0.35);
+  --app-table-row: #ffffff;
+  --app-table-row-hover: rgba(24, 94, 56, 0.06);
+  --bs-body-color: var(--app-ink);
+  --bs-heading-color: var(--app-ink);
+  --bs-body-bg: transparent;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--app-ink);
+  background:
+    radial-gradient(circle at top left, rgba(43, 217, 107, 0.16), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(15, 20, 18, 0.08), transparent 24%),
+    linear-gradient(180deg, var(--app-bg) 0%, #f8fbf8 52%, var(--app-bg-deep) 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme="dark"] {
+  --app-bg: #0f1312;
+  --app-bg-deep: #090c0b;
+  --app-surface: rgba(20, 25, 23, 0.96);
+  --app-surface-border: rgba(255, 255, 255, 0.1);
+  --app-surface-shadow: rgba(0, 0, 0, 0.45);
+  --app-ink: #eaf3ee;
+  --app-muted: #a8b8b0;
+  --app-wash: rgba(43, 217, 107, 0.2);
+  --app-field-bg: #171d1b;
+  --app-field-border: rgba(255, 255, 255, 0.18);
+  --app-field-focus: rgba(43, 217, 107, 0.55);
+  --app-table-row: #151b19;
+  --app-table-row-hover: rgba(43, 217, 107, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--app-ink);
+  background:
+    radial-gradient(circle at top left, rgba(43, 217, 107, 0.16), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(15, 20, 18, 0.12), transparent 24%),
+    linear-gradient(180deg, var(--app-bg) 0%, #f8fbf8 52%, var(--app-bg-deep) 100%);
+}
+
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at top left, rgba(43, 217, 107, 0.18), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.38), transparent 28%),
+    linear-gradient(180deg, #0f1312 0%, #0b0f0e 52%, #090c0b 100%);
+}
+
+a {
+  color: inherit;
+}
+
+#root {
+  width: 100%;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--app-ink);
+}
+
+:root[data-theme="dark"] .form-control,
+:root[data-theme="dark"] .form-select,
+:root[data-theme="dark"] .input-group-text {
+  background-color: var(--app-field-bg);
+  color: var(--app-ink);
+  border-color: var(--app-field-border);
+}
+
+:root[data-theme="dark"] .form-control::placeholder {
+  color: #8ea198;
+}
+
+:root[data-theme="dark"] .form-control:focus,
+:root[data-theme="dark"] .form-select:focus {
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 0.2rem var(--app-field-focus);
+}
+
+:root[data-theme="dark"] .table {
+  --bs-table-color: var(--app-ink);
+  --bs-table-bg: var(--app-table-row);
+  --bs-table-border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme="dark"] .btn-light {
+  background: #222a27;
+  color: var(--app-ink);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme="dark"] .btn-outline-dark {
+  color: var(--app-ink);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+:root[data-theme="dark"] .btn-outline-secondary {
+  color: #c8d5cf;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+:root[data-theme="dark"] .table thead th,
+:root[data-theme="dark"] .products-table th,
+:root[data-theme="dark"] .repairs-table th {
+  color: #eaf3ee !important;
+}
+
+:root[data-theme="dark"] .form-label,
+:root[data-theme="dark"] .section-kicker,
+:root[data-theme="dark"] .muted-text {
+  color: #c3d2cb !important;
+}
