@@ -97,10 +97,10 @@ function ProductosFilters({
       </div>
 
       <div className="products-filter-actions">
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn products-filter-actions__apply">
           Aplicar filtros
         </button>
-        <button type="button" className="btn btn-light" onClick={onClear}>
+        <button type="button" className="btn products-filter-actions__clear" onClick={onClear}>
           Limpiar
         </button>
       </div>

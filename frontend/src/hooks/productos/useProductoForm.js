@@ -84,6 +84,7 @@ export function useProductoForm({ productoId, onSuccess }) {
   const [values, setValues] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
+  const [validationModal, setValidationModal] = useState(null);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [fotoFile, setFotoFile] = useState(null);
@@ -103,6 +104,13 @@ export function useProductoForm({ productoId, onSuccess }) {
     selectedCategoria?.nombre,
   );
   const codeSequence = extractProductCodeSequence(values.codigo, codePrefix);
+
+  function openValidationModal(title, message) {
+    setValidationModal({
+      title,
+      message,
+    });
+  }
 
   useEffect(() => {
     if (!isEdit) {
@@ -268,6 +276,7 @@ export function useProductoForm({ productoId, onSuccess }) {
     setSaving(true);
     setErrors({});
     setErrorMessage("");
+    setValidationModal(null);
 
     const precioCompra = Number(values.precio_compra || 0);
     const precioVenta = Number(values.precio_venta || 0);
@@ -278,6 +287,10 @@ export function useProductoForm({ productoId, onSuccess }) {
           "El precio de venta no puede ser menor que el precio de compra.",
         ],
       });
+      openValidationModal(
+        "Precio de venta invalido",
+        "No se puede guardar el producto porque el precio de venta no puede ser menor que el precio de compra.",
+      );
       setSaving(false);
       return;
     }
@@ -290,12 +303,47 @@ export function useProductoForm({ productoId, onSuccess }) {
 
       onSuccess(producto);
     } catch (requestError) {
+      const responseStatus = requestError.response?.status;
+      const responseMessage =
+        requestError.response?.data?.message ??
+        requestError.message ??
+        "Ocurrio un problema al intentar registrar el producto.";
       const validationErrors = requestError.response?.data?.errors;
 
       if (validationErrors) {
         setErrors(validationErrors);
+        const validationFields = Object.keys(validationErrors);
+        const firstField = validationFields[0];
+        const firstMessage = validationErrors[firstField]?.[0] ?? "Revisa los datos del formulario.";
+        const duplicateCode =
+          validationFields.includes("codigo") &&
+          /already been taken|ya ha sido tomado|ya existe|registrado|duplicate|duplicado/i.test(
+            `${responseMessage} ${firstMessage}`,
+          );
+
+        openValidationModal(
+          duplicateCode ? "Codigo ya registrado" : "No se pudo guardar el producto",
+          duplicateCode
+            ? "No se puede registrar el producto porque ese codigo ya esta registrado. Usa un codigo diferente."
+            : firstMessage,
+        );
+      } else if (responseStatus === 422) {
+        const duplicateCode = /codigo|already been taken|ya existe|registrado|duplicate|duplicado/i.test(
+          responseMessage,
+        );
+
+        openValidationModal(
+          duplicateCode ? "Codigo ya registrado" : "No se pudo guardar el producto",
+          duplicateCode
+            ? "No se puede registrar el producto porque ese codigo ya esta registrado. Usa un codigo diferente."
+            : responseMessage,
+        );
       } else {
         setErrorMessage("No se pudo guardar el producto.");
+        openValidationModal(
+          "No se pudo guardar el producto",
+          "Ocurrio un problema al intentar registrar el producto.",
+        );
       }
     } finally {
       setSaving(false);
@@ -306,6 +354,7 @@ export function useProductoForm({ productoId, onSuccess }) {
     values,
     errors,
     errorMessage,
+    validationModal,
     loading,
     saving,
     modulos,
@@ -335,5 +384,6 @@ export function useProductoForm({ productoId, onSuccess }) {
     updateStockInitial,
     changeStockInitial,
     submit,
+    closeValidationModal: () => setValidationModal(null),
   };
 }

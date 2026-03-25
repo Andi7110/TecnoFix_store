@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus } from "../../icons/phosphor";
 import ProductosFilters from "../../components/productos/ProductosFilters";
 import ProductosTable from "../../components/productos/ProductosTable";
 import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos";
@@ -7,6 +9,7 @@ import { useProductosFilters } from "../../hooks/productos/useProductosFilters";
 import { useProductosList } from "../../hooks/productos/useProductosList";
 
 function ProductosPage() {
+  const navigate = useNavigate();
   const {
     filters,
     draftFilters,
@@ -20,10 +23,31 @@ function ProductosPage() {
   );
   const { productos, loading, error, reload } = useProductosList(filters);
   const { pendingId, changeEstado } = useProductoEstado();
+  const [isOpeningCreate, setIsOpeningCreate] = useState(false);
+
+  useEffect(() => {
+    if (!isOpeningCreate) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      navigate("/productos/nuevo");
+    }, 450);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isOpeningCreate, navigate]);
 
   async function handleToggleEstado(producto) {
     await changeEstado(producto);
     reload();
+  }
+
+  function handleOpenCreate() {
+    if (isOpeningCreate) {
+      return;
+    }
+
+    setIsOpeningCreate(true);
   }
 
   return (
@@ -41,9 +65,29 @@ function ProductosPage() {
           <Link to="/productos/inventario" className="btn btn-light">
             Submodulo inventario
           </Link>
-          <Link to="/productos/nuevo" className="btn btn-primary">
-            Nuevo producto
-          </Link>
+          <button
+            type="button"
+            className="btn products-page__create-btn"
+            onClick={handleOpenCreate}
+            disabled={isOpeningCreate}
+          >
+            <span className="products-page__create-btn-content">
+              {isOpeningCreate ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm products-page__create-btn-spinner"
+                    aria-hidden="true"
+                  />
+                  <span>Cargando...</span>
+                </>
+              ) : (
+                <>
+                  <Plus size={18} weight="bold" aria-hidden="true" />
+                  <span>Nuevo producto</span>
+                </>
+              )}
+            </span>
+          </button>
         </div>
       </div>
 

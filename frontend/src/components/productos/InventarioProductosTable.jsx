@@ -180,6 +180,7 @@ function InventarioProductosTable({
   }
 
   function renderTableSection({
+    sectionKey,
     title,
     items,
     loading,
@@ -196,7 +197,14 @@ function InventarioProductosTable({
     const categorias = resolveCategorias(items);
 
     return (
-      <section className="inventory-section">
+      <section
+        className={`inventory-section ${sectionKey === "libreria" ? "inventory-section--separated" : ""}`}
+      >
+        {sectionKey === "libreria" ? (
+          <div className="inventory-section__divider" aria-hidden="true">
+            <span />
+          </div>
+        ) : null}
         <h3 className="inventory-section__title">{title}</h3>
         <form
           className="inventory-section__filters"
@@ -297,6 +305,7 @@ function InventarioProductosTable({
   return (
     <>
       {renderTableSection({
+        sectionKey: "accesorios",
         title: "Accesorios",
         items: accesoriosRegistros,
         loading: accesoriosLoading,
@@ -311,6 +320,7 @@ function InventarioProductosTable({
         emptyMessage: "No hay productos registrados en Accesorios.",
       })}
       {renderTableSection({
+        sectionKey: "libreria",
         title: "Libreria",
         items: libreriaRegistros,
         loading: libreriaLoading,

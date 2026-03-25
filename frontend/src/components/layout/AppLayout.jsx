@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
 
@@ -91,6 +91,8 @@ function AppLayout() {
   });
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   useEffect(() => {
     window.localStorage.setItem(SIDEBAR_PINNED_KEY, String(isSidebarPinned));
@@ -101,6 +103,32 @@ function AppLayout() {
     document.documentElement.setAttribute("data-theme", mode);
     window.localStorage.setItem(THEME_MODE_KEY, mode);
   }, [isDarkMode]);
+
+  useEffect(() => {
+    if (!isUserMenuOpen) {
+      return undefined;
+    }
+
+    function handlePointerDown(event) {
+      if (!userMenuRef.current?.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+
+    function handleEscape(event) {
+      if (event.key === "Escape") {
+        setIsUserMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isUserMenuOpen]);
 
   const navItems = [
     { to: "/", label: "Dashboard", end: true, icon: <DashboardIcon /> },
@@ -116,6 +144,7 @@ function AppLayout() {
 
   async function handleConfirmLogout() {
     setIsLoggingOut(true);
+    setIsUserMenuOpen(false);
 
     try {
       await logout();
@@ -222,13 +251,65 @@ function AppLayout() {
               </span>
             </button>
 
-            <button
-              type="button"
-              className="btn btn-danger app-toolbar__logout"
-              onClick={() => setIsLogoutConfirmOpen(true)}
+            <div
+              ref={userMenuRef}
+              className={`app-user-menu ${isUserMenuOpen ? "is-open" : ""}`}
             >
-              Cerrar sesion
-            </button>
+              <button
+                type="button"
+                className="btn app-user-menu__trigger"
+                onClick={() => setIsUserMenuOpen((current) => !current)}
+                aria-haspopup="menu"
+                aria-expanded={isUserMenuOpen}
+                aria-label="Abrir menu de usuario"
+              >
+                <span className="app-user-menu__avatar">
+                  <PowerLogo />
+                </span>
+              </button>
+
+              {isUserMenuOpen ? (
+                <div className="app-user-menu__dropdown" role="menu">
+                  <div className="app-user-menu__header">
+                    <p className="app-user-menu__kicker">Sesion activa</p>
+                    <p className="app-user-menu__name">{user?.name ?? "Usuario"}</p>
+                    <p className="app-user-menu__email">{user?.email ?? ""}</p>
+                  </div>
+
+                  <button type="button" className="app-user-menu__item" role="menuitem">
+                    Mi perfil
+                  </button>
+
+                  <button
+                    type="button"
+                    className="app-user-menu__item"
+                    onClick={() => {
+                      setIsDarkMode((current) => !current);
+                      setIsUserMenuOpen(false);
+                    }}
+                    role="menuitem"
+                  >
+                    {isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+                  </button>
+
+                  <button type="button" className="app-user-menu__item" role="menuitem">
+                    Preferencias
+                  </button>
+
+                  <button
+                    type="button"
+                    className="app-user-menu__item app-user-menu__item--danger"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      setIsLogoutConfirmOpen(true);
+                    }}
+                    role="menuitem"
+                  >
+                    Cerrar sesion
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
 
