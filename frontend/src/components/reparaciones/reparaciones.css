@@ -12,6 +12,57 @@
   letter-spacing: 0.08em;
 }
 
+.repairs-table-card {
+  margin-top: 1rem;
+}
+
+.repair-form {
+  color: var(--app-ink);
+}
+
+.repair-form .section-kicker,
+.repair-form .form-label,
+.repair-form .muted-text {
+  color: var(--app-ink);
+}
+
+.repair-form h2 {
+  color: var(--app-ink);
+  font-weight: 700;
+}
+
+.repair-form .form-label {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.repair-form .form-control,
+.repair-form .form-select,
+.repair-form textarea {
+  color: var(--app-ink);
+  font-weight: 500;
+}
+
+.repair-form .invalid-feedback {
+  display: block;
+}
+
+.repair-date-input .input-group-text {
+  background: var(--app-field-bg);
+  border-color: var(--app-field-border);
+  color: var(--app-muted);
+  border-right: 0;
+}
+
+.repair-date-input .form-control {
+  border-left: 0;
+}
+
+.repair-date-input .form-control::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
 .repair-status {
   display: inline-flex;
   align-items: center;

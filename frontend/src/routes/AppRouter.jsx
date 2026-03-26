@@ -12,6 +12,8 @@ import ProductosPage from "../pages/productos/ProductosPage";
 import CrearReparacionPage from "../pages/reparaciones/CrearReparacionPage";
 import EditarReparacionPage from "../pages/reparaciones/EditarReparacionPage";
 import ReparacionesPage from "../pages/reparaciones/ReparacionesPage";
+import CrearVentaPage from "../pages/ventas/CrearVentaPage";
+import VentasPage from "../pages/ventas/VentasPage";
 
 function AppRouter() {
   return (
@@ -28,6 +30,8 @@ function AppRouter() {
             <Route path="/productos/inventario" element={<InventarioProductosPage />} />
             <Route path="/productos/nuevo" element={<CrearProductoPage />} />
             <Route path="/productos/:productoId/editar" element={<EditarProductoPage />} />
+            <Route path="/ventas" element={<VentasPage />} />
+            <Route path="/ventas/nueva" element={<CrearVentaPage />} />
             <Route path="/reparaciones" element={<ReparacionesPage />} />
             <Route path="/reparaciones/nueva" element={<CrearReparacionPage />} />
             <Route path="/reparaciones/:reparacionId/editar" element={<EditarReparacionPage />} />

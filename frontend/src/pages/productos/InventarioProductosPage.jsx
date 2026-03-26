@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { deleteProductoLogico } from "../../api/productos";
 import InventarioProductosTable from "../../components/productos/InventarioProductosTable";
 import { useInventarioProductosList } from "../../hooks/productos/useInventarioProductosList";
 
@@ -40,33 +39,6 @@ function InventarioProductosPage() {
   );
   const accesoriosListado = useInventarioProductosList(accesoriosQuery);
   const libreriaListado = useInventarioProductosList(libreriaQuery);
-  const [deletingProductoId, setDeletingProductoId] = useState(null);
-
-  async function handleDelete(registro) {
-    if (!registro?.producto_id) {
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `Se eliminara el producto "${registro.nombre}". Esta accion desactiva el producto en el sistema.`,
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    setDeletingProductoId(registro.producto_id);
-
-    try {
-      await deleteProductoLogico(registro.producto_id);
-      accesoriosListado.reload();
-      libreriaListado.reload();
-    } catch {
-      window.alert("No se pudo eliminar el producto.");
-    } finally {
-      setDeletingProductoId(null);
-    }
-  }
 
   function updateSectionFilters(setter, name, value) {
     setter((current) => ({
@@ -136,8 +108,6 @@ function InventarioProductosPage() {
           setLibreriaFilters,
           setLibreriaPage,
         )}
-        deletingProductoId={deletingProductoId}
-        onDelete={handleDelete}
       />
     </section>
   );

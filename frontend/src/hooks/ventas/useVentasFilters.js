@@ -1,18 +1,16 @@
 import { useState } from "react";
 
 const initialFilters = {
-  estado: "",
-  cliente: "",
-  telefono: "",
-  marca: "",
-  modelo: "",
+  modulo_id: "",
+  numero_venta: "",
+  metodo_pago: "",
   fecha_desde: "",
   fecha_hasta: "",
   page: 1,
-  per_page: 3,
+  per_page: 10,
 };
 
-export function useReparacionesFilters() {
+export function useVentasFilters() {
   const [filters, setFilters] = useState(initialFilters);
   const [draftFilters, setDraftFilters] = useState(initialFilters);
 

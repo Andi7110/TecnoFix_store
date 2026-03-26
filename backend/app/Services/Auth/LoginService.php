@@ -13,10 +13,12 @@ class LoginService
     {
         $remember = (bool) ($credentials['remember'] ?? false);
 
-        if (! Auth::attempt([
+        $authenticated = Auth::attempt([
             'username' => $credentials['username'],
             'password' => $credentials['password'],
-        ], $remember)) {
+        ], $remember);
+
+        if (! $authenticated) {
             throw ValidationException::withMessages([
                 'username' => ['Credenciales invalidas.'],
             ]);

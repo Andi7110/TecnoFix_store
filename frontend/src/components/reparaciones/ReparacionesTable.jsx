@@ -19,7 +19,7 @@ function ReparacionesTable({ reparaciones, loading }) {
   }
 
   return (
-    <div className="surface-card products-table-wrapper">
+    <div className="surface-card products-table-wrapper repairs-table-card">
       <div className="table-responsive">
         <table className="table align-middle repairs-table">
           <thead>

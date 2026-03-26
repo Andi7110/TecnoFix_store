@@ -51,8 +51,6 @@ function InventarioProductosTable({
   onLibreriaFilterChange,
   onLibreriaFiltersApply,
   onLibreriaFiltersClear,
-  deletingProductoId,
-  onDelete,
 }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
@@ -141,8 +139,9 @@ function InventarioProductosTable({
           </small>
         </td>
         <td>
-          <div>Inicial: {registro.stock_inicial}</div>
-          <small className="muted-text">Min: {registro.stock_minimo}</small>
+          <span className="inventory-stock-badge">
+            {Number(registro.stock ?? 0)}
+          </span>
         </td>
         <td>
           <span className={`status-pill ${registro.estado ? "is-active" : "is-inactive"}`}>
@@ -163,16 +162,8 @@ function InventarioProductosTable({
               className="btn btn-success btn-sm"
               to={`/productos/${registro.producto_id}/editar`}
             >
-              Editar
+              Detalle
             </Link>
-            <button
-              type="button"
-              className="btn btn-danger btn-sm"
-              disabled={!registro.producto_id || deletingProductoId === registro.producto_id}
-              onClick={() => onDelete(registro)}
-            >
-              {deletingProductoId === registro.producto_id ? "Eliminando..." : "Eliminar"}
-            </button>
           </div>
         </td>
       </tr>

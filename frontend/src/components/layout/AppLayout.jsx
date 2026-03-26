@@ -60,6 +60,14 @@ function CashIcon() {
   );
 }
 
+function SalesIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 5h16v3H4V5Zm0 5h10v9H4v-9Zm12 0h4v9h-4v-9ZM7 13h4v2H7v-2Z" />
+    </svg>
+  );
+}
+
 function PinIcon({ pinned }) {
   return pinned ? (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -138,6 +146,12 @@ function AppLayout() {
       icon: <ProductsIcon />,
       children: [{ to: "/productos/inventario", label: "Inventario", icon: <InventoryIcon /> }],
     },
+    {
+      to: "/ventas",
+      label: "Ventas",
+      icon: <SalesIcon />,
+      children: [{ to: "/ventas/nueva", label: "Nueva venta", icon: <CashIcon /> }],
+    },
     { to: "/reparaciones", label: "Reparaciones", icon: <RepairsIcon /> },
     { to: "/caja", label: "Caja", icon: <CashIcon /> },
   ];
@@ -184,7 +198,7 @@ function AppLayout() {
 
           <nav className="app-nav">
             {navItems.map((item) => {
-              const groupSelected = item.to === "/productos" && pathname.startsWith("/productos");
+              const groupSelected = pathname.startsWith(item.to);
 
               return (
                 <div key={item.to} className="app-nav__group">

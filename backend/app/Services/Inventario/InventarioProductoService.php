@@ -18,7 +18,9 @@ class InventarioProductoService
         $perPage = $this->resolvePerPage($filters);
 
         $query = InventarioProducto::query()
-            ->whereHas('producto', fn ($builder) => $builder->where('estado', true))
+            ->whereHas('producto', fn ($builder) => $builder
+                ->where('estado', true)
+                ->where('stock', '>', 0))
             ->select([
                 'id',
                 'producto_id',
@@ -40,6 +42,7 @@ class InventarioProductoService
                 'updated_at',
             ])
             ->with([
+                'producto:id,stock',
                 'modulo:id,nombre',
                 'categoria:id,nombre',
                 'registradoPor:id,name,username,email',

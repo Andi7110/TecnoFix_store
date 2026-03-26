@@ -4,7 +4,7 @@ export function cleanQueryParams(params = {}) {
       return accumulator;
     }
 
-    accumulator[key] = value;
+    accumulator[key] = typeof value === "boolean" ? Number(value) : value;
 
     return accumulator;
   }, {});

@@ -1,0 +1,70 @@
+import { Link } from "react-router-dom";
+import ProductosPagination from "../../components/productos/ProductosPagination";
+import VentaDetailModal from "../../components/ventas/VentaDetailModal";
+import VentasFilters from "../../components/ventas/VentasFilters";
+import VentasTable from "../../components/ventas/VentasTable";
+import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos";
+import { useVentaDetail } from "../../hooks/ventas/useVentaDetail";
+import { useVentasFilters } from "../../hooks/ventas/useVentasFilters";
+import { useVentasList } from "../../hooks/ventas/useVentasList";
+
+function VentasPage() {
+  const {
+    filters,
+    draftFilters,
+    updateDraftFilter,
+    applyFilters,
+    clearFilters,
+    changePage,
+  } = useVentasFilters();
+  const { modulos } = useProductoCatalogos("", true);
+  const { ventas, meta, loading, error } = useVentasList(filters);
+  const ventaDetail = useVentaDetail();
+
+  return (
+    <section>
+      <div className="products-page__header">
+        <div>
+          <p className="section-kicker">Ventas</p>
+          <h2>Historial de ventas</h2>
+          <p className="muted-text">
+            Registra articulos vendidos y consulta el detalle de cada operacion.
+          </p>
+        </div>
+
+        <div className="products-page__header-actions">
+          <Link to="/ventas/nueva" className="btn btn-primary">
+            Nueva venta
+          </Link>
+        </div>
+      </div>
+
+      <VentasFilters
+        values={draftFilters}
+        modulos={modulos}
+        onChange={updateDraftFilter}
+        onSubmit={applyFilters}
+        onClear={clearFilters}
+      />
+
+      {error ? <div className="alert alert-danger">{error}</div> : null}
+
+      <VentasTable
+        ventas={ventas}
+        loading={loading}
+        onViewDetail={ventaDetail.openVenta}
+      />
+
+      <ProductosPagination meta={meta} onPageChange={changePage} />
+
+      <VentaDetailModal
+        venta={ventaDetail.venta}
+        loading={ventaDetail.loading}
+        error={ventaDetail.error}
+        onClose={ventaDetail.closeVenta}
+      />
+    </section>
+  );
+}
+
+export default VentasPage;

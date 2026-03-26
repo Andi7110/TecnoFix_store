@@ -15,6 +15,9 @@ class ProductoFilter extends QueryFilter
             'estado',
             'nombre',
             'codigo',
+            'con_stock',
+            'agotado',
+            'stock_critico',
             'stock_bajo',
             'precio_min',
             'precio_max',
@@ -50,6 +53,39 @@ class ProductoFilter extends QueryFilter
     public function codigo(Builder $query, string $value): void
     {
         $query->buscarCodigo($value);
+    }
+
+    public function con_stock(Builder $query, mixed $value): void
+    {
+        $conStock = $this->toBoolean($value);
+
+        if ($conStock !== true) {
+            return;
+        }
+
+        $query->where('stock', '>', 0);
+    }
+
+    public function agotado(Builder $query, mixed $value): void
+    {
+        $agotado = $this->toBoolean($value);
+
+        if ($agotado !== true) {
+            return;
+        }
+
+        $query->where('stock', '<=', 0);
+    }
+
+    public function stock_critico(Builder $query, mixed $value): void
+    {
+        $stockCritico = $this->toBoolean($value);
+
+        if ($stockCritico !== true) {
+            return;
+        }
+
+        $query->where('stock', '=', 2);
     }
 
     public function stock_bajo(Builder $query, mixed $value): void

@@ -21,6 +21,7 @@ class InventarioProductoResource extends JsonResource
             'foto_url' => $this->foto_path ? route('productos.foto', ['path' => $this->foto_path]) : null,
             'precio_compra' => $this->precio_compra,
             'precio_venta' => $this->precio_venta,
+            'stock' => $this->whenLoaded('producto', fn (): int => (int) $this->producto->stock),
             'stock_inicial' => $this->stock_inicial,
             'stock_minimo' => $this->stock_minimo,
             'unidad_medida' => $this->unidad_medida,

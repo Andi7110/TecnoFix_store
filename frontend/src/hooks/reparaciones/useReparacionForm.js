@@ -5,6 +5,10 @@ import {
   updateReparacion,
 } from "../../api/reparaciones";
 import { listModulos } from "../../api/inventarioCatalogos";
+import {
+  formatMoneyInput,
+  normalizeMoneyInput,
+} from "../../utils/currencyInput";
 
 const initialValues = {
   modulo_id: "",
@@ -79,6 +83,135 @@ function buildPayload(values) {
   };
 }
 
+function createError(message) {
+  return [message];
+}
+
+function formatTelefono(value) {
+  const digits = String(value ?? "").replace(/\D/g, "").slice(0, 8);
+
+  if (digits.length <= 4) {
+    return digits;
+  }
+
+  return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+}
+
+function formatDui(value) {
+  const digits = String(value ?? "").replace(/\D/g, "").slice(0, 9);
+
+  if (digits.length <= 8) {
+    return digits;
+  }
+
+  return `${digits.slice(0, 8)}-${digits.slice(8)}`;
+}
+
+function formatDireccion(value) {
+  return String(value ?? "")
+    .replace(/[^0-9A-Za-zÁÉÍÓÚáéíóúÑñ.,#/\-\s]/g, "")
+    .replace(/\s+/g, " ")
+    .slice(0, 255);
+}
+
+function validateValues(values) {
+  const nextErrors = {};
+  const nombreCliente = values.cliente.nombre.trim();
+  const telefono = formatTelefono(values.cliente.telefono);
+  const telefonoDigits = telefono.replace(/\D/g, "");
+  const documento = formatDui(values.cliente.documento);
+  const documentoDigits = documento.replace(/\D/g, "");
+  const email = values.cliente.email.trim();
+  const marca = values.marca.trim();
+  const modelo = values.modelo.trim();
+  const problemaReportado = values.problema_reportado.trim();
+  const diagnostico = values.diagnostico.trim();
+  const observacion = values.observacion.trim();
+  const costoTexto = normalizeMoneyInput(values.costo_reparacion);
+  const costo = Number(costoTexto || 0);
+  const anticipoTexto = normalizeMoneyInput(values.anticipo);
+  const anticipo = Number(anticipoTexto || 0);
+  const fechaIngreso = values.fecha_ingreso;
+  const fechaEstimadaEntrega = values.fecha_estimada_entrega;
+
+  if (!nombreCliente) {
+    nextErrors["cliente.nombre"] = createError("El nombre del cliente es obligatorio.");
+  } else if (nombreCliente.length > 150) {
+    nextErrors["cliente.nombre"] = createError("El nombre del cliente no puede exceder 150 caracteres.");
+  }
+
+  if (telefono && telefonoDigits.length !== 8) {
+    nextErrors["cliente.telefono"] = createError("El telefono debe tener exactamente 8 numeros.");
+  }
+
+  if (documento && documentoDigits.length !== 9) {
+    nextErrors["cliente.documento"] = createError("El DUI debe tener exactamente 9 numeros.");
+  }
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    nextErrors["cliente.email"] = createError("Ingresa un correo valido.");
+  } else if (email.length > 150) {
+    nextErrors["cliente.email"] = createError("El correo no puede exceder 150 caracteres.");
+  }
+
+  if (values.cliente.direccion.trim().length > 255) {
+    nextErrors["cliente.direccion"] = createError("La direccion no puede exceder 255 caracteres.");
+  }
+
+  if (!marca) {
+    nextErrors.marca = createError("La marca es obligatoria.");
+  } else if (marca.length > 100) {
+    nextErrors.marca = createError("La marca no puede exceder 100 caracteres.");
+  }
+
+  if (!modelo) {
+    nextErrors.modelo = createError("El modelo es obligatorio.");
+  } else if (modelo.length > 100) {
+    nextErrors.modelo = createError("El modelo no puede exceder 100 caracteres.");
+  }
+
+  if (!problemaReportado) {
+    nextErrors.problema_reportado = createError("Describe el problema reportado.");
+  }
+
+  if (diagnostico.length > 0 && diagnostico.length < 3) {
+    nextErrors.diagnostico = createError("El diagnostico debe tener al menos 3 caracteres.");
+  }
+
+  if (!fechaIngreso) {
+    nextErrors.fecha_ingreso = createError("La fecha de ingreso es obligatoria.");
+  }
+
+  if (costoTexto && Number.isNaN(costo)) {
+    nextErrors.costo_reparacion = createError("Ingresa un monto valido.");
+  } else if (Number.isNaN(costo) || costo < 0) {
+    nextErrors.costo_reparacion = createError("El costo debe ser un numero igual o mayor que cero.");
+  }
+
+  if (anticipoTexto && Number.isNaN(anticipo)) {
+    nextErrors.anticipo = createError("Ingresa un monto valido.");
+  } else if (Number.isNaN(anticipo) || anticipo < 0) {
+    nextErrors.anticipo = createError("El anticipo debe ser un numero igual o mayor que cero.");
+  } else if (!Number.isNaN(costo) && anticipo > costo) {
+    nextErrors.anticipo = createError("El anticipo no puede ser mayor que el costo.");
+  }
+
+  if (fechaIngreso && fechaEstimadaEntrega) {
+    const ingreso = new Date(fechaIngreso);
+    const entrega = new Date(fechaEstimadaEntrega);
+
+    if (!Number.isNaN(ingreso.getTime()) && !Number.isNaN(entrega.getTime()) && entrega < ingreso) {
+      nextErrors.fecha_estimada_entrega = createError("La fecha estimada no puede ser anterior a la fecha de ingreso.");
+    }
+  }
+
+  if (observacion.length > 0 && observacion.length < 3) {
+    nextErrors.observacion = createError("La observacion debe tener al menos 3 caracteres.");
+  }
+
+  return nextErrors;
+}
+
 export function useReparacionForm({ reparacionId, onSuccess }) {
   const isEdit = Boolean(reparacionId);
   const [values, setValues] = useState(initialValues);
@@ -93,9 +226,18 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
 
     async function loadCatalog() {
       const data = await listModulos();
+      const reparacionesModulo = data.find((modulo) => modulo.nombre === "reparaciones");
 
       if (!ignore) {
         setModulos(data);
+        setValues((current) => (
+          isEdit || current.modulo_id || !reparacionesModulo
+            ? current
+            : {
+                ...current,
+                modulo_id: String(reparacionesModulo.id),
+              }
+        ));
       }
     }
 
@@ -104,7 +246,7 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [isEdit]);
 
   useEffect(() => {
     if (!isEdit) {
@@ -142,27 +284,47 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
   }, [isEdit, reparacionId]);
 
   function updateField(name, value) {
+    const normalizedValue = name === "costo_reparacion" || name === "anticipo"
+      ? normalizeMoneyInput(value)
+      : value;
+
     setValues((current) => ({
       ...current,
-      [name]: value,
+      [name]: normalizedValue,
     }));
   }
 
   function updateClienteField(name, value) {
+    const normalizedValue = name === "telefono"
+      ? formatTelefono(value)
+      : name === "documento"
+        ? formatDui(value)
+        : name === "direccion"
+          ? formatDireccion(value)
+        : value;
+
     setValues((current) => ({
       ...current,
       cliente: {
         ...current.cliente,
-        [name]: value,
+        [name]: normalizedValue,
       },
     }));
   }
 
   async function submit(event) {
     event.preventDefault();
-    setSaving(true);
     setErrors({});
     setErrorMessage("");
+
+    const validationErrors = validateValues(values);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setSaving(true);
 
     try {
       const payload = buildPayload(values);
@@ -197,6 +359,12 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
     onSubmit: submit,
     updateField,
     updateClienteField,
+    formatMoneyField: (name) => {
+      setValues((current) => ({
+        ...current,
+        [name]: formatMoneyInput(current[name]),
+      }));
+    },
     submit,
   };
 }

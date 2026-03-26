@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { listProductos } from "../../api/productos";
+import { listVentas } from "../../api/ventas";
 
-export function useProductosList(filters) {
-  const [productos, setProductos] = useState([]);
+export function useVentasList(filters) {
+  const [ventas, setVentas] = useState([]);
   const [meta, setMeta] = useState(null);
-  const [links, setLinks] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadToken, setReloadToken] = useState(0);
@@ -12,27 +11,28 @@ export function useProductosList(filters) {
   useEffect(() => {
     let ignore = false;
 
-    async function loadProductos() {
+    async function loadVentas() {
       setLoading(true);
       setError("");
 
       try {
-        const response = await listProductos(filters);
+        const response = await listVentas(filters);
 
         if (ignore) {
           return;
         }
 
-        setProductos(response.data ?? []);
+        setVentas(response.data ?? []);
         setMeta(response.meta ?? null);
-        setLinks(response.links ?? null);
-      } catch (error) {
+      } catch (requestError) {
         if (ignore) {
           return;
         }
 
-        const apiMessage = error?.response?.data?.message;
-        setError(apiMessage || "No se pudieron cargar los productos.");
+        setError(
+          requestError?.response?.data?.message
+            || "No se pudieron cargar las ventas.",
+        );
       } finally {
         if (!ignore) {
           setLoading(false);
@@ -40,7 +40,7 @@ export function useProductosList(filters) {
       }
     }
 
-    loadProductos();
+    loadVentas();
 
     return () => {
       ignore = true;
@@ -52,9 +52,8 @@ export function useProductosList(filters) {
   }
 
   return {
-    productos,
+    ventas,
     meta,
-    links,
     loading,
     error,
     reload,

@@ -51,19 +51,6 @@ function ProductosFilters({
         </div>
 
         <div>
-          <label className="form-label">Estado</label>
-          <select
-            className="form-select"
-            value={values.estado}
-            onChange={(event) => onChange("estado", event.target.value)}
-          >
-            <option value="">Todos</option>
-            <option value="true">Activos</option>
-            <option value="false">Inactivos</option>
-          </select>
-        </div>
-
-        <div>
           <label className="form-label">Nombre</label>
           <input
             className="form-control"
