@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import ProductosPagination from "../../components/productos/ProductosPagination";
+import CrearVentaModal from "../../components/ventas/CrearVentaModal";
 import VentaDetailModal from "../../components/ventas/VentaDetailModal";
 import VentasFilters from "../../components/ventas/VentasFilters";
 import VentasTable from "../../components/ventas/VentasTable";
@@ -9,6 +11,7 @@ import { useVentasFilters } from "../../hooks/ventas/useVentasFilters";
 import { useVentasList } from "../../hooks/ventas/useVentasList";
 
 function VentasPage() {
+  const [isCreateSaleOpen, setIsCreateSaleOpen] = useState(false);
   const {
     filters,
     draftFilters,
@@ -16,9 +19,10 @@ function VentasPage() {
     applyFilters,
     clearFilters,
     changePage,
+    changePerPage,
   } = useVentasFilters();
   const { modulos } = useProductoCatalogos("", true);
-  const { ventas, meta, loading, error } = useVentasList(filters);
+  const { ventas, meta, loading, error, reload } = useVentasList(filters);
   const ventaDetail = useVentaDetail();
 
   return (
@@ -33,8 +37,15 @@ function VentasPage() {
         </div>
 
         <div className="products-page__header-actions">
-          <Link to="/ventas/nueva" className="btn btn-primary">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setIsCreateSaleOpen(true)}
+          >
             Nueva venta
+          </button>
+          <Link to="/ventas/reportes" className="btn btn-outline-dark">
+            Reportes
           </Link>
         </div>
       </div>
@@ -55,7 +66,13 @@ function VentasPage() {
         onViewDetail={ventaDetail.openVenta}
       />
 
-      <ProductosPagination meta={meta} onPageChange={changePage} />
+      <ProductosPagination
+        meta={meta}
+        onPageChange={changePage}
+        showWhenSinglePage
+        perPage={filters.per_page}
+        onPerPageChange={changePerPage}
+      />
 
       <VentaDetailModal
         venta={ventaDetail.venta}
@@ -63,6 +80,16 @@ function VentasPage() {
         error={ventaDetail.error}
         onClose={ventaDetail.closeVenta}
       />
+
+      {isCreateSaleOpen ? (
+        <CrearVentaModal
+          modulos={modulos}
+          onClose={() => setIsCreateSaleOpen(false)}
+          onCreated={() => {
+            reload();
+          }}
+        />
+      ) : null}
     </section>
   );
 }

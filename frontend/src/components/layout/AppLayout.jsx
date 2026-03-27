@@ -68,6 +68,14 @@ function SalesIcon() {
   );
 }
 
+function ReportsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 3h9l5 5v13H6V3Zm8 1.5V9h4.5L14 4.5ZM9 12h8v1.8H9V12Zm0 4h8v1.8H9V16Zm0-8h3v1.8H9V8Z" />
+    </svg>
+  );
+}
+
 function PinIcon({ pinned }) {
   return pinned ? (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -150,7 +158,9 @@ function AppLayout() {
       to: "/ventas",
       label: "Ventas",
       icon: <SalesIcon />,
-      children: [{ to: "/ventas/nueva", label: "Nueva venta", icon: <CashIcon /> }],
+      children: [
+        { to: "/ventas/reportes", label: "Reportes", icon: <ReportsIcon /> },
+      ],
     },
     { to: "/reparaciones", label: "Reparaciones", icon: <RepairsIcon /> },
     { to: "/caja", label: "Caja", icon: <CashIcon /> },
@@ -236,13 +246,6 @@ function AppLayout() {
             })}
           </nav>
 
-          <div className="app-sidebar__footer">
-            <div className="app-userbox">
-              <p className="app-userbox__label">Sesion activa</p>
-              <p className="app-userbox__name">{user?.name ?? "Usuario"}</p>
-              <p className="app-userbox__email">{user?.email ?? ""}</p>
-            </div>
-          </div>
         </div>
       </aside>
 
@@ -281,6 +284,7 @@ function AppLayout() {
                   <PowerLogo />
                 </span>
               </button>
+              <p className="app-user-menu__display-name">{user?.name ?? "Usuario"}</p>
 
               {isUserMenuOpen ? (
                 <div className="app-user-menu__dropdown" role="menu">

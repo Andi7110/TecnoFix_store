@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Inventario\ProductoController;
 use App\Http\Controllers\Api\Caja\MovimientoCajaController;
 use App\Http\Controllers\Api\Dashboard\DashboardSummaryController;
 use App\Http\Controllers\Api\Reparaciones\ReparacionController;
+use App\Http\Controllers\Api\Ventas\SalesReportController;
 use App\Http\Controllers\Api\Ventas\VentaController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::patch('productos/{producto}/estado', [ProductoController::class, 'updateEstado'])->name('productos.update-estado');
         Route::apiResource('productos', ProductoController::class)->only(['index', 'store', 'show', 'update']);
         Route::apiResource('movimientos', MovimientoInventarioController::class)->only(['index', 'store', 'show']);
+    });
+
+    Route::prefix('ventas/reportes')->group(function (): void {
+        Route::get('diario', [SalesReportController::class, 'daily'])->name('ventas.reportes.diario');
+        Route::get('estado-resultados', [SalesReportController::class, 'monthlyIncomeStatement'])->name('ventas.reportes.estado-resultados');
+        Route::post('diario', [SalesReportController::class, 'storeDaily'])->name('ventas.reportes.diario.store');
+        Route::post('estado-resultados', [SalesReportController::class, 'storeMonthly'])->name('ventas.reportes.estado-resultados.store');
+        Route::get('historial', [SalesReportController::class, 'history'])->name('ventas.reportes.historial');
     });
 
     Route::apiResource('ventas', VentaController::class)->only(['index', 'store', 'show']);

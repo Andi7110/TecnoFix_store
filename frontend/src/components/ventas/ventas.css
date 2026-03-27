@@ -4,6 +4,147 @@
   margin-bottom: 1.5rem;
 }
 
+.ventas-reportes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.ventas-report-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ventas-report-card h3,
+.ventas-report-panel h4 {
+  margin: 0;
+  color: var(--app-ink);
+}
+
+.ventas-report-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ventas-report-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.ventas-report-form--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ventas-report-form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ventas-report-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ventas-report-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ventas-report-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ventas-report-metric {
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: var(--app-surface);
+  padding: 0.95rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ventas-report-metric span {
+  color: var(--app-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ventas-report-metric strong {
+  color: var(--app-ink);
+  font-size: 1.05rem;
+}
+
+.ventas-report-metric--accent {
+  border-color: rgba(30, 168, 82, 0.2);
+  background: linear-gradient(135deg, rgba(30, 168, 82, 0.08), rgba(255, 255, 255, 0.82));
+}
+
+.ventas-report-metric--success {
+  border-color: rgba(20, 124, 88, 0.18);
+  background: linear-gradient(135deg, rgba(20, 124, 88, 0.08), rgba(255, 255, 255, 0.82));
+}
+
+.ventas-report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.ventas-report-panel {
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.45);
+  padding: 1rem;
+}
+
+.ventas-report-card--history {
+  grid-column: 1 / -1;
+}
+
+.ventas-report-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.ventas-report-table {
+  margin-bottom: 0;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--app-ink);
+  --bs-table-border-color: var(--app-surface-border);
+}
+
+.ventas-report-table th {
+  color: var(--app-muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ventas-report-notes {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--app-ink);
+}
+
+.ventas-report-notes li + li {
+  margin-top: 0.45rem;
+}
+
 .ventas-filters__grid,
 .venta-form__grid {
   display: grid;
@@ -16,6 +157,13 @@
   background: var(--app-surface);
   border: 1px solid var(--app-surface-border);
   color: var(--app-ink);
+  box-shadow: 0 14px 30px var(--app-surface-shadow);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.ventas-table-wrapper.surface-card::before {
+  display: none;
 }
 
 .ventas-table th,
@@ -170,7 +318,33 @@
   color: var(--app-ink);
 }
 
+.venta-create-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1490;
+  background: rgba(7, 10, 9, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.venta-create-modal__content {
+  width: min(96vw, 1180px);
+  max-height: 92vh;
+  overflow: auto;
+  border-radius: 1.3rem;
+}
+
+.venta-create-modal__content .venta-form {
+  margin-bottom: 0;
+}
+
 @media (max-width: 992px) {
+  .ventas-reportes,
+  .ventas-report-grid,
+  .ventas-report-metrics,
   .ventas-filters__grid,
   .venta-form__grid,
   .venta-form__catalog,
@@ -179,9 +353,17 @@
   .venta-detail-modal__summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .ventas-report-form,
+  .ventas-report-form--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
+  .ventas-reportes,
+  .ventas-report-grid,
+  .ventas-report-metrics,
   .ventas-filters__grid,
   .venta-form__grid,
   .venta-form__catalog,
@@ -189,6 +371,16 @@
   .venta-detail-modal__meta,
   .venta-detail-modal__summary {
     grid-template-columns: 1fr;
+  }
+
+  .ventas-report-form,
+  .ventas-report-form--three {
+    grid-template-columns: 1fr;
+  }
+
+  .ventas-report-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .venta-form__product-card,

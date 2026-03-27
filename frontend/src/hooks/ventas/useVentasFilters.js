@@ -43,6 +43,19 @@ export function useVentasFilters() {
     }));
   }
 
+  function changePerPage(perPage) {
+    setDraftFilters((current) => ({
+      ...current,
+      per_page: perPage,
+    }));
+
+    setFilters((current) => ({
+      ...current,
+      per_page: perPage,
+      page: 1,
+    }));
+  }
+
   return {
     filters,
     draftFilters,
@@ -50,5 +63,6 @@ export function useVentasFilters() {
     applyFilters,
     clearFilters,
     changePage,
+    changePerPage,
   };
 }

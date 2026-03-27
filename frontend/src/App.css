@@ -488,6 +488,10 @@
 .app-user-menu {
   position: relative;
   z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .app-user-menu__trigger {
@@ -538,6 +542,17 @@
   margin: 0;
   background: transparent;
   box-shadow: none;
+}
+
+.app-user-menu__display-name {
+  margin: 0;
+  max-width: 6.5rem;
+  color: var(--app-ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  word-break: break-word;
 }
 
 .app-user-menu__dropdown {
@@ -804,6 +819,10 @@
 }
 
 :root[data-theme="dark"] .app-user-menu__name {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .app-user-menu__display-name {
   color: #eff8f3;
 }
 
