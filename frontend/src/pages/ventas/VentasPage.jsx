@@ -39,12 +39,13 @@ function VentasPage() {
         <div className="products-page__header-actions">
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn venta-page__new-button"
             onClick={() => setIsCreateSaleOpen(true)}
           >
-            Nueva venta
+            <span className="venta-page__new-button-symbol" aria-hidden="true">+</span>
+            <span>Nueva venta</span>
           </button>
-          <Link to="/ventas/reportes" className="btn btn-outline-dark">
+          <Link to="/ventas/reportes" className="btn venta-page__reports-button">
             Reportes
           </Link>
         </div>

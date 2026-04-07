@@ -3,6 +3,9 @@ import { createVenta } from "../../api/ventas";
 import { listProductos } from "../../api/productos";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
 
+const SUSPENDED_SALES_KEY = "tecnofix-pos-suspended-sales";
+const TICKET_CONFIG_KEY = "tecnofix-pos-ticket-config";
+
 function getLocalDateTimeValue() {
   const now = new Date();
   const offset = now.getTimezoneOffset();
@@ -11,13 +14,15 @@ function getLocalDateTimeValue() {
   return localDate.toISOString().slice(0, 16);
 }
 
-const initialValues = {
-  modulo_id: "",
-  fecha_venta: getLocalDateTimeValue(),
-  descuento: "",
-  metodo_pago: "efectivo",
-  observacion: "",
-};
+function createInitialValues() {
+  return {
+    modulo_id: "",
+    fecha_venta: getLocalDateTimeValue(),
+    descuento: "",
+    metodo_pago: "efectivo",
+    observacion: "",
+  };
+}
 
 function normalizeText(value) {
   return String(value ?? "")
@@ -27,15 +32,69 @@ function normalizeText(value) {
     .trim();
 }
 
+function loadFromStorage(key, fallback) {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  try {
+    const rawValue = window.localStorage.getItem(key);
+
+    return rawValue ? JSON.parse(rawValue) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function buildSuspendedSaleSnapshot({ values, items, montoRecibido }) {
+  const now = new Date();
+
+  return {
+    id: `suspended-${now.getTime()}`,
+    created_at: now.toISOString(),
+    modulo_id: values.modulo_id,
+    metodo_pago: values.metodo_pago,
+    observacion: values.observacion,
+    items_count: items.reduce((accumulator, item) => accumulator + Number(item.cantidad ?? 0), 0),
+    values,
+    items,
+    montoRecibido,
+  };
+}
+
 export function useVentaForm({ onSuccess }) {
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState(createInitialValues);
   const [items, setItems] = useState([]);
   const [productos, setProductos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [montoRecibido, setMontoRecibido] = useState("");
+  const [ticketConfig, setTicketConfig] = useState(() => loadFromStorage(TICKET_CONFIG_KEY, {
+    businessName: "TecnoFix",
+    businessPhone: "",
+    businessAddress: "",
+    footerNote: "Gracias por tu compra",
+  }));
+  const [ventasSuspendidas, setVentasSuspendidas] = useState(() => loadFromStorage(SUSPENDED_SALES_KEY, []));
   const [loadingProductos, setLoadingProductos] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(TICKET_CONFIG_KEY, JSON.stringify(ticketConfig));
+  }, [ticketConfig]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(SUSPENDED_SALES_KEY, JSON.stringify(ventasSuspendidas));
+  }, [ventasSuspendidas]);
 
   useEffect(() => {
     let ignore = false;
@@ -106,10 +165,41 @@ export function useVentaForm({ onSuccess }) {
   );
   const descuento = Number(values.descuento || 0);
   const total = Math.max(0, subtotal - descuento);
+  const montoRecibidoNormalizado = Number(montoRecibido || 0);
+  const cambio = Math.max(0, montoRecibidoNormalizado - total);
+  const faltante = Math.max(0, total - montoRecibidoNormalizado);
   const productosCriticos = useMemo(
     () => items.filter((item) => Number(item.stock_disponible) === 2),
     [items],
   );
+  const productosSugeridos = useMemo(() => {
+    const seleccionados = new Set(items.map((item) => Number(item.producto_id)));
+
+    return productos
+      .filter((producto) => !seleccionados.has(Number(producto.id)))
+      .sort((first, second) => {
+        const firstLowStock = Number(first.stock_bajo) ? 1 : 0;
+        const secondLowStock = Number(second.stock_bajo) ? 1 : 0;
+
+        if (firstLowStock !== secondLowStock) {
+          return firstLowStock - secondLowStock;
+        }
+
+        const firstMargin = Number(first.precio_venta ?? 0) - Number(first.precio_compra ?? 0);
+        const secondMargin = Number(second.precio_venta ?? 0) - Number(second.precio_compra ?? 0);
+
+        if (firstMargin !== secondMargin) {
+          return secondMargin - firstMargin;
+        }
+
+        return Number(second.stock ?? 0) - Number(first.stock ?? 0);
+      })
+      .slice(0, 4);
+  }, [items, productos]);
+  const resumenVenta = useMemo(() => ({
+    items_count: items.reduce((accumulator, item) => accumulator + Number(item.cantidad ?? 0), 0),
+    productos_count: items.length,
+  }), [items]);
 
   function updateField(name, value) {
     const nextValue = name === "descuento"
@@ -129,6 +219,7 @@ export function useVentaForm({ onSuccess }) {
     if (name === "modulo_id") {
       setItems([]);
       setSearchTerm("");
+      setMontoRecibido("");
     }
   }
 
@@ -183,6 +274,33 @@ export function useVentaForm({ onSuccess }) {
     }));
   }
 
+  function addProductoBySearch() {
+    if (!values.modulo_id) {
+      return;
+    }
+
+    const term = normalizeText(searchTerm);
+
+    if (!term) {
+      return;
+    }
+
+    const exactMatch = productos.find((producto) => (
+      normalizeText(producto.codigo) === term || normalizeText(producto.nombre) === term
+    ));
+
+    if (exactMatch) {
+      addProducto(exactMatch);
+      setSearchTerm("");
+      return;
+    }
+
+    if (filteredProductos.length === 1) {
+      addProducto(filteredProductos[0]);
+      setSearchTerm("");
+    }
+  }
+
   function removeItem(productoId) {
     setItems((current) => current.filter(
       (item) => Number(item.producto_id) !== Number(productoId),
@@ -223,6 +341,77 @@ export function useVentaForm({ onSuccess }) {
     )));
   }
 
+  function updateMontoRecibido(value) {
+    setMontoRecibido(normalizeMoneyInput(value));
+    setErrors((current) => ({
+      ...current,
+      monto_recibido: undefined,
+    }));
+  }
+
+  function formatMontoRecibido() {
+    setMontoRecibido((current) => formatMoneyInput(current));
+  }
+
+  function applyQuickCash(amount) {
+    setMontoRecibido(formatMoneyInput(amount));
+  }
+
+  function updateTicketField(name, value) {
+    setTicketConfig((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  }
+
+  function resetForm(nextValues = createInitialValues()) {
+    setValues(nextValues);
+    setItems([]);
+    setProductos([]);
+    setSearchTerm("");
+    setMontoRecibido("");
+    setErrors({});
+    setErrorMessage("");
+  }
+
+  function suspendCurrentSale() {
+    if (items.length === 0) {
+      setErrors({
+        items: ["Agrega al menos un articulo antes de suspender la venta."],
+      });
+      return;
+    }
+
+    const snapshot = buildSuspendedSaleSnapshot({
+      values,
+      items,
+      montoRecibido,
+    });
+
+    setVentasSuspendidas((current) => [snapshot, ...current].slice(0, 12));
+    resetForm();
+  }
+
+  function resumeSuspendedSale(saleId) {
+    const suspendedSale = ventasSuspendidas.find((sale) => sale.id === saleId);
+
+    if (!suspendedSale) {
+      return;
+    }
+
+    setValues(suspendedSale.values);
+    setItems(suspendedSale.items);
+    setMontoRecibido(suspendedSale.montoRecibido ?? "");
+    setSearchTerm("");
+    setErrors({});
+    setErrorMessage("");
+    setVentasSuspendidas((current) => current.filter((sale) => sale.id !== saleId));
+  }
+
+  function removeSuspendedSale(saleId) {
+    setVentasSuspendidas((current) => current.filter((sale) => sale.id !== saleId));
+  }
+
   async function submit(event) {
     event.preventDefault();
 
@@ -248,6 +437,14 @@ export function useVentaForm({ onSuccess }) {
       return;
     }
 
+    if (values.metodo_pago === "efectivo" && total > 0 && montoRecibidoNormalizado < total) {
+      setErrors({
+        monto_recibido: ["El monto recibido debe cubrir el total para ventas en efectivo."],
+      });
+      setSaving(false);
+      return;
+    }
+
     const payload = {
       modulo_id: Number(values.modulo_id),
       fecha_venta: values.fecha_venta,
@@ -264,7 +461,8 @@ export function useVentaForm({ onSuccess }) {
 
     try {
       const venta = await createVenta(payload);
-      onSuccess?.(venta);
+      resetForm();
+      onSuccess?.(venta, ticketConfig);
     } catch (requestError) {
       const validationErrors = requestError?.response?.data?.errors;
 
@@ -294,14 +492,29 @@ export function useVentaForm({ onSuccess }) {
     subtotal,
     descuento,
     total,
+    montoRecibido,
+    cambio,
+    faltante,
     productosCriticos,
+    productosSugeridos,
+    resumenVenta,
+    ticketConfig,
+    ventasSuspendidas,
     updateField,
     formatDiscount,
     setSearchTerm,
+    addProductoBySearch,
     addProducto,
     removeItem,
     updateItem,
     formatItemPrice,
+    updateMontoRecibido,
+    formatMontoRecibido,
+    applyQuickCash,
+    updateTicketField,
+    suspendCurrentSale,
+    resumeSuspendedSale,
+    removeSuspendedSale,
     submit,
   };
 }

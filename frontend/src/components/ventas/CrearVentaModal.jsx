@@ -1,28 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CheckCircle } from "../../icons/phosphor";
 import { useVentaForm } from "../../hooks/ventas/useVentaForm";
+import { printSaleTicket } from "../../utils/saleTicketPrint";
 import VentaForm from "./VentaForm";
 
 function CrearVentaModal({ modulos, onClose, onCreated }) {
   const [ventaRegistrada, setVentaRegistrada] = useState(null);
+  const [ticketConfig, setTicketConfig] = useState(null);
   const form = useVentaForm({
-    onSuccess: (venta) => {
+    onSuccess: (venta, nextTicketConfig) => {
       setVentaRegistrada(venta);
+      setTicketConfig(nextTicketConfig);
       onCreated?.(venta);
     },
   });
-
-  useEffect(() => {
-    if (!ventaRegistrada) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      onClose();
-    }, 1400);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [onClose, ventaRegistrada]);
 
   return (
     <>
@@ -50,14 +41,29 @@ function CrearVentaModal({ modulos, onClose, onCreated }) {
             subtotal={form.subtotal}
             descuento={form.descuento}
             total={form.total}
+            montoRecibido={form.montoRecibido}
+            cambio={form.cambio}
+            faltante={form.faltante}
             productosCriticos={form.productosCriticos}
+            productosSugeridos={form.productosSugeridos}
+            resumenVenta={form.resumenVenta}
+            ticketConfig={form.ticketConfig}
+            ventasSuspendidas={form.ventasSuspendidas}
             onChange={form.updateField}
             onDiscountBlur={form.formatDiscount}
             onSearchChange={form.setSearchTerm}
+            onSearchSubmit={form.addProductoBySearch}
             onAddProducto={form.addProducto}
             onRemoveItem={form.removeItem}
             onUpdateItem={form.updateItem}
             onFormatItemPrice={form.formatItemPrice}
+            onMontoRecibidoChange={form.updateMontoRecibido}
+            onMontoRecibidoBlur={form.formatMontoRecibido}
+            onApplyQuickCash={form.applyQuickCash}
+            onTicketConfigChange={form.updateTicketField}
+            onSuspendSale={form.suspendCurrentSale}
+            onResumeSuspendedSale={form.resumeSuspendedSale}
+            onRemoveSuspendedSale={form.removeSuspendedSale}
             onSubmit={form.submit}
             onCancel={onClose}
           />
@@ -77,6 +83,18 @@ function CrearVentaModal({ modulos, onClose, onCreated }) {
             <p className="muted-text mb-0">
               La venta {ventaRegistrada.numero_venta} se guardo correctamente.
             </p>
+            <div className="venta-success-actions">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => printSaleTicket(ventaRegistrada, ticketConfig)}
+              >
+                Imprimir ticket
+              </button>
+              <button type="button" className="btn btn-light" onClick={onClose}>
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

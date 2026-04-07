@@ -4,11 +4,275 @@
   margin-bottom: 1.5rem;
 }
 
+.venta-form {
+  border: 1px solid var(--app-surface-border);
+  background:
+    radial-gradient(circle at top right, rgba(255, 196, 107, 0.18), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96));
+}
+
 .ventas-reportes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
   margin-bottom: 1.5rem;
+}
+
+.ventas-report-center {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.ventas-report-center__hero,
+.ventas-report-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ventas-report-center__hero {
+  background:
+    radial-gradient(circle at top right, rgba(30, 168, 82, 0.12), transparent 26%),
+    radial-gradient(circle at bottom left, rgba(251, 191, 36, 0.12), transparent 20%),
+    var(--app-surface);
+}
+
+.ventas-report-shell__header h3,
+.ventas-report-banner h3 {
+  margin: 0;
+  color: var(--app-ink);
+}
+
+.ventas-report-controlbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 0.9rem;
+  align-items: end;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.ventas-report-controlbar--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+}
+
+.ventas-report-controlbar__actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ventas-report-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ventas-report-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem;
+  border-radius: 1.15rem;
+  border: 1px solid var(--app-surface-border);
+  background:
+    radial-gradient(circle at top left, rgba(30, 168, 82, 0.1), transparent 26%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.85));
+}
+
+.ventas-report-banner__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.ventas-report-banner__meta > div {
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.85rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ventas-report-kpis {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ventas-report-kpi {
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: var(--app-surface);
+  padding: 0.95rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ventas-report-kpi span {
+  color: var(--app-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ventas-report-kpi strong {
+  color: var(--app-ink);
+  font-size: 1.05rem;
+}
+
+.ventas-report-kpi--accent {
+  border-color: rgba(30, 168, 82, 0.2);
+  background: linear-gradient(135deg, rgba(30, 168, 82, 0.08), rgba(255, 255, 255, 0.82));
+}
+
+.ventas-report-kpi--success {
+  border-color: rgba(20, 124, 88, 0.18);
+  background: linear-gradient(135deg, rgba(20, 124, 88, 0.08), rgba(255, 255, 255, 0.82));
+}
+
+.ventas-report-insights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ventas-report-insight {
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ventas-report-insight strong {
+  color: var(--app-ink);
+}
+
+.ventas-report-insight p {
+  margin: 0;
+  color: var(--app-muted);
+}
+
+.ventas-report-insight--accent {
+  border-color: rgba(30, 168, 82, 0.16);
+}
+
+.ventas-report-insight--success {
+  border-color: rgba(20, 124, 88, 0.16);
+}
+
+.ventas-report-tabs {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.ventas-report-tabs__item {
+  border: 1px solid var(--app-surface-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--app-muted);
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.ventas-report-tabs__item:hover,
+.ventas-report-tabs__item:focus {
+  color: var(--app-ink);
+  transform: translateY(-0.05rem);
+}
+
+.ventas-report-tabs__item.is-active {
+  border-color: rgba(30, 168, 82, 0.26);
+  background: rgba(30, 168, 82, 0.12);
+  color: #135432;
+}
+
+.ventas-report-grid--balanced {
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.ventas-report-health {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ventas-report-health__item,
+.ventas-report-summary-list__item,
+.ventas-report-ledger__row {
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.42);
+  padding: 0.9rem 1rem;
+}
+
+.ventas-report-health__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ventas-report-health__item strong {
+  color: var(--app-ink);
+}
+
+.ventas-report-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.ventas-report-summary-list__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.ventas-report-summary-list__item strong,
+.ventas-report-summary-list__meta strong {
+  color: var(--app-ink);
+}
+
+.ventas-report-summary-list__item span,
+.ventas-report-summary-list__meta span {
+  display: block;
+  color: var(--app-muted);
+}
+
+.ventas-report-summary-list__meta {
+  text-align: right;
+}
+
+.ventas-report-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.ventas-report-ledger__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.ventas-report-ledger__row--accent {
+  border-color: rgba(30, 168, 82, 0.18);
+  background: linear-gradient(135deg, rgba(30, 168, 82, 0.08), rgba(255, 255, 255, 0.62));
 }
 
 .ventas-report-card {
@@ -153,6 +417,80 @@
   margin-top: 1rem;
 }
 
+.venta-pos-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr);
+  gap: 1.25rem;
+}
+
+.venta-pos-main,
+.venta-pos-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.venta-pos-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.16), transparent 24%),
+    linear-gradient(135deg, #ffffff, #f8fafc);
+}
+
+.venta-pos-hero h2 {
+  margin: 0;
+  color: var(--app-ink);
+}
+
+.venta-pos-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(110px, 1fr));
+  gap: 0.75rem;
+}
+
+.venta-pos-hero__stat {
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.venta-pos-hero__stat strong {
+  font-size: 1.05rem;
+  color: var(--app-ink);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.venta-pos-searchbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: end;
+}
+
+.venta-pos-searchbar__field {
+  min-height: 52px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.venta-pos-searchbar__action {
+  min-height: 52px;
+  padding-inline: 1.3rem;
+  border-radius: 0.9rem;
+}
+
 .ventas-table-wrapper.surface-card {
   background: var(--app-surface);
   border: 1px solid var(--app-surface-border);
@@ -224,6 +562,105 @@
   gap: 0.45rem;
 }
 
+.venta-pos-suggestions {
+  border-radius: 1.15rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 1rem;
+}
+
+.venta-pos-suspended {
+  border-radius: 1.15rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 1rem;
+}
+
+.venta-pos-suggestions__header h3 {
+  margin: 0;
+}
+
+.venta-pos-suggestions__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.venta-pos-suggestion {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+  color: var(--app-ink);
+  text-align: left;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.venta-pos-suggestion:hover,
+.venta-pos-suggestion:focus {
+  transform: translateY(-0.08rem);
+  border-color: rgba(34, 197, 94, 0.35);
+  box-shadow: 0 16px 24px rgba(15, 23, 42, 0.08);
+}
+
+.venta-pos-suggestion strong {
+  font-size: 0.96rem;
+}
+
+.venta-pos-suggestion small {
+  color: var(--app-muted);
+}
+
+.venta-pos-suggestion__badge {
+  width: fit-content;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.venta-pos-suspended__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.venta-pos-suspended__item {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+  padding: 0.95rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.venta-pos-suspended__item strong,
+.venta-pos-suspended__item span,
+.venta-pos-suspended__item small {
+  display: block;
+}
+
+.venta-pos-suspended__item small,
+.venta-pos-suspended__item span {
+  color: var(--app-muted);
+}
+
+.venta-pos-suspended__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .ventas-qty-input {
   max-width: 90px;
   font-variant-numeric: tabular-nums;
@@ -263,6 +700,167 @@
   background: linear-gradient(135deg, rgba(30, 168, 82, 0.1), rgba(255, 255, 255, 0.7));
 }
 
+.venta-pos-sidebar__card {
+  border-radius: 1.1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.venta-pos-sidebar__card--accent {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.18), transparent 34%),
+    linear-gradient(135deg, #0f172a, #1e293b);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.venta-pos-sidebar__card--accent .muted-text,
+.venta-pos-sidebar__card--accent small,
+.venta-pos-sidebar__card--accent strong {
+  color: #f8fafc;
+}
+
+.venta-pos-sidebar__card--accent strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.venta-pos-sidebar__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.venta-pos-sidebar__row--total {
+  padding-top: 0.55rem;
+  border-top: 1px dashed var(--app-surface-border);
+  font-size: 1.02rem;
+}
+
+.venta-pos-quickcash {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.venta-pos-balance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.venta-pos-balance__item {
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f8fafc;
+  padding: 0.85rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.venta-pos-balance__item strong {
+  color: var(--app-ink);
+  font-size: 1.05rem;
+}
+
+.venta-pos-sidebar__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.venta-page__new-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.85rem;
+  padding: 0.6rem 1.1rem;
+  border-color: rgba(57, 255, 122, 0.58) !important;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, rgba(57, 255, 122, 0.42), rgba(16, 28, 21, 0.96)) !important;
+  background-color: #2dba4e !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 0.95rem;
+  box-shadow: none;
+  transition:
+    background-color 320ms ease,
+    border-color 320ms ease,
+    box-shadow 320ms ease,
+    transform 220ms ease,
+    color 320ms ease;
+  text-decoration: none !important;
+}
+
+.venta-page__new-button:hover,
+.venta-page__new-button:focus {
+  border-color: rgba(57, 255, 122, 0.58) !important;
+  background: linear-gradient(135deg, rgba(57, 255, 122, 0.42), rgba(16, 28, 21, 0.96)) !important;
+  background-color: #279b40 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+  text-decoration: none !important;
+}
+
+.venta-page__new-button-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.venta-page__reports-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.85rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid transparent !important;
+  border-radius: 0.95rem;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(57, 255, 122, 0.05);
+  text-decoration: none !important;
+  transition:
+    background-color 320ms ease,
+    border-color 320ms ease,
+    box-shadow 320ms ease,
+    transform 220ms ease,
+    color 320ms ease;
+}
+
+.venta-page__reports-button:hover,
+.venta-page__reports-button:focus {
+  border-color: #39ff7a !important;
+  background: #050505 !important;
+  background-color: #050505 !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 0 1px rgba(57, 255, 122, 0.28),
+    0 16px 30px rgba(0, 0, 0, 0.2);
+  text-decoration: none !important;
+}
+
+:root[data-theme="dark"] .venta-page__new-button,
+:root[data-theme="dark"] .venta-page__new-button:hover,
+:root[data-theme="dark"] .venta-page__new-button:focus {
+  box-shadow: none;
+}
+
 .venta-detail-modal {
   position: fixed;
   inset: 0;
@@ -292,6 +890,13 @@
   align-items: flex-start;
   gap: 1rem;
   margin-bottom: 1rem;
+}
+
+.venta-detail-modal__actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .venta-detail-modal__meta,
@@ -341,7 +946,303 @@
   margin-bottom: 0;
 }
 
+.venta-success-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+:root[data-theme="dark"] .venta-form {
+  border-color: rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(250, 204, 21, 0.1), transparent 24%),
+    linear-gradient(180deg, rgba(17, 24, 22, 0.96), rgba(12, 18, 16, 0.96));
+}
+
+:root[data-theme="dark"] .venta-pos-hero {
+  border-color: rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(250, 204, 21, 0.12), transparent 24%),
+    linear-gradient(135deg, rgba(20, 28, 26, 0.98), rgba(14, 20, 18, 0.98));
+}
+
+:root[data-theme="dark"] .venta-pos-hero__stat {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .venta-form__product-card,
+:root[data-theme="dark"] .venta-pos-suggestion,
+:root[data-theme="dark"] .venta-pos-suspended__item,
+:root[data-theme="dark"] .venta-pos-sidebar__card,
+:root[data-theme="dark"] .venta-pos-balance__item,
+:root[data-theme="dark"] .venta-detail-modal__meta > div,
+:root[data-theme="dark"] .venta-detail-modal__summary > div,
+:root[data-theme="dark"] .venta-detail-modal__notes {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .venta-form__product-card {
+  background: linear-gradient(180deg, rgba(22, 30, 28, 0.95), rgba(15, 21, 19, 0.95));
+}
+
+:root[data-theme="dark"] .venta-form__product-card:hover,
+:root[data-theme="dark"] .venta-form__product-card:focus,
+:root[data-theme="dark"] .venta-pos-suggestion:hover,
+:root[data-theme="dark"] .venta-pos-suggestion:focus {
+  border-color: rgba(34, 197, 94, 0.35);
+  box-shadow: 0 16px 26px rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme="dark"] .venta-pos-suggestions,
+:root[data-theme="dark"] .venta-pos-suspended {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-theme="dark"] .venta-pos-suggestion,
+:root[data-theme="dark"] .venta-pos-suspended__item {
+  background: linear-gradient(180deg, rgba(22, 30, 28, 0.96), rgba(15, 21, 19, 0.96));
+}
+
+:root[data-theme="dark"] .venta-pos-suggestion__badge {
+  background: rgba(34, 197, 94, 0.18);
+  color: #bbf7d0;
+}
+
+:root[data-theme="dark"] .venta-pos-suspended__item small,
+:root[data-theme="dark"] .venta-pos-suspended__item span {
+  color: #9fb4ab;
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__card {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__card--accent {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 34%),
+    linear-gradient(135deg, #0b1110, #121a18);
+  border-color: rgba(34, 197, 94, 0.14);
+}
+
+:root[data-theme="dark"] .venta-pos-balance__item {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .venta-detail-modal__card {
+  background: linear-gradient(180deg, #01050a 0%, #01050a 42%, #03080e 100%);
+  border-color: #30363d;
+}
+
+:root[data-theme="dark"] .venta-detail-modal__meta > div,
+:root[data-theme="dark"] .venta-detail-modal__summary > div,
+:root[data-theme="dark"] .venta-detail-modal__notes {
+  background: rgba(22, 27, 34, 0.72);
+  border-color: #30363d;
+}
+
+:root[data-theme="dark"] .venta-detail-modal__card h3,
+:root[data-theme="dark"] .venta-detail-modal__meta strong,
+:root[data-theme="dark"] .venta-detail-modal__summary strong,
+:root[data-theme="dark"] .venta-detail-modal__notes p,
+:root[data-theme="dark"] .venta-detail-modal .product-name,
+:root[data-theme="dark"] .venta-detail-modal .ventas-detail-table td {
+  color: #f0f6fc;
+}
+
+:root[data-theme="dark"] .venta-detail-modal .section-kicker,
+:root[data-theme="dark"] .venta-detail-modal .muted-text,
+:root[data-theme="dark"] .venta-detail-modal .product-code {
+  color: #9fb0c0 !important;
+}
+
+:root[data-theme="dark"] .venta-detail-modal .ventas-detail-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #f0f6fc;
+  --bs-table-border-color: #30363d;
+}
+
+:root[data-theme="dark"] .venta-detail-modal .ventas-detail-table th {
+  color: #f0f6fc;
+}
+
+:root[data-theme="dark"] .venta-create-modal {
+  background: rgba(5, 8, 7, 0.78);
+}
+
+:root[data-theme="dark"] .ventas-filters h2,
+:root[data-theme="dark"] .ventas-filters .muted-text,
+:root[data-theme="dark"] .ventas-filters .form-label {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .ventas-report-card,
+:root[data-theme="dark"] .ventas-report-panel,
+:root[data-theme="dark"] .ventas-report-metric,
+:root[data-theme="dark"] .ventas-report-kpi,
+:root[data-theme="dark"] .ventas-report-insight,
+:root[data-theme="dark"] .ventas-report-banner,
+:root[data-theme="dark"] .ventas-report-banner__meta > div,
+:root[data-theme="dark"] .ventas-report-health__item,
+:root[data-theme="dark"] .ventas-report-summary-list__item,
+:root[data-theme="dark"] .ventas-report-ledger__row,
+:root[data-theme="dark"] .ventas-report-controlbar {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .ventas-report-card {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .ventas-report-center__hero {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 26%),
+    radial-gradient(circle at bottom left, rgba(250, 204, 21, 0.08), transparent 20%),
+    rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .ventas-report-card h3,
+:root[data-theme="dark"] .ventas-report-panel h4,
+:root[data-theme="dark"] .ventas-report-shell__header h3,
+:root[data-theme="dark"] .ventas-report-banner h3,
+:root[data-theme="dark"] .ventas-report-summary-list__item strong,
+:root[data-theme="dark"] .ventas-report-panel__header h4,
+:root[data-theme="dark"] .ventas-report-center__hero h3,
+:root[data-theme="dark"] .ventas-report-card .muted-text,
+:root[data-theme="dark"] .ventas-report-card .form-label,
+:root[data-theme="dark"] .ventas-report-notes,
+:root[data-theme="dark"] .ventas-report-table td,
+:root[data-theme="dark"] .ventas-report-table th,
+:root[data-theme="dark"] .ventas-report-kpi strong,
+:root[data-theme="dark"] .ventas-report-insight strong,
+:root[data-theme="dark"] .ventas-report-banner__meta strong,
+:root[data-theme="dark"] .ventas-report-health__item strong,
+:root[data-theme="dark"] .ventas-report-summary-list__item strong,
+:root[data-theme="dark"] .ventas-report-summary-list__meta strong,
+:root[data-theme="dark"] .ventas-report-ledger__row strong {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .ventas-report-card__header .muted-text,
+:root[data-theme="dark"] .ventas-report-panel__header .muted-text,
+:root[data-theme="dark"] .ventas-report-notes li,
+:root[data-theme="dark"] .ventas-report-table td .muted-text,
+:root[data-theme="dark"] .ventas-report-kpi span,
+:root[data-theme="dark"] .ventas-report-insight p,
+:root[data-theme="dark"] .ventas-report-summary-list__item span,
+:root[data-theme="dark"] .ventas-report-summary-list__meta span,
+:root[data-theme="dark"] .ventas-report-tabs__item {
+  color: #aabdb5;
+}
+
+:root[data-theme="dark"] .ventas-report-panel {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-theme="dark"] .ventas-report-controlbar,
+:root[data-theme="dark"] .ventas-report-banner,
+:root[data-theme="dark"] .ventas-report-health__item,
+:root[data-theme="dark"] .ventas-report-summary-list__item,
+:root[data-theme="dark"] .ventas-report-ledger__row,
+:root[data-theme="dark"] .ventas-report-banner__meta > div,
+:root[data-theme="dark"] .ventas-report-insight {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-theme="dark"] .ventas-report-metric {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .ventas-report-kpi {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .ventas-report-metric span {
+  color: #aabdb5;
+}
+
+:root[data-theme="dark"] .ventas-report-metric strong {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .ventas-report-tabs__item {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .ventas-report-tabs__item.is-active {
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.24);
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .ventas-report-metric--accent {
+  border-color: rgba(34, 197, 94, 0.22);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.14), rgba(255, 255, 255, 0.03));
+}
+
+:root[data-theme="dark"] .ventas-report-metric--success {
+  border-color: rgba(16, 185, 129, 0.22);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(255, 255, 255, 0.03));
+}
+
+:root[data-theme="dark"] .ventas-report-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #eff8f3;
+  --bs-table-border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .ventas-report-table th {
+  color: #aabdb5;
+}
+
+:root[data-theme="dark"] .ventas-report-kpi--accent,
+:root[data-theme="dark"] .ventas-report-ledger__row--accent {
+  border-color: rgba(34, 197, 94, 0.22);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.14), rgba(255, 255, 255, 0.03));
+}
+
+:root[data-theme="dark"] .ventas-report-kpi--success {
+  border-color: rgba(16, 185, 129, 0.22);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(255, 255, 255, 0.03));
+}
+
 @media (max-width: 992px) {
+  .ventas-report-controlbar,
+  .ventas-report-controlbar--three,
+  .ventas-report-banner,
+  .ventas-report-kpis,
+  .ventas-report-insights,
+  .ventas-report-grid--balanced,
+  .ventas-report-banner__meta,
+  .ventas-report-health {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ventas-report-banner {
+    flex-direction: column;
+  }
+
+  .venta-pos-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .venta-pos-hero,
+  .venta-pos-searchbar {
+    grid-template-columns: 1fr;
+  }
+
+  .venta-pos-hero {
+    flex-direction: column;
+  }
+
+  .venta-pos-hero__stats,
+  .venta-pos-suggestions__grid,
   .ventas-reportes,
   .ventas-report-grid,
   .ventas-report-metrics,
@@ -361,6 +1262,31 @@
 }
 
 @media (max-width: 768px) {
+  .ventas-report-controlbar,
+  .ventas-report-controlbar--three,
+  .ventas-report-kpis,
+  .ventas-report-insights,
+  .ventas-report-grid--balanced,
+  .ventas-report-banner__meta,
+  .ventas-report-health {
+    grid-template-columns: 1fr;
+  }
+
+  .ventas-report-controlbar__actions,
+  .ventas-report-tabs,
+  .ventas-report-summary-list__item,
+  .ventas-report-ledger__row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ventas-report-summary-list__meta {
+    text-align: left;
+  }
+
+  .venta-pos-hero__stats,
+  .venta-pos-suggestions__grid,
+  .venta-pos-balance,
   .ventas-reportes,
   .ventas-report-grid,
   .ventas-report-metrics,
@@ -384,7 +1310,9 @@
   }
 
   .venta-form__product-card,
-  .venta-detail-modal__header {
+  .venta-pos-suspended__item,
+  .venta-detail-modal__header,
+  .venta-detail-modal__actions {
     flex-direction: column;
     align-items: stretch;
   }

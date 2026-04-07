@@ -7,11 +7,14 @@ function formatMoney(value) {
 
 function DashboardModulesTable({ rows }) {
   return (
-    <div className="surface-card">
+    <div className="surface-card dashboard-section-card">
       <div className="section-heading">
         <div>
           <p className="section-kicker">Ventas por modulo</p>
-          <h2>Resumen por area</h2>
+          <h2>Rendimiento por area</h2>
+          <p className="muted-text mb-0">
+            Detecta rapidamente que modulo esta empujando el ingreso del dia.
+          </p>
         </div>
       </div>
 

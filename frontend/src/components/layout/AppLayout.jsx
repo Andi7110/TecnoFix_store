@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
+import { getDashboardSummary } from "../../api/dashboard";
 
-const SIDEBAR_PINNED_KEY = "tecnofix-sidebar-pinned";
 const THEME_MODE_KEY = "tecnofix-theme-mode";
+const NOTIFICATIONS_READ_KEY = "tecnofix-notifications-read";
 
 function PowerLogo() {
   return (
@@ -76,28 +77,157 @@ function ReportsIcon() {
   );
 }
 
-function PinIcon({ pinned }) {
-  return pinned ? (
+function SearchIcon() {
+  return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 3h8v2l-2 3v5l2 2v1H8v-1l2-2V8L8 5V3Zm3 13h2v5h-2v-5Z" />
-    </svg>
-  ) : (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m16 3 5 5-1.5 1.5-1.7-1.7-2.9 2.9 2.1 5.6-1 1-5.6-2.1-4 4-.7-.7 4-4-2.1-5.6 1-1 5.6 2.1 2.9-2.9L14.5 4.5 16 3Z" />
+      <path d="M10.5 4a6.5 6.5 0 1 1 0 13a6.5 6.5 0 0 1 0-13Zm0 1.8a4.7 4.7 0 1 0 0 9.4a4.7 4.7 0 0 0 0-9.4Zm8.87 11.8 1.27 1.27l-1.27 1.27l-3.5-3.5 1.27-1.27 2.23 2.23Z" />
     </svg>
   );
+}
+
+function BellIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 18.918a6 6 0 0 0 8 0c0 1.105-1.79 2-4 2s-4-.895-4-2Zm4-15.5a4.5 4.5 0 0 0-4.5 4.5c0 1.098-.5 6-2.5 7.5h14c-2-1.5-2.5-6.402-2.5-7.5a4.5 4.5 0 0 0-4.5-4.5Z" />
+    </svg>
+  );
+}
+
+function formatMoney(value) {
+  return new Intl.NumberFormat("es-SV", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(Number(value ?? 0));
+}
+
+function formatShortDateTime(value) {
+  if (!value) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("es-SV", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function buildNotificationItems(summary) {
+  const items = [];
+
+  if (Number(summary?.today?.productos_stock_bajo ?? 0) > 0) {
+    items.push({
+      id: "stock",
+      title: "Stock critico detectado",
+      body: `${summary.today.productos_stock_bajo} productos necesitan reposicion.`,
+      to: "/productos/inventario",
+      tone: "warning",
+    });
+  }
+
+  if (Number(summary?.today?.reparaciones_pendientes ?? 0) > 0) {
+    items.push({
+      id: "repairs",
+      title: "Reparaciones pendientes",
+      body: `${summary.today.reparaciones_pendientes} equipos siguen en cola de trabajo.`,
+      to: "/reparaciones",
+      tone: "accent",
+    });
+  }
+
+  if (Number(summary?.resumen_dia?.modulos_con_ventas ?? 0) === 0) {
+    items.push({
+      id: "sales",
+      title: "Sin ventas registradas hoy",
+      body: "Conviene revisar si la operacion comercial ya inicio correctamente.",
+      to: "/ventas",
+      tone: "neutral",
+    });
+  }
+
+  if (Number(summary?.today?.total_salidas ?? 0) > Number(summary?.today?.total_entradas ?? 0)) {
+    items.push({
+      id: "cash",
+      title: "Caja en revision",
+      body: "Las salidas del dia superan las entradas registradas.",
+      to: "/caja",
+      tone: "warning",
+    });
+  }
+
+  if (items.length === 0) {
+    items.push({
+      id: "healthy",
+      title: "Operacion estable",
+      body: "No se detectaron alertas criticas con la informacion actual.",
+      to: "/",
+      tone: "success",
+    });
+  }
+
+  return items;
+}
+
+function getPageMeta(pathname) {
+  if (pathname === "/") {
+    return {
+      title: "Dashboard",
+      description: "Supervisa operacion, ventas, caja y taller desde un solo lugar.",
+    };
+  }
+
+  if (pathname.startsWith("/ventas/reportes")) {
+    return {
+      title: "Reportes",
+      description: "Analisis comercial y contable con foco en cierres y rendimiento.",
+    };
+  }
+
+  if (pathname.startsWith("/ventas")) {
+    return {
+      title: "Ventas",
+      description: "Administra caja, historial y detalle de ventas del negocio.",
+    };
+  }
+
+  if (pathname.startsWith("/reparaciones")) {
+    return {
+      title: "Reparaciones",
+      description: "Controla ingreso, diagnostico y seguimiento de equipos.",
+    };
+  }
+
+  if (pathname.startsWith("/caja")) {
+    return {
+      title: "Caja",
+      description: "Registra entradas, salidas y balance operativo diario.",
+    };
+  }
+
+  if (pathname.startsWith("/productos/inventario")) {
+    return {
+      title: "Inventario",
+      description: "Consulta existencias, stock critico y movimiento operativo.",
+    };
+  }
+
+  if (pathname.startsWith("/productos")) {
+    return {
+      title: "Productos",
+      description: "Gestiona catalogo, precios, estado y surtido comercial.",
+    };
+  }
+
+  return {
+    title: "TecnoFix",
+    description: "Operacion comercial centralizada.",
+  };
 }
 
 function AppLayout() {
   const { logout, user } = useAuth();
   const { pathname } = useLocation();
-  const [isSidebarPinned, setIsSidebarPinned] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window.localStorage.getItem(SIDEBAR_PINNED_KEY) === "true";
-  });
+  const pageMeta = getPageMeta(pathname);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window === "undefined") {
       return false;
@@ -108,17 +238,39 @@ function AppLayout() {
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const userMenuRef = useRef(null);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isTopbarVisible, setIsTopbarVisible] = useState(true);
+  const [notificationsSummary, setNotificationsSummary] = useState(null);
+  const [notificationsLoading, setNotificationsLoading] = useState(true);
+  const [notificationsError, setNotificationsError] = useState("");
+  const [readNotificationIds, setReadNotificationIds] = useState(() => {
+    if (typeof window === "undefined") {
+      return [];
+    }
 
-  useEffect(() => {
-    window.localStorage.setItem(SIDEBAR_PINNED_KEY, String(isSidebarPinned));
-  }, [isSidebarPinned]);
+    try {
+      const stored = window.localStorage.getItem(NOTIFICATIONS_READ_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+  const userMenuRef = useRef(null);
+  const notificationsRef = useRef(null);
 
   useEffect(() => {
     const mode = isDarkMode ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", mode);
     window.localStorage.setItem(THEME_MODE_KEY, mode);
   }, [isDarkMode]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(NOTIFICATIONS_READ_KEY, JSON.stringify(readNotificationIds));
+  }, [readNotificationIds]);
 
   useEffect(() => {
     if (!isUserMenuOpen) {
@@ -129,11 +281,16 @@ function AppLayout() {
       if (!userMenuRef.current?.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
+
+      if (!notificationsRef.current?.contains(event.target)) {
+        setIsNotificationsOpen(false);
+      }
     }
 
     function handleEscape(event) {
       if (event.key === "Escape") {
         setIsUserMenuOpen(false);
+        setIsNotificationsOpen(false);
       }
     }
 
@@ -145,6 +302,91 @@ function AppLayout() {
       document.removeEventListener("keydown", handleEscape);
     };
   }, [isUserMenuOpen]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    let lastScrollY = window.scrollY;
+
+    function handleScroll() {
+      const currentScrollY = window.scrollY;
+      const scrollingUp = currentScrollY < lastScrollY;
+      const nearTop = currentScrollY < 32;
+
+      setIsTopbarVisible(scrollingUp || nearTop);
+      lastScrollY = currentScrollY;
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadNotifications() {
+      if (!ignore) {
+        setNotificationsLoading(true);
+        setNotificationsError("");
+      }
+
+      try {
+        const data = await getDashboardSummary();
+
+        if (!ignore) {
+          setNotificationsSummary(data);
+        }
+      } catch {
+        if (!ignore) {
+          setNotificationsError("No se pudieron cargar las notificaciones.");
+        }
+      } finally {
+        if (!ignore) {
+          setNotificationsLoading(false);
+        }
+      }
+    }
+
+    loadNotifications();
+
+    const intervalId = window.setInterval(loadNotifications, 60000);
+
+    return () => {
+      ignore = true;
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  const notificationItems = useMemo(
+    () => buildNotificationItems(notificationsSummary),
+    [notificationsSummary],
+  );
+
+  const notificationCount = useMemo(
+    () =>
+      notificationItems.filter(
+        (item) => item.id !== "healthy" && !readNotificationIds.includes(item.id),
+      ).length,
+    [notificationItems, readNotificationIds],
+  );
+
+  const recentNotificationActivity = useMemo(
+    () => notificationsSummary?.actividad_reciente?.slice(0, 2) ?? [],
+    [notificationsSummary],
+  );
+
+  function markNotificationsAsRead(ids) {
+    if (!ids.length) {
+      return;
+    }
+
+    setReadNotificationIds((current) => [...new Set([...current, ...ids])]);
+  }
 
   const navItems = [
     { to: "/", label: "Dashboard", end: true, icon: <DashboardIcon /> },
@@ -179,31 +421,15 @@ function AppLayout() {
   }
 
   return (
-    <div className={`app-shell ${isSidebarPinned ? "app-shell--sidebar-pinned" : ""}`}>
-      <aside className={`app-sidebar ${isSidebarPinned ? "is-pinned" : ""}`}>
+    <div className="app-shell">
+      <aside className="app-sidebar is-pinned">
         <div className="app-sidebar__inner">
           <div className="app-sidebar__brand">
-            <button
-              type="button"
-              className="btn app-sidebar__pin app-sidebar__pin--top"
-              onClick={() => setIsSidebarPinned((current) => !current)}
-              title={isSidebarPinned ? "Desfijar menu" : "Fijar menu"}
-            >
-              <span className="app-sidebar__pin-icon">
-                <PinIcon pinned={isSidebarPinned} />
-              </span>
-              <span className="app-sidebar__pin-label">
-                {isSidebarPinned ? "Desfijar menu" : "Fijar menu"}
-              </span>
-            </button>
-
             <PowerLogo />
-
-            <p className="app-kicker">Operacion diaria</p>
-            <h1 className="app-brand">
-              <span className="app-brand__accent">TecnoFix</span>
-              <span className="app-brand__text">Sistema comercial</span>
-            </h1>
+            <div className="app-sidebar__brand-copy">
+              <span className="app-sidebar__brand-name">TecnoFix</span>
+              <span className="app-sidebar__brand-text">Sistema comercial</span>
+            </div>
           </div>
 
           <nav className="app-nav">
@@ -221,7 +447,7 @@ function AppLayout() {
                     title={item.label}
                   >
                     <span className="app-nav__icon">{item.icon}</span>
-                    <span className="app-nav__label">{item.label}</span>
+                    <span className="app-nav__label app-nav__label--visible">{item.label}</span>
                   </NavLink>
 
                   {item.children && groupSelected ? (
@@ -251,82 +477,215 @@ function AppLayout() {
 
       <div className="app-content">
         <div className="app-toolbar">
-          <div className="app-toolbar__actions">
-            <button
-              type="button"
-              className={`app-theme-switch ${isDarkMode ? "is-active" : ""}`}
-              onClick={() => setIsDarkMode((current) => !current)}
-              role="switch"
-              aria-checked={isDarkMode}
-              title="Cambiar modo oscuro"
-            >
-              <span className="app-theme-switch__track">
-                <span className="app-theme-switch__thumb" />
-              </span>
-              <span className="app-theme-switch__label">
-                {isDarkMode ? "Modo oscuro" : "Modo claro"}
-              </span>
-            </button>
+          <div className={`app-topbar ${isTopbarVisible ? "is-visible" : "is-hidden"}`}>
+            <div className="app-topbar__left">
+              <label className="app-topbar__search" aria-label="Busqueda global">
+                <span className="app-topbar__search-icon">
+                  <SearchIcon />
+                </span>
+                <input
+                  type="search"
+                  className="form-control"
+                  placeholder="Buscar productos, ventas o reparaciones..."
+                />
+              </label>
+            </div>
 
-            <div
-              ref={userMenuRef}
-              className={`app-user-menu ${isUserMenuOpen ? "is-open" : ""}`}
-            >
+            <div className="app-topbar__right">
+              <div className="app-topbar__status-item">
+                <strong>{pageMeta.title}</strong>
+              </div>
+
+              <div
+                ref={notificationsRef}
+                className={`app-notifications ${isNotificationsOpen ? "is-open" : ""}`}
+              >
+                <button
+                  type="button"
+                  className="btn app-topbar__alerts"
+                  title="Alertas del sistema"
+                  aria-haspopup="menu"
+                  aria-expanded={isNotificationsOpen}
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    setIsNotificationsOpen((current) => {
+                      const nextOpen = !current;
+
+                      if (nextOpen) {
+                        markNotificationsAsRead(
+                          notificationItems
+                            .filter((item) => item.id !== "healthy")
+                            .map((item) => item.id),
+                        );
+                      }
+
+                      return nextOpen;
+                    });
+                  }}
+                >
+                  <BellIcon />
+                  {notificationCount > 0 ? (
+                    <span className="app-topbar__alerts-badge">{notificationCount}</span>
+                  ) : null}
+                </button>
+
+                {isNotificationsOpen ? (
+                  <div className="app-notifications__panel" role="menu">
+                    <div className="app-notifications__header">
+                      <div>
+                        <p className="app-user-menu__kicker">Alertas</p>
+                        <strong>Centro de notificaciones</strong>
+                      </div>
+                      <button
+                        type="button"
+                        className="app-notifications__refresh"
+                        onClick={async () => {
+                          setNotificationsLoading(true);
+                          setNotificationsError("");
+
+                          try {
+                            const data = await getDashboardSummary();
+                            setNotificationsSummary(data);
+                          } catch {
+                            setNotificationsError("No se pudieron actualizar las notificaciones.");
+                          } finally {
+                            setNotificationsLoading(false);
+                          }
+                        }}
+                      >
+                        Actualizar
+                      </button>
+                    </div>
+
+                    {notificationsError ? (
+                      <p className="app-notifications__empty">{notificationsError}</p>
+                    ) : notificationsLoading ? (
+                      <p className="app-notifications__empty">Cargando notificaciones...</p>
+                    ) : (
+                      <>
+                        <div className="app-notifications__list">
+                          {notificationItems.map((item) => (
+                            <Link
+                              key={item.id}
+                              to={item.to}
+                              className={`app-notifications__item app-notifications__item--${item.tone}`}
+                              onClick={() => {
+                                markNotificationsAsRead([item.id]);
+                                setIsNotificationsOpen(false);
+                              }}
+                            >
+                              <div>
+                                <strong>{item.title}</strong>
+                                <p>{item.body}</p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="app-notifications__activity">
+                          <div className="app-notifications__activity-header">
+                            <strong>Actividad reciente</strong>
+                          </div>
+
+                          {recentNotificationActivity.length > 0 ? (
+                            recentNotificationActivity.map((item) => (
+                              <div key={`${item.tipo}-${item.entidad_id}`} className="app-notifications__activity-item">
+                                <strong>{item.titulo}</strong>
+                                <span>{item.contexto}</span>
+                                <small>
+                                  {formatMoney(item.monto)} · {formatShortDateTime(item.fecha)}
+                                </small>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="app-notifications__empty">No hay actividad reciente para mostrar.</p>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : null}
+              </div>
+
               <button
                 type="button"
-                className="btn app-user-menu__trigger"
-                onClick={() => setIsUserMenuOpen((current) => !current)}
-                aria-haspopup="menu"
-                aria-expanded={isUserMenuOpen}
-                aria-label="Abrir menu de usuario"
+                className={`app-theme-switch ${isDarkMode ? "is-active" : ""}`}
+                onClick={() => setIsDarkMode((current) => !current)}
+                role="switch"
+                aria-checked={isDarkMode}
+                title="Cambiar modo oscuro"
               >
-                <span className="app-user-menu__avatar">
-                  <PowerLogo />
+                <span className="app-theme-switch__track">
+                  <span className="app-theme-switch__thumb" />
+                </span>
+                <span className="app-theme-switch__label">
+                  {isDarkMode ? "Modo oscuro" : "Modo claro"}
                 </span>
               </button>
-              <p className="app-user-menu__display-name">{user?.name ?? "Usuario"}</p>
 
-              {isUserMenuOpen ? (
-                <div className="app-user-menu__dropdown" role="menu">
-                  <div className="app-user-menu__header">
-                    <p className="app-user-menu__kicker">Sesion activa</p>
-                    <p className="app-user-menu__name">{user?.name ?? "Usuario"}</p>
-                    <p className="app-user-menu__email">{user?.email ?? ""}</p>
+              <div
+                ref={userMenuRef}
+                className={`app-user-menu ${isUserMenuOpen ? "is-open" : ""}`}
+              >
+                <button
+                  type="button"
+                  className="btn app-user-menu__trigger"
+                  onClick={() => {
+                    setIsNotificationsOpen(false);
+                    setIsUserMenuOpen((current) => !current);
+                  }}
+                  aria-haspopup="menu"
+                  aria-expanded={isUserMenuOpen}
+                  aria-label="Abrir menu de usuario"
+                >
+                  <span className="app-user-menu__avatar">
+                    <PowerLogo />
+                  </span>
+                </button>
+                <p className="app-user-menu__display-name">{user?.name ?? "Usuario"}</p>
+
+                {isUserMenuOpen ? (
+                  <div className="app-user-menu__dropdown" role="menu">
+                    <div className="app-user-menu__header">
+                      <p className="app-user-menu__kicker">Sesion activa</p>
+                      <p className="app-user-menu__name">{user?.name ?? "Usuario"}</p>
+                      <p className="app-user-menu__email">{user?.email ?? ""}</p>
+                    </div>
+
+                    <button type="button" className="app-user-menu__item" role="menuitem">
+                      Mi perfil
+                    </button>
+
+                    <button
+                      type="button"
+                      className="app-user-menu__item"
+                      onClick={() => {
+                        setIsDarkMode((current) => !current);
+                        setIsUserMenuOpen(false);
+                      }}
+                      role="menuitem"
+                    >
+                      {isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+                    </button>
+
+                    <button type="button" className="app-user-menu__item" role="menuitem">
+                      Preferencias
+                    </button>
+
+                    <button
+                      type="button"
+                      className="app-user-menu__item app-user-menu__item--danger"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        setIsLogoutConfirmOpen(true);
+                      }}
+                      role="menuitem"
+                    >
+                      Cerrar sesion
+                    </button>
                   </div>
-
-                  <button type="button" className="app-user-menu__item" role="menuitem">
-                    Mi perfil
-                  </button>
-
-                  <button
-                    type="button"
-                    className="app-user-menu__item"
-                    onClick={() => {
-                      setIsDarkMode((current) => !current);
-                      setIsUserMenuOpen(false);
-                    }}
-                    role="menuitem"
-                  >
-                    {isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-                  </button>
-
-                  <button type="button" className="app-user-menu__item" role="menuitem">
-                    Preferencias
-                  </button>
-
-                  <button
-                    type="button"
-                    className="app-user-menu__item app-user-menu__item--danger"
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      setIsLogoutConfirmOpen(true);
-                    }}
-                    role="menuitem"
-                  >
-                    Cerrar sesion
-                  </button>
-                </div>
-              ) : null}
+                ) : null}
+              </div>
             </div>
           </div>
         </div>

@@ -15,6 +15,13 @@ const initialSummary = {
     balance_caja: 0,
     modulos_con_ventas: 0,
   },
+  comparativo_vs_ayer: {
+    ventas: { actual: 0, anterior: 0, delta: 0 },
+    entradas: { actual: 0, anterior: 0, delta: 0 },
+    salidas: { actual: 0, anterior: 0, delta: 0 },
+    reparaciones_pendientes: { actual: 0, anterior: 0, delta: 0 },
+  },
+  actividad_reciente: [],
   generated_at: null,
 };
 

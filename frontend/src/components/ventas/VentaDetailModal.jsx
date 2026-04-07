@@ -1,3 +1,5 @@
+import { printSaleTicket } from "../../utils/saleTicketPrint";
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-SV", {
     style: "currency",
@@ -51,9 +53,20 @@ function VentaDetailModal({
             </h3>
           </div>
 
-          <button type="button" className="btn btn-light btn-sm" onClick={onClose}>
-            Cerrar
-          </button>
+          <div className="venta-detail-modal__actions">
+            {venta ? (
+              <button
+                type="button"
+                className="btn btn-outline-dark btn-sm"
+                onClick={() => printSaleTicket(venta)}
+              >
+                Ticket
+              </button>
+            ) : null}
+            <button type="button" className="btn btn-light btn-sm" onClick={onClose}>
+              Cerrar
+            </button>
+          </div>
         </div>
 
         {loading ? <p className="empty-state">Cargando detalle...</p> : null}

@@ -32,19 +32,21 @@
 }
 
 :root[data-theme="dark"] {
-  --app-bg: #0f1312;
-  --app-bg-deep: #090c0b;
-  --app-surface: rgba(20, 25, 23, 0.96);
-  --app-surface-border: rgba(255, 255, 255, 0.1);
-  --app-surface-shadow: rgba(0, 0, 0, 0.45);
-  --app-ink: #eaf3ee;
-  --app-muted: #a8b8b0;
-  --app-wash: rgba(43, 217, 107, 0.2);
-  --app-field-bg: #171d1b;
-  --app-field-border: rgba(255, 255, 255, 0.18);
-  --app-field-focus: rgba(43, 217, 107, 0.55);
-  --app-table-row: #151b19;
-  --app-table-row-hover: rgba(43, 217, 107, 0.14);
+  --app-bg: #01050a;
+  --app-bg-deep: #03080e;
+  --app-surface: rgba(22, 27, 34, 0.96);
+  --app-surface-border: rgba(48, 54, 61, 0.98);
+  --app-surface-shadow: rgba(1, 4, 9, 0.34);
+  --app-ink: #f0f6fc;
+  --app-muted: #8b949e;
+  --app-primary: #2ea043;
+  --app-primary-dark: #2ea043;
+  --app-wash: rgba(46, 160, 67, 0.14);
+  --app-field-bg: #0d1117;
+  --app-field-border: rgba(48, 54, 61, 0.98);
+  --app-field-focus: rgba(46, 160, 67, 0.28);
+  --app-table-row: #161b22;
+  --app-table-row-hover: rgba(139, 148, 158, 0.08);
 }
 
 * {
@@ -69,9 +71,7 @@ body {
 
 :root[data-theme="dark"] body {
   background:
-    radial-gradient(circle at top left, rgba(43, 217, 107, 0.18), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.38), transparent 28%),
-    linear-gradient(180deg, #0f1312 0%, #0b0f0e 52%, #090c0b 100%);
+    linear-gradient(180deg, #01050a 0%, #01050a 42%, #03080e 100%);
 }
 
 a {
@@ -108,7 +108,7 @@ h6 {
 }
 
 :root[data-theme="dark"] .form-control::placeholder {
-  color: #8ea198;
+  color: #8b949e;
 }
 
 :root[data-theme="dark"] .form-control:focus,
@@ -124,29 +124,29 @@ h6 {
 }
 
 :root[data-theme="dark"] .btn-light {
-  background: #222a27;
+  background: #161b22;
   color: var(--app-ink);
-  border-color: rgba(255, 255, 255, 0.16);
+  border-color: #30363d;
 }
 
 :root[data-theme="dark"] .btn-outline-dark {
   color: var(--app-ink);
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: #30363d;
 }
 
 :root[data-theme="dark"] .btn-outline-secondary {
-  color: #c8d5cf;
-  border-color: rgba(255, 255, 255, 0.22);
+  color: #8b949e;
+  border-color: #30363d;
 }
 
 :root[data-theme="dark"] .table thead th,
 :root[data-theme="dark"] .products-table th,
 :root[data-theme="dark"] .repairs-table th {
-  color: #eaf3ee !important;
+  color: #f0f6fc !important;
 }
 
 :root[data-theme="dark"] .form-label,
 :root[data-theme="dark"] .section-kicker,
 :root[data-theme="dark"] .muted-text {
-  color: #c3d2cb !important;
+  color: #8b949e !important;
 }

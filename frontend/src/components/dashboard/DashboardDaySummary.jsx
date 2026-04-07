@@ -7,11 +7,14 @@ function formatMoney(value) {
 
 function DashboardDaySummary({ resumen, generatedAt }) {
   return (
-    <div className="surface-card">
+    <div className="surface-card dashboard-section-card">
       <div className="section-heading">
         <div>
           <p className="section-kicker">Resumen del dia</p>
           <h2>Operacion consolidada</h2>
+          <p className="muted-text mb-0">
+            Consolida caja, modulos activos y fecha operativa en un mismo bloque.
+          </p>
         </div>
       </div>
 

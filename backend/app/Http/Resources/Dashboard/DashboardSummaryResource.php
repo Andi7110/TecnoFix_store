@@ -25,6 +25,29 @@ class DashboardSummaryResource extends JsonResource
                 'balance_caja' => data_get($summary, 'resumen_dia.balance_caja', 0),
                 'modulos_con_ventas' => data_get($summary, 'resumen_dia.modulos_con_ventas', 0),
             ],
+            'comparativo_vs_ayer' => [
+                'ventas' => [
+                    'actual' => data_get($summary, 'comparativo_vs_ayer.ventas.actual', 0),
+                    'anterior' => data_get($summary, 'comparativo_vs_ayer.ventas.anterior', 0),
+                    'delta' => data_get($summary, 'comparativo_vs_ayer.ventas.delta', 0),
+                ],
+                'entradas' => [
+                    'actual' => data_get($summary, 'comparativo_vs_ayer.entradas.actual', 0),
+                    'anterior' => data_get($summary, 'comparativo_vs_ayer.entradas.anterior', 0),
+                    'delta' => data_get($summary, 'comparativo_vs_ayer.entradas.delta', 0),
+                ],
+                'salidas' => [
+                    'actual' => data_get($summary, 'comparativo_vs_ayer.salidas.actual', 0),
+                    'anterior' => data_get($summary, 'comparativo_vs_ayer.salidas.anterior', 0),
+                    'delta' => data_get($summary, 'comparativo_vs_ayer.salidas.delta', 0),
+                ],
+                'reparaciones_pendientes' => [
+                    'actual' => data_get($summary, 'comparativo_vs_ayer.reparaciones_pendientes.actual', 0),
+                    'anterior' => data_get($summary, 'comparativo_vs_ayer.reparaciones_pendientes.anterior', 0),
+                    'delta' => data_get($summary, 'comparativo_vs_ayer.reparaciones_pendientes.delta', 0),
+                ],
+            ],
+            'actividad_reciente' => data_get($summary, 'actividad_reciente', []),
             'generated_at' => data_get($summary, 'generated_at'),
         ];
     }
