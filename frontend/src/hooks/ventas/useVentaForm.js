@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { createVenta } from "../../api/ventas";
+import {
+  createTransferAccount,
+  deleteTransferAccount,
+  createVenta,
+  listTransferAccounts,
+} from "../../api/ventas";
 import { listProductos } from "../../api/productos";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
 
@@ -20,6 +25,9 @@ function createInitialValues() {
     fecha_venta: getLocalDateTimeValue(),
     descuento: "",
     metodo_pago: "efectivo",
+    cliente_transferente: "",
+    referencia_transferencia: "",
+    nota_transferencia: "",
     observacion: "",
   };
 }
@@ -46,7 +54,7 @@ function loadFromStorage(key, fallback) {
   }
 }
 
-function buildSuspendedSaleSnapshot({ values, items, montoRecibido }) {
+function buildSuspendedSaleSnapshot({ values, items, montoRecibido, montoTransferencia }) {
   const now = new Date();
 
   return {
@@ -59,6 +67,72 @@ function buildSuspendedSaleSnapshot({ values, items, montoRecibido }) {
     values,
     items,
     montoRecibido,
+    montoTransferencia,
+  };
+}
+
+function buildTransferSummary({
+  values,
+  transferAccount,
+  montoRecibido,
+  montoTransferencia,
+}) {
+  const lines = [];
+
+  if (values.metodo_pago !== "transferencia" && values.metodo_pago !== "mixto") {
+    return "";
+  }
+
+  lines.push("Datos de transferencia:");
+
+  if (transferAccount.bank_name?.trim()) {
+    lines.push(`Banco: ${transferAccount.bank_name.trim()}`);
+  }
+
+  if (transferAccount.account_number?.trim()) {
+    lines.push(`Numero de cuenta: ${transferAccount.account_number.trim()}`);
+  }
+
+  if (transferAccount.owner_name?.trim()) {
+    lines.push(`Propietario: ${transferAccount.owner_name.trim()}`);
+  }
+
+  if (transferAccount.owner_type?.trim()) {
+    lines.push(`Tipo: ${transferAccount.owner_type.trim()}`);
+  }
+
+  if (values.cliente_transferente?.trim()) {
+    lines.push(`Cliente que transfiere: ${values.cliente_transferente.trim()}`);
+  }
+
+  if (values.referencia_transferencia?.trim()) {
+    lines.push(`Referencia: ${values.referencia_transferencia.trim()}`);
+  }
+
+  if (values.nota_transferencia?.trim()) {
+    lines.push(`Nota de transferencia: ${values.nota_transferencia.trim()}`);
+  }
+
+  if (values.metodo_pago === "transferencia") {
+    lines.push(`Monto transferido: ${Number(montoTransferencia || 0).toFixed(2)}`);
+  }
+
+  if (values.metodo_pago === "mixto") {
+    lines.push(`Monto en efectivo: ${Number(montoRecibido || 0).toFixed(2)}`);
+    lines.push(`Monto por transferencia: ${Number(montoTransferencia || 0).toFixed(2)}`);
+  }
+
+  return lines.join("\n");
+}
+
+function createEmptyTransferAccount() {
+  return {
+    id: null,
+    bank_name: "",
+    account_number: "",
+    owner_name: "",
+    owner_type: "Natural",
+    is_active: true,
   };
 }
 
@@ -68,12 +142,19 @@ export function useVentaForm({ onSuccess }) {
   const [productos, setProductos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [montoRecibido, setMontoRecibido] = useState("");
+  const [montoTransferencia, setMontoTransferencia] = useState("");
   const [ticketConfig, setTicketConfig] = useState(() => loadFromStorage(TICKET_CONFIG_KEY, {
     businessName: "TecnoFix",
     businessPhone: "",
     businessAddress: "",
     footerNote: "Gracias por tu compra",
   }));
+  const [transferAccounts, setTransferAccounts] = useState([]);
+  const [selectedTransferAccountId, setSelectedTransferAccountId] = useState(null);
+  const [transferAccountDraft, setTransferAccountDraft] = useState(createEmptyTransferAccount);
+  const [loadingTransferAccounts, setLoadingTransferAccounts] = useState(false);
+  const [savingTransferAccount, setSavingTransferAccount] = useState(false);
+  const [transferAccountsError, setTransferAccountsError] = useState("");
   const [ventasSuspendidas, setVentasSuspendidas] = useState(() => loadFromStorage(SUSPENDED_SALES_KEY, []));
   const [loadingProductos, setLoadingProductos] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -95,6 +176,45 @@ export function useVentaForm({ onSuccess }) {
 
     window.localStorage.setItem(SUSPENDED_SALES_KEY, JSON.stringify(ventasSuspendidas));
   }, [ventasSuspendidas]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadAccounts() {
+      setLoadingTransferAccounts(true);
+      setTransferAccountsError("");
+
+      try {
+        const accounts = await listTransferAccounts();
+
+        if (ignore) {
+          return;
+        }
+
+        setTransferAccounts(accounts);
+        setSelectedTransferAccountId(accounts[0]?.id ?? null);
+      } catch (requestError) {
+        if (!ignore) {
+          setTransferAccounts([]);
+          setSelectedTransferAccountId(null);
+          setTransferAccountsError(
+            requestError?.response?.data?.message
+              || "No se pudieron cargar las cuentas de transferencia.",
+          );
+        }
+      } finally {
+        if (!ignore) {
+          setLoadingTransferAccounts(false);
+        }
+      }
+    }
+
+    loadAccounts();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   useEffect(() => {
     let ignore = false;
@@ -166,8 +286,14 @@ export function useVentaForm({ onSuccess }) {
   const descuento = Number(values.descuento || 0);
   const total = Math.max(0, subtotal - descuento);
   const montoRecibidoNormalizado = Number(montoRecibido || 0);
-  const cambio = Math.max(0, montoRecibidoNormalizado - total);
-  const faltante = Math.max(0, total - montoRecibidoNormalizado);
+  const montoTransferenciaNormalizado = Number(montoTransferencia || 0);
+  const totalPagado = values.metodo_pago === "transferencia"
+    ? montoTransferenciaNormalizado
+    : values.metodo_pago === "mixto"
+      ? montoRecibidoNormalizado + montoTransferenciaNormalizado
+      : montoRecibidoNormalizado;
+  const cambio = Math.max(0, totalPagado - total);
+  const faltante = Math.max(0, total - totalPagado);
   const productosCriticos = useMemo(
     () => items.filter((item) => Number(item.stock_disponible) === 2),
     [items],
@@ -200,6 +326,15 @@ export function useVentaForm({ onSuccess }) {
     items_count: items.reduce((accumulator, item) => accumulator + Number(item.cantidad ?? 0), 0),
     productos_count: items.length,
   }), [items]);
+  const isCreatingTransferAccount = selectedTransferAccountId === "new";
+  const transferAccount = useMemo(() => {
+    if (isCreatingTransferAccount) {
+      return transferAccountDraft;
+    }
+
+    return transferAccounts.find((account) => Number(account.id) === Number(selectedTransferAccountId))
+      ?? createEmptyTransferAccount();
+  }, [isCreatingTransferAccount, selectedTransferAccountId, transferAccountDraft, transferAccounts]);
 
   function updateField(name, value) {
     const nextValue = name === "descuento"
@@ -220,6 +355,7 @@ export function useVentaForm({ onSuccess }) {
       setItems([]);
       setSearchTerm("");
       setMontoRecibido("");
+      setMontoTransferencia("");
     }
   }
 
@@ -346,11 +482,25 @@ export function useVentaForm({ onSuccess }) {
     setErrors((current) => ({
       ...current,
       monto_recibido: undefined,
+      pago_mixto: undefined,
     }));
   }
 
   function formatMontoRecibido() {
     setMontoRecibido((current) => formatMoneyInput(current));
+  }
+
+  function updateMontoTransferencia(value) {
+    setMontoTransferencia(normalizeMoneyInput(value));
+    setErrors((current) => ({
+      ...current,
+      monto_transferencia: undefined,
+      pago_mixto: undefined,
+    }));
+  }
+
+  function formatMontoTransferencia() {
+    setMontoTransferencia((current) => formatMoneyInput(current));
   }
 
   function applyQuickCash(amount) {
@@ -364,12 +514,88 @@ export function useVentaForm({ onSuccess }) {
     }));
   }
 
+  function updateTransferAccountField(name, value) {
+    setTransferAccountDraft((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  }
+
+  function selectTransferAccount(accountId) {
+    setSelectedTransferAccountId(accountId);
+    setTransferAccountsError("");
+  }
+
+  async function addTransferAccount() {
+    setSelectedTransferAccountId("new");
+    setTransferAccountDraft(createEmptyTransferAccount());
+    setTransferAccountsError("");
+  }
+
+  async function saveSelectedTransferAccount() {
+    if (!isCreatingTransferAccount) {
+      return;
+    }
+
+    setSavingTransferAccount(true);
+    setTransferAccountsError("");
+
+    try {
+      const account = await createTransferAccount({
+        bank_name: transferAccountDraft.bank_name ?? "",
+        account_number: transferAccountDraft.account_number ?? "",
+        owner_name: transferAccountDraft.owner_name ?? "",
+        owner_type: transferAccountDraft.owner_type ?? "Natural",
+        is_active: Boolean(transferAccountDraft.is_active ?? true),
+      });
+
+      setTransferAccounts((current) => [account, ...current]);
+      setSelectedTransferAccountId(account.id);
+    } catch (requestError) {
+      setTransferAccountsError(
+        requestError?.response?.data?.message
+          || "No se pudo crear una nueva cuenta.",
+      );
+    } finally {
+      setSavingTransferAccount(false);
+    }
+  }
+
+  async function deleteSelectedTransferAccount() {
+    if (!selectedTransferAccountId || isCreatingTransferAccount) {
+      return;
+    }
+
+    setSavingTransferAccount(true);
+    setTransferAccountsError("");
+
+    try {
+      const accountId = selectedTransferAccountId;
+
+      await deleteTransferAccount(accountId);
+
+      setTransferAccounts((current) => {
+        const nextAccounts = current.filter((account) => Number(account.id) !== Number(accountId));
+        setSelectedTransferAccountId(nextAccounts[0]?.id ?? null);
+        return nextAccounts;
+      });
+    } catch (requestError) {
+      setTransferAccountsError(
+        requestError?.response?.data?.message
+          || "No se pudo eliminar la cuenta seleccionada.",
+      );
+    } finally {
+      setSavingTransferAccount(false);
+    }
+  }
+
   function resetForm(nextValues = createInitialValues()) {
     setValues(nextValues);
     setItems([]);
     setProductos([]);
     setSearchTerm("");
     setMontoRecibido("");
+    setMontoTransferencia("");
     setErrors({});
     setErrorMessage("");
   }
@@ -386,6 +612,7 @@ export function useVentaForm({ onSuccess }) {
       values,
       items,
       montoRecibido,
+      montoTransferencia,
     });
 
     setVentasSuspendidas((current) => [snapshot, ...current].slice(0, 12));
@@ -402,6 +629,7 @@ export function useVentaForm({ onSuccess }) {
     setValues(suspendedSale.values);
     setItems(suspendedSale.items);
     setMontoRecibido(suspendedSale.montoRecibido ?? "");
+    setMontoTransferencia(suspendedSale.montoTransferencia ?? "");
     setSearchTerm("");
     setErrors({});
     setErrorMessage("");
@@ -445,12 +673,35 @@ export function useVentaForm({ onSuccess }) {
       return;
     }
 
+    if (values.metodo_pago === "transferencia" && total > 0 && montoTransferenciaNormalizado < total) {
+      setErrors({
+        monto_transferencia: ["El monto transferido debe cubrir el total de la venta."],
+      });
+      setSaving(false);
+      return;
+    }
+
+    if (values.metodo_pago === "mixto" && total > 0 && totalPagado < total) {
+      setErrors({
+        pago_mixto: ["La suma de efectivo y transferencia debe cubrir el total de la venta."],
+      });
+      setSaving(false);
+      return;
+    }
+
     const payload = {
       modulo_id: Number(values.modulo_id),
       fecha_venta: values.fecha_venta,
       descuento: descuento || 0,
       metodo_pago: values.metodo_pago,
-      observacion: values.observacion.trim() || null,
+      observacion: [values.observacion.trim(), buildTransferSummary({
+        values,
+        transferAccount,
+        montoRecibido,
+        montoTransferencia,
+      })]
+        .filter(Boolean)
+        .join("\n\n") || null,
       items: items.map((item) => ({
         producto_id: Number(item.producto_id),
         descripcion_item: item.nombre,
@@ -493,12 +744,21 @@ export function useVentaForm({ onSuccess }) {
     descuento,
     total,
     montoRecibido,
+    montoTransferencia,
+    totalPagado,
     cambio,
     faltante,
     productosCriticos,
     productosSugeridos,
     resumenVenta,
     ticketConfig,
+    transferAccounts,
+    transferAccount,
+    selectedTransferAccountId,
+    isCreatingTransferAccount,
+    loadingTransferAccounts,
+    savingTransferAccount,
+    transferAccountsError,
     ventasSuspendidas,
     updateField,
     formatDiscount,
@@ -510,8 +770,15 @@ export function useVentaForm({ onSuccess }) {
     formatItemPrice,
     updateMontoRecibido,
     formatMontoRecibido,
+    updateMontoTransferencia,
+    formatMontoTransferencia,
     applyQuickCash,
     updateTicketField,
+    updateTransferAccountField,
+    selectTransferAccount,
+    addTransferAccount,
+    saveSelectedTransferAccount,
+    deleteSelectedTransferAccount,
     suspendCurrentSale,
     resumeSuspendedSale,
     removeSuspendedSale,

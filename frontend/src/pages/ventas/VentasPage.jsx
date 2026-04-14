@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import ProductosPagination from "../../components/productos/ProductosPagination";
-import CrearVentaModal from "../../components/ventas/CrearVentaModal";
 import VentaDetailModal from "../../components/ventas/VentaDetailModal";
 import VentasFilters from "../../components/ventas/VentasFilters";
 import VentasTable from "../../components/ventas/VentasTable";
@@ -11,7 +9,6 @@ import { useVentasFilters } from "../../hooks/ventas/useVentasFilters";
 import { useVentasList } from "../../hooks/ventas/useVentasList";
 
 function VentasPage() {
-  const [isCreateSaleOpen, setIsCreateSaleOpen] = useState(false);
   const {
     filters,
     draftFilters,
@@ -22,7 +19,7 @@ function VentasPage() {
     changePerPage,
   } = useVentasFilters();
   const { modulos } = useProductoCatalogos("", true);
-  const { ventas, meta, loading, error, reload } = useVentasList(filters);
+  const { ventas, meta, loading, error } = useVentasList(filters);
   const ventaDetail = useVentaDetail();
 
   return (
@@ -37,14 +34,10 @@ function VentasPage() {
         </div>
 
         <div className="products-page__header-actions">
-          <button
-            type="button"
-            className="btn venta-page__new-button"
-            onClick={() => setIsCreateSaleOpen(true)}
-          >
+          <Link to="/ventas/nueva" className="btn venta-page__new-button">
             <span className="venta-page__new-button-symbol" aria-hidden="true">+</span>
             <span>Nueva venta</span>
-          </button>
+          </Link>
           <Link to="/ventas/reportes" className="btn venta-page__reports-button">
             Reportes
           </Link>
@@ -81,16 +74,6 @@ function VentasPage() {
         error={ventaDetail.error}
         onClose={ventaDetail.closeVenta}
       />
-
-      {isCreateSaleOpen ? (
-        <CrearVentaModal
-          modulos={modulos}
-          onClose={() => setIsCreateSaleOpen(false)}
-          onCreated={() => {
-            reload();
-          }}
-        />
-      ) : null}
     </section>
   );
 }

@@ -1,3 +1,7 @@
+import { Check, Copy, CreditCard, ShareNetwork, X } from "../../icons/phosphor";
+import { useState } from "react";
+import { createPortal } from "react-dom";
+
 function fieldError(errors, name) {
   return errors?.[name]?.[0];
 }
@@ -40,12 +44,21 @@ function VentaForm({
   descuento,
   total,
   montoRecibido,
+  montoTransferencia,
+  totalPagado,
   cambio,
   faltante,
   productosCriticos,
   productosSugeridos,
   resumenVenta,
   ticketConfig,
+  transferAccounts,
+  transferAccount,
+  selectedTransferAccountId,
+  isCreatingTransferAccount,
+  loadingTransferAccounts,
+  savingTransferAccount,
+  transferAccountsError,
   ventasSuspendidas,
   onChange,
   onDiscountBlur,
@@ -57,16 +70,80 @@ function VentaForm({
   onFormatItemPrice,
   onMontoRecibidoChange,
   onMontoRecibidoBlur,
+  onMontoTransferenciaChange,
+  onMontoTransferenciaBlur,
   onApplyQuickCash,
   onTicketConfigChange,
+  onTransferAccountChange,
+  onSelectTransferAccount,
+  onAddTransferAccount,
+  onSaveTransferAccount,
+  onDeleteTransferAccount,
   onSuspendSale,
   onResumeSuspendedSale,
   onRemoveSuspendedSale,
   onSubmit,
   onCancel,
 }) {
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [transferActionMessage, setTransferActionMessage] = useState("");
   const quickAmounts = [10, 20, 50, 100];
   const moduloPorId = new Map(modulos.map((modulo) => [String(modulo.id), modulo.nombre]));
+  const montoRecibidoInsuficiente = values.metodo_pago === "efectivo" && total > 0 && faltante > 0;
+  const montoTransferenciaInsuficiente = values.metodo_pago === "transferencia" && total > 0 && faltante > 0;
+  const pagoMixtoInsuficiente = values.metodo_pago === "mixto" && total > 0 && faltante > 0;
+  const transferSummary = [
+    transferAccount.bank_name ? `Banco: ${transferAccount.bank_name}` : "",
+    transferAccount.account_number ? `Numero de cuenta: ${transferAccount.account_number}` : "",
+    transferAccount.owner_name ? `Propietario: ${transferAccount.owner_name}` : "",
+    transferAccount.owner_type ? `Tipo: ${transferAccount.owner_type}` : "",
+  ].filter(Boolean).join("\n");
+
+  function showTransferActionMessage(message) {
+    setTransferActionMessage(message);
+
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => {
+        setTransferActionMessage((current) => (current === message ? "" : current));
+      }, 2200);
+    }
+  }
+
+  async function copyTransferSummary() {
+    if (!transferSummary || typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
+      showTransferActionMessage("No se pudo copiar los datos.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(transferSummary);
+      showTransferActionMessage("Datos copiados.");
+    } catch {
+      showTransferActionMessage("No se pudo copiar los datos.");
+    }
+  }
+
+  async function shareTransferSummary() {
+    if (!transferSummary) {
+      showTransferActionMessage("Completa los datos de la cuenta para compartirlos.");
+      return;
+    }
+
+    if (typeof navigator === "undefined" || !navigator.share) {
+      await copyTransferSummary();
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title: "Datos de cuenta para transferencia",
+        text: transferSummary,
+      });
+      showTransferActionMessage("Datos compartidos.");
+    } catch {
+      // Ignore cancelled shares.
+    }
+  }
 
   return (
     <form className="surface-card venta-form" onSubmit={onSubmit}>
@@ -74,8 +151,8 @@ function VentaForm({
         <section className="venta-pos-main">
           <div className="venta-pos-hero">
             <div>
-              <p className="section-kicker">Punto de venta smart</p>
-              <h2>Caja inteligente</h2>
+              <p className="section-kicker">Punto de venta</p>
+              <h2>Caja registradora</h2>
               <p className="muted-text mb-0">
                 Vende mas rapido, controla inventario al instante y deja ticket listo para imprimir.
               </p>
@@ -135,22 +212,33 @@ function VentaForm({
 
             <div>
               <label className="form-label">Metodo de pago</label>
-              <select
-                className={`form-select ${fieldError(errors, "metodo_pago") ? "is-invalid" : ""}`}
-                value={values.metodo_pago}
-                onChange={(event) => onChange("metodo_pago", event.target.value)}
-              >
-                <option value="efectivo">Efectivo</option>
-                <option value="transferencia">Transferencia</option>
-                <option value="tarjeta">Tarjeta</option>
-                <option value="mixto">Mixto</option>
-              </select>
+              <div className="venta-form__payment-row">
+                <select
+                  className={`form-select ${fieldError(errors, "metodo_pago") ? "is-invalid" : ""}`}
+                  value={values.metodo_pago}
+                  onChange={(event) => onChange("metodo_pago", event.target.value)}
+                >
+                  <option value="efectivo">Efectivo</option>
+                  <option value="transferencia">Transferencia</option>
+                  <option value="mixto">Mixto</option>
+                </select>
+                {(values.metodo_pago === "transferencia" || values.metodo_pago === "mixto") ? (
+                  <button
+                    type="button"
+                    className="btn venta-form__accounts-button"
+                    onClick={() => setIsTransferModalOpen(true)}
+                  >
+                    <CreditCard size={18} weight="duotone" aria-hidden="true" />
+                    <span>Ver cuentas</span>
+                  </button>
+                ) : null}
+              </div>
               <div className="invalid-feedback">{fieldError(errors, "metodo_pago")}</div>
             </div>
 
             <div>
               <label className="form-label">Descuento</label>
-              <div className="input-group product-money-input">
+              <div className="input-group product-money-input venta-form__money-input">
                 <span className="input-group-text">$</span>
                 <input
                   className={`form-control text-end ${fieldError(errors, "descuento") ? "is-invalid" : ""}`}
@@ -418,50 +506,164 @@ function VentaForm({
           </div>
 
           <div className="venta-pos-sidebar__card">
-            <label className="form-label">Monto recibido</label>
-            <div className="input-group product-money-input">
-              <span className="input-group-text">$</span>
-              <input
-                className={`form-control text-end ${fieldError(errors, "monto_recibido") ? "is-invalid" : ""}`}
-                value={montoRecibido}
-                onChange={(event) => onMontoRecibidoChange(event.target.value)}
-                onBlur={onMontoRecibidoBlur}
-                placeholder="0.00"
-                inputMode="decimal"
-              />
-            </div>
-            <div className="invalid-feedback d-block">{fieldError(errors, "monto_recibido")}</div>
+            {values.metodo_pago === "efectivo" ? (
+              <>
+                <label className="form-label">Monto recibido</label>
+                <div className="input-group product-money-input venta-form__money-input">
+                  <span className="input-group-text">$</span>
+                  <input
+                    className={`form-control text-end ${fieldError(errors, "monto_recibido") ? "is-invalid" : ""}`}
+                    value={montoRecibido}
+                    onChange={(event) => onMontoRecibidoChange(event.target.value)}
+                    onBlur={onMontoRecibidoBlur}
+                    placeholder="0.00"
+                    inputMode="decimal"
+                  />
+                </div>
+                <div className="invalid-feedback d-block">{fieldError(errors, "monto_recibido")}</div>
+                {montoRecibidoInsuficiente ? (
+                  <p className="venta-pos-helper venta-pos-helper--danger mb-0">
+                    El monto recibido debe ser igual o mayor al total de la venta.
+                  </p>
+                ) : null}
 
-            <div className="venta-pos-quickcash">
-              {quickAmounts.map((amount) => (
-                <button
-                  key={amount}
-                  type="button"
-                  className="btn btn-light btn-sm"
-                  onClick={() => onApplyQuickCash(amount)}
-                >
-                  {formatCurrency(amount)}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-dark btn-sm"
-                onClick={() => onApplyQuickCash(total)}
-              >
-                Exacto
-              </button>
-            </div>
+                <div className="venta-pos-quickcash">
+                  {quickAmounts.map((amount) => (
+                    <button
+                      key={amount}
+                      type="button"
+                      className="btn btn-light btn-sm"
+                      onClick={() => onApplyQuickCash(amount)}
+                    >
+                      {formatCurrency(amount)}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="btn btn-outline-dark btn-sm"
+                    onClick={() => onApplyQuickCash(total)}
+                  >
+                    Exacto
+                  </button>
+                </div>
 
-            <div className="venta-pos-balance">
-              <div className="venta-pos-balance__item">
-                <span className="muted-text">Cambio</span>
-                <strong>{formatCurrency(cambio)}</strong>
-              </div>
-              <div className="venta-pos-balance__item">
-                <span className="muted-text">Faltante</span>
-                <strong>{formatCurrency(faltante)}</strong>
-              </div>
-            </div>
+                <div className="venta-pos-balance">
+                  <div className="venta-pos-balance__item">
+                    <span className="muted-text">Cambio</span>
+                    <strong>{formatCurrency(cambio)}</strong>
+                  </div>
+                  <div className="venta-pos-balance__item">
+                    <span className="muted-text">Faltante</span>
+                    <strong>{formatCurrency(faltante)}</strong>
+                  </div>
+                </div>
+              </>
+            ) : null}
+
+            {values.metodo_pago === "transferencia" ? (
+              <>
+                <label className="form-label">Monto transferido</label>
+                <div className="input-group product-money-input venta-form__money-input">
+                  <span className="input-group-text">$</span>
+                  <input
+                    className={`form-control text-end ${fieldError(errors, "monto_transferencia") ? "is-invalid" : ""}`}
+                    value={montoTransferencia}
+                    onChange={(event) => onMontoTransferenciaChange(event.target.value)}
+                    onBlur={onMontoTransferenciaBlur}
+                    placeholder="0.00"
+                    inputMode="decimal"
+                  />
+                </div>
+                <div className="invalid-feedback d-block">{fieldError(errors, "monto_transferencia")}</div>
+                {montoTransferenciaInsuficiente ? (
+                  <p className="venta-pos-helper venta-pos-helper--danger mb-0">
+                    El monto transferido debe ser igual o mayor al total de la venta.
+                  </p>
+                ) : null}
+
+                <div className="venta-pos-balance">
+                  <div className="venta-pos-balance__item">
+                    <span className="muted-text">Transferido</span>
+                    <strong>{formatCurrency(totalPagado)}</strong>
+                  </div>
+                  <div className="venta-pos-balance__item">
+                    <span className="muted-text">{faltante > 0 ? "Faltante" : "Excedente"}</span>
+                    <strong>{formatCurrency(faltante > 0 ? faltante : cambio)}</strong>
+                  </div>
+                </div>
+              </>
+            ) : null}
+
+            {values.metodo_pago === "mixto" ? (
+              <>
+                <label className="form-label">Monto en efectivo</label>
+                <div className="input-group product-money-input venta-form__money-input">
+                  <span className="input-group-text">$</span>
+                  <input
+                    className="form-control text-end"
+                    value={montoRecibido}
+                    onChange={(event) => onMontoRecibidoChange(event.target.value)}
+                    onBlur={onMontoRecibidoBlur}
+                    placeholder="0.00"
+                    inputMode="decimal"
+                  />
+                </div>
+
+                <div className="venta-pos-quickcash">
+                  {quickAmounts.map((amount) => (
+                    <button
+                      key={amount}
+                      type="button"
+                      className="btn btn-light btn-sm"
+                      onClick={() => onApplyQuickCash(amount)}
+                    >
+                      {formatCurrency(amount)}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="btn btn-outline-dark btn-sm"
+                    onClick={() => onApplyQuickCash(total)}
+                  >
+                    Exacto en efectivo
+                  </button>
+                </div>
+
+                <label className="form-label">Monto por transferencia</label>
+                <div className="input-group product-money-input venta-form__money-input">
+                  <span className="input-group-text">$</span>
+                  <input
+                    className={`form-control text-end ${fieldError(errors, "pago_mixto") ? "is-invalid" : ""}`}
+                    value={montoTransferencia}
+                    onChange={(event) => onMontoTransferenciaChange(event.target.value)}
+                    onBlur={onMontoTransferenciaBlur}
+                    placeholder="0.00"
+                    inputMode="decimal"
+                  />
+                </div>
+                <div className="invalid-feedback d-block">{fieldError(errors, "pago_mixto")}</div>
+                {pagoMixtoInsuficiente ? (
+                  <p className="venta-pos-helper venta-pos-helper--danger mb-0">
+                    La suma del efectivo y la transferencia debe ser igual o mayor al total.
+                  </p>
+                ) : (
+                  <p className="venta-pos-helper mb-0">
+                    Digita por separado lo que entregan en efectivo y lo que enviaron por transferencia.
+                  </p>
+                )}
+
+                <div className="venta-pos-balance">
+                  <div className="venta-pos-balance__item">
+                    <span className="muted-text">Total pagado</span>
+                    <strong>{formatCurrency(totalPagado)}</strong>
+                  </div>
+                  <div className="venta-pos-balance__item">
+                    <span className="muted-text">{faltante > 0 ? "Faltante" : "Excedente"}</span>
+                    <strong>{formatCurrency(faltante > 0 ? faltante : cambio)}</strong>
+                  </div>
+                </div>
+              </>
+            ) : null}
           </div>
 
           <div className="venta-pos-sidebar__card">
@@ -474,6 +676,44 @@ function VentaForm({
               placeholder="Comentario opcional para ticket o control interno"
             />
           </div>
+
+          {(values.metodo_pago === "transferencia" || values.metodo_pago === "mixto") ? (
+            <div className="venta-pos-sidebar__card">
+              <div>
+                <p className="section-kicker">Transferencia</p>
+                <h3 className="mb-0">Confirmacion del deposito</h3>
+              </div>
+
+              <button
+                type="button"
+                className="btn venta-form__accounts-button venta-form__accounts-button--inline"
+                onClick={() => setIsTransferModalOpen(true)}
+              >
+                <CreditCard size={18} weight="duotone" aria-hidden="true" />
+                <span>Ver cuentas para transferir</span>
+              </button>
+
+              <input
+                className="form-control"
+                value={values.cliente_transferente}
+                onChange={(event) => onChange("cliente_transferente", event.target.value)}
+                placeholder="Nombre de quien transfiere"
+              />
+              <input
+                className="form-control"
+                value={values.referencia_transferencia}
+                onChange={(event) => onChange("referencia_transferencia", event.target.value)}
+                placeholder="Numero de referencia o comprobante"
+              />
+              <textarea
+                className="form-control"
+                rows="3"
+                value={values.nota_transferencia}
+                onChange={(event) => onChange("nota_transferencia", event.target.value)}
+                placeholder="Nota adicional de la transferencia"
+              />
+            </div>
+          ) : null}
 
           <div className="venta-pos-sidebar__card">
             <div>
@@ -508,10 +748,18 @@ function VentaForm({
           </div>
 
           <div className="venta-pos-sidebar__actions">
-            <button type="submit" className="btn btn-primary btn-lg" disabled={saving}>
+            <button
+              type="submit"
+              className="btn btn-lg venta-pos-sidebar__submit"
+              disabled={saving || montoRecibidoInsuficiente || montoTransferenciaInsuficiente || pagoMixtoInsuficiente}
+            >
               {saving ? "Registrando..." : "Cobrar y generar ticket"}
             </button>
-            <button type="button" className="btn btn-outline-dark" onClick={onSuspendSale}>
+            <button
+              type="button"
+              className="btn venta-pos-sidebar__suspend"
+              onClick={onSuspendSale}
+            >
               Suspender venta
             </button>
             <button type="button" className="btn btn-light" onClick={onCancel}>
@@ -520,6 +768,195 @@ function VentaForm({
           </div>
         </aside>
       </div>
+
+      {isTransferModalOpen && typeof document !== "undefined" ? createPortal((
+        <div
+          className="venta-transfer-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Cuentas para transferencia"
+          onClick={() => setIsTransferModalOpen(false)}
+        >
+          <div
+            className="venta-transfer-modal__card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="venta-transfer-modal__header">
+              <div>
+                <p className="section-kicker">Transferencia</p>
+                <h3>Cuentas disponibles</h3>
+                <p className="muted-text mb-0">
+                  Comparte estos datos con el cliente y actualizalos cuando cambie la cuenta de cobro.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="btn venta-transfer-modal__close"
+                onClick={() => setIsTransferModalOpen(false)}
+                aria-label="Cerrar ventana de cuentas"
+              >
+                <X size={18} weight="bold" aria-hidden="true" />
+              </button>
+              <div className="venta-transfer-modal__actions">
+                <button
+                  type="button"
+                  className="btn venta-transfer-modal__icon-button"
+                  onClick={shareTransferSummary}
+                  aria-label="Compartir datos de transferencia"
+                  title="Compartir datos"
+                >
+                    <ShareNetwork size={18} weight="bold" aria-hidden="true" />
+                  </button>
+              </div>
+            </div>
+
+            {transferAccountsError ? (
+              <div className="alert alert-danger mb-0">{transferAccountsError}</div>
+            ) : null}
+
+            {loadingTransferAccounts ? (
+              <p className="muted-text mb-0">Cargando cuentas guardadas...</p>
+            ) : null}
+
+            {transferAccounts.length > 0 ? (
+              <div className="venta-transfer-modal__account-list">
+                {transferAccounts.map((account, index) => (
+                  <button
+                    key={account.id}
+                    type="button"
+                    className={`venta-transfer-modal__account-chip ${Number(account.id) === Number(selectedTransferAccountId) ? "is-active" : ""}`}
+                    onClick={() => onSelectTransferAccount(account.id)}
+                  >
+                    <strong>{account.bank_name?.trim() || `Cuenta ${index + 1}`}</strong>
+                    <span>{account.account_number?.trim() || "Sin numero registrado"}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {isCreatingTransferAccount ? (
+              <div className="venta-transfer-modal__grid">
+                <div>
+                  <label className="form-label">Banco</label>
+                  <input
+                    className="form-control"
+                    value={transferAccount.bank_name ?? ""}
+                    onChange={(event) => onTransferAccountChange("bank_name", event.target.value)}
+                    placeholder="Banco"
+                  />
+                </div>
+
+                <div>
+                  <label className="form-label">Numero de cuenta</label>
+                  <input
+                    className="form-control"
+                    value={transferAccount.account_number ?? ""}
+                    onChange={(event) => onTransferAccountChange("account_number", event.target.value)}
+                    placeholder="Numero de cuenta"
+                  />
+                </div>
+
+                <div>
+                  <label className="form-label">Nombre del propietario</label>
+                  <input
+                    className="form-control"
+                    value={transferAccount.owner_name ?? ""}
+                    onChange={(event) => onTransferAccountChange("owner_name", event.target.value)}
+                    placeholder="Nombre del propietario"
+                  />
+                </div>
+
+                <div>
+                  <label className="form-label">Tipo de propietario</label>
+                  <select
+                    className="form-select"
+                    value={transferAccount.owner_type ?? "Natural"}
+                    onChange={(event) => onTransferAccountChange("owner_type", event.target.value)}
+                  >
+                    <option value="Natural">Natural</option>
+                    <option value="Juridico">Juridico</option>
+                  </select>
+                </div>
+              </div>
+            ) : (
+              <div className="venta-transfer-modal__grid">
+                <div className="venta-transfer-modal__static-field">
+                  <span className="form-label">Banco</span>
+                  <strong>{transferAccount.bank_name || "-"}</strong>
+                </div>
+
+                <div className="venta-transfer-modal__static-field">
+                  <span className="form-label">Numero de cuenta</span>
+                  <strong>{transferAccount.account_number || "-"}</strong>
+                </div>
+
+                <div className="venta-transfer-modal__static-field">
+                  <span className="form-label">Nombre del propietario</span>
+                  <strong>{transferAccount.owner_name || "-"}</strong>
+                </div>
+
+                <div className="venta-transfer-modal__static-field">
+                  <span className="form-label">Tipo de propietario</span>
+                  <strong>{transferAccount.owner_type || "-"}</strong>
+                </div>
+              </div>
+            )}
+
+            <div className="venta-transfer-modal__copy-row">
+              <div className="venta-transfer-modal__copy-wrap">
+                <button
+                  type="button"
+                  className="btn venta-transfer-modal__copy-button"
+                  onClick={copyTransferSummary}
+                  aria-label="Copiar datos de transferencia"
+                  title="Copiar datos"
+                  disabled={!selectedTransferAccountId || isCreatingTransferAccount}
+                >
+                  <Copy size={18} weight="bold" aria-hidden="true" />
+                  <span>Copiar datos</span>
+                </button>
+                {transferActionMessage === "Datos copiados." ? (
+                  <span className="venta-transfer-modal__copy-popover">
+                    <Check size={16} weight="fill" aria-hidden="true" />
+                    <span>Datos copiados</span>
+                  </span>
+                ) : null}
+              </div>
+              <div className="venta-transfer-modal__footer-actions">
+                <button
+                  type="button"
+                  className="btn venta-transfer-modal__secondary-button"
+                  onClick={onAddTransferAccount}
+                  disabled={savingTransferAccount}
+                >
+                  <span aria-hidden="true">+</span>
+                  {savingTransferAccount ? "Agregando..." : "Agregar otra cuenta"}
+                </button>
+                <button
+                  type="button"
+                  className="btn venta-transfer-modal__save-button"
+                  onClick={onSaveTransferAccount}
+                  disabled={!isCreatingTransferAccount || savingTransferAccount}
+                >
+                  {savingTransferAccount ? "Guardando..." : "Guardar"}
+                </button>
+                <button
+                  type="button"
+                  className="btn venta-transfer-modal__delete-button"
+                  onClick={onDeleteTransferAccount}
+                  disabled={!selectedTransferAccountId || savingTransferAccount || isCreatingTransferAccount}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+
+            <div className="venta-pos-transfer-note">
+              Estos datos se guardan en este equipo para reutilizarlos en las siguientes ventas.
+            </div>
+          </div>
+        </div>
+      ), document.body) : null}
     </form>
   );
 }

@@ -47,6 +47,11 @@ function ProductosPage() {
     [productos],
   );
   const [isOpeningCreate, setIsOpeningCreate] = useState(false);
+  const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(false);
+
+  useEffect(() => {
+    setIsProductsAlertDismissed(false);
+  }, [productosCriticos]);
 
   useEffect(() => {
     if (!isOpeningCreate) {
@@ -119,9 +124,19 @@ function ProductosPage() {
         onClear={clearFilters}
       />
 
-      {productosCriticos.length > 0 ? (
+      {productosCriticos.length > 0 && !isProductsAlertDismissed ? (
         <div className="alert alert-warning products-alert">
-          Solo quedan 2 articulos de: {productosCriticos.map((producto) => producto.nombre).join(", ")}.
+          <span>
+            Solo quedan 2 articulos de: {productosCriticos.map((producto) => producto.nombre).join(", ")}.
+          </span>
+          <button
+            type="button"
+            className="products-alert__close"
+            aria-label="Cerrar alerta"
+            onClick={() => setIsProductsAlertDismissed(true)}
+          >
+            ×
+          </button>
         </div>
       ) : null}
 

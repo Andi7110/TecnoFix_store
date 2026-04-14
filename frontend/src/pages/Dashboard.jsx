@@ -120,15 +120,15 @@ function buildInsights(summary) {
 function QuickAction({ title, description, to, tone = "default" }) {
   return (
     <Link to={to} className={`dashboard-quick-action dashboard-quick-action--${tone}`}>
-      <strong>{title}</strong>
-      <span>{description}</span>
+      <span className="dashboard-quick-action__symbol" aria-hidden="true">+</span>
+      <span className="dashboard-quick-action__label">{title}</span>
     </Link>
   );
 }
 
 function AlertCard({ alert }) {
   return (
-    <article className={`dashboard-alert-card dashboard-alert-card--${alert.tone}`}>
+    <article className={`dashboard-alert-card dashboard-alert-card--${alert.tone} dashboard-alert-card--${alert.id}`}>
       <div>
         <strong>{alert.title}</strong>
         <p>{alert.body}</p>
@@ -222,7 +222,7 @@ function Dashboard() {
   const insights = useMemo(() => buildInsights(summary), [summary]);
 
   return (
-    <section>
+    <section className="dashboard-page">
       <div className="products-page__header dashboard-command-center">
         <div>
           <p className="section-kicker">Dashboard</p>
@@ -252,19 +252,21 @@ function Dashboard() {
         </div>
       ) : (
         <>
+          <div className="dashboard-actions-shell">
+            <div className="dashboard-actions-grid">
+              <QuickAction title="Nueva venta" description="Abre el flujo de caja y registra una venta nueva." to="/ventas" tone="primary" />
+              <QuickAction title="Nueva reparacion" description="Ingresa un equipo, su diagnostico y condiciones iniciales." to="/reparaciones/nueva" />
+              <QuickAction title="Registrar caja" description="Agrega entradas o salidas y controla el balance operativo." to="/caja/nuevo" />
+              <QuickAction title="Nuevo producto" description="Incorpora articulos al catalogo y define sus precios." to="/productos/nuevo" />
+            </div>
+          </div>
+
           <DashboardMetricCards today={summary.today} />
 
           <div className="dashboard-alerts-grid">
             {alerts.map((alert) => (
               <AlertCard key={alert.id} alert={alert} />
             ))}
-          </div>
-
-          <div className="dashboard-actions-grid">
-            <QuickAction title="Nueva venta" description="Abre el flujo de caja y registra una venta nueva." to="/ventas" tone="primary" />
-            <QuickAction title="Nueva reparacion" description="Ingresa un equipo, su diagnostico y condiciones iniciales." to="/reparaciones/nueva" />
-            <QuickAction title="Registrar caja" description="Agrega entradas o salidas y controla el balance operativo." to="/caja/nuevo" />
-            <QuickAction title="Nuevo producto" description="Incorpora articulos al catalogo y define sus precios." to="/productos/nuevo" />
           </div>
 
           <div className="dashboard-insights-grid">

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
 import { getDashboardSummary } from "../../api/dashboard";
 
@@ -93,6 +93,14 @@ function BellIcon() {
   );
 }
 
+function ArrowLeftIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M10.83 5.47a.75.75 0 0 1 0 1.06L6.81 10.5H20a.75.75 0 0 1 0 1.5H6.81l4.02 3.97a.75.75 0 1 1-1.06 1.06l-5.25-5.19a.75.75 0 0 1 0-1.06l5.25-5.25a.75.75 0 0 1 1.06 0Z" />
+    </svg>
+  );
+}
+
 function formatMoney(value) {
   return new Intl.NumberFormat("es-SV", {
     style: "currency",
@@ -171,7 +179,7 @@ function buildNotificationItems(summary) {
 function getPageMeta(pathname) {
   if (pathname === "/") {
     return {
-      title: "Dashboard",
+      title: "Inicio",
       description: "Supervisa operacion, ventas, caja y taller desde un solo lugar.",
     };
   }
@@ -224,10 +232,16 @@ function getPageMeta(pathname) {
   };
 }
 
+function shouldShowBackButton(pathname) {
+  return !["/", "/productos", "/ventas", "/reparaciones", "/caja"].includes(pathname);
+}
+
 function AppLayout() {
   const { logout, user } = useAuth();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const pageMeta = getPageMeta(pathname);
+  const showBackButton = shouldShowBackButton(pathname);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window === "undefined") {
       return false;
@@ -389,7 +403,7 @@ function AppLayout() {
   }
 
   const navItems = [
-    { to: "/", label: "Dashboard", end: true, icon: <DashboardIcon /> },
+    { to: "/", label: "Inicio", end: true, icon: <DashboardIcon /> },
     {
       to: "/productos",
       label: "Productos",
@@ -479,6 +493,18 @@ function AppLayout() {
         <div className="app-toolbar">
           <div className={`app-topbar ${isTopbarVisible ? "is-visible" : "is-hidden"}`}>
             <div className="app-topbar__left">
+              {showBackButton ? (
+                <button
+                  type="button"
+                  className="btn app-topbar__back"
+                  onClick={() => navigate(-1)}
+                  title="Volver atras"
+                >
+                  <ArrowLeftIcon />
+                  <span>Atras</span>
+                </button>
+              ) : null}
+
               <label className="app-topbar__search" aria-label="Busqueda global">
                 <span className="app-topbar__search-icon">
                   <SearchIcon />

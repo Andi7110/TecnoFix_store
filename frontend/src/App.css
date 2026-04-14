@@ -293,12 +293,42 @@
 
 .app-topbar__left {
   flex: 1 1 auto;
+  gap: 0.8rem;
 }
 
 .app-topbar__right {
   flex: 0 0 auto;
   gap: 0.8rem;
   justify-content: flex-end;
+}
+
+.app-topbar__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.65rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 20, 18, 0.12);
+  background: #ffffff;
+  color: var(--app-ink);
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.app-topbar__back svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.app-topbar__back:hover,
+.app-topbar__back:focus {
+  background: #f5f7f6;
+  border-color: rgba(15, 20, 18, 0.18);
+  color: var(--app-ink);
+  box-shadow: none;
 }
 
 .app-topbar__search {
@@ -865,6 +895,19 @@
   border-color: #30363d;
 }
 
+:root[data-theme="dark"] .app-topbar__back {
+  background: #0d1117;
+  border-color: #30363d;
+  color: #f0f6fc;
+}
+
+:root[data-theme="dark"] .app-topbar__back:hover,
+:root[data-theme="dark"] .app-topbar__back:focus {
+  background: #161b22;
+  border-color: #39ff7a;
+  color: #f0f6fc;
+}
+
 :root[data-theme="dark"] .app-sidebar__inner {
   background: #161b22;
   border-right-color: #30363d;
@@ -1011,6 +1054,10 @@
   .app-topbar__left,
   .app-topbar__right {
     width: 100%;
+  }
+
+  .app-topbar__left {
+    flex-wrap: wrap;
   }
 
   .app-topbar__right {

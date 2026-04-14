@@ -113,6 +113,29 @@
   box-shadow: none;
 }
 
+.products-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.products-alert__close {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.7;
+}
+
+.products-alert__close:hover,
+.products-alert__close:focus {
+  opacity: 1;
+}
+
 .product-code {
   color: var(--app-muted);
   font-size: 0.85rem;

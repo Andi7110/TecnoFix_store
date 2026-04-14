@@ -20,7 +20,7 @@ class StoreVentaRequest extends FormRequest
             'modulo_id' => ['required', 'integer', 'exists:modulos,id'],
             'fecha_venta' => ['required', 'date'],
             'descuento' => ['nullable', 'numeric', 'min:0'],
-            'metodo_pago' => ['required', Rule::in(['efectivo', 'transferencia', 'tarjeta', 'mixto'])],
+            'metodo_pago' => ['required', Rule::in(['efectivo', 'transferencia', 'mixto'])],
             'observacion' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.producto_id' => ['nullable', 'integer', 'exists:productos,id'],

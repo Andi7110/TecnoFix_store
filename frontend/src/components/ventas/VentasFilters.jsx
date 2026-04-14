@@ -51,7 +51,6 @@ function VentasFilters({
             <option value="">Todos</option>
             <option value="efectivo">Efectivo</option>
             <option value="transferencia">Transferencia</option>
-            <option value="tarjeta">Tarjeta</option>
             <option value="mixto">Mixto</option>
           </select>
         </div>

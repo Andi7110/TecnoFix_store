@@ -22,7 +22,6 @@
   font-weight: 400;
   color: var(--app-ink);
   background:
-    radial-gradient(circle at top left, rgba(43, 217, 107, 0.16), transparent 22%),
     radial-gradient(circle at bottom right, rgba(15, 20, 18, 0.08), transparent 24%),
     linear-gradient(180deg, var(--app-bg) 0%, #f8fbf8 52%, var(--app-bg-deep) 100%);
   font-synthesis: none;
@@ -64,7 +63,6 @@ body {
   min-width: 320px;
   color: var(--app-ink);
   background:
-    radial-gradient(circle at top left, rgba(43, 217, 107, 0.16), transparent 22%),
     radial-gradient(circle at bottom right, rgba(15, 20, 18, 0.12), transparent 24%),
     linear-gradient(180deg, var(--app-bg) 0%, #f8fbf8 52%, var(--app-bg-deep) 100%);
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Inventario\ProductoController;
 use App\Http\Controllers\Api\Caja\MovimientoCajaController;
 use App\Http\Controllers\Api\Dashboard\DashboardSummaryController;
 use App\Http\Controllers\Api\Reparaciones\ReparacionController;
+use App\Http\Controllers\Api\Ventas\CuentaTransferenciaController;
 use App\Http\Controllers\Api\Ventas\SalesReportController;
 use App\Http\Controllers\Api\Ventas\VentaController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('diario', [SalesReportController::class, 'storeDaily'])->name('ventas.reportes.diario.store');
         Route::post('estado-resultados', [SalesReportController::class, 'storeMonthly'])->name('ventas.reportes.estado-resultados.store');
         Route::get('historial', [SalesReportController::class, 'history'])->name('ventas.reportes.historial');
+    });
+
+    Route::prefix('ventas')->group(function (): void {
+        Route::apiResource('cuentas-transferencia', CuentaTransferenciaController::class)
+            ->parameters(['cuentas-transferencia' => 'cuentaTransferencia'])
+            ->only(['index', 'store', 'update', 'destroy']);
     });
 
     Route::apiResource('ventas', VentaController::class)->only(['index', 'store', 'show']);
