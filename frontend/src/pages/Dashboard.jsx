@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
+import { Money, Package, ShoppingCart, Wrench } from "../icons/phosphor";
 
 function formatMoney(value) {
   return new Intl.NumberFormat("es-SV", {
@@ -99,10 +100,10 @@ function buildInsights(summary) {
   ];
 }
 
-function QuickAction({ title, description, to, tone = "default" }) {
+function QuickAction({ title, description, to, tone = "default", icon }) {
   return (
     <Link to={to} className={`dashboard-quick-action dashboard-quick-action--${tone}`}>
-      <span className="dashboard-quick-action__symbol" aria-hidden="true">+</span>
+      <span className="dashboard-quick-action__symbol" aria-hidden="true">{icon}</span>
       <span className="dashboard-quick-action__label">{title}</span>
     </Link>
   );
@@ -177,10 +178,6 @@ function Dashboard() {
 
         <div className="products-page__header-actions dashboard-command-center__meta">
           <div>
-            <span className="muted-text">Fecha operativa</span>
-            <strong>{summary.resumen_dia.fecha || "Hoy"}</strong>
-          </div>
-          <div>
             <span className="muted-text">Actualizado</span>
             <strong>{summary.generated_at ? new Date(summary.generated_at).toLocaleString() : "-"}</strong>
           </div>
@@ -197,10 +194,31 @@ function Dashboard() {
         <>
           <div className="dashboard-actions-shell">
             <div className="dashboard-actions-grid">
-              <QuickAction title="Nueva venta" description="Abre el flujo de caja y registra una venta nueva." to="/ventas" tone="primary" />
-              <QuickAction title="Nueva reparacion" description="Ingresa un equipo, su diagnostico y condiciones iniciales." to="/reparaciones/nueva" />
-              <QuickAction title="Registrar caja" description="Agrega entradas o salidas y controla el balance operativo." to="/caja/nuevo" />
-              <QuickAction title="Nuevo producto" description="Incorpora articulos al catalogo y define sus precios." to="/productos/nuevo" />
+              <QuickAction
+                title="Nueva venta"
+                description="Abre el flujo de caja y registra una venta nueva."
+                to="/ventas"
+                tone="primary"
+                icon={<ShoppingCart size={22} weight="bold" />}
+              />
+              <QuickAction
+                title="Nueva reparacion"
+                description="Ingresa un equipo, su diagnostico y condiciones iniciales."
+                to="/reparaciones/nueva"
+                icon={<Wrench size={22} weight="bold" />}
+              />
+              <QuickAction
+                title="Registrar caja"
+                description="Agrega entradas o salidas y controla el balance operativo."
+                to="/caja/nuevo"
+                icon={<Money size={22} weight="bold" />}
+              />
+              <QuickAction
+                title="Nuevo producto"
+                description="Incorpora articulos al catalogo y define sus precios."
+                to="/productos/nuevo"
+                icon={<Package size={22} weight="bold" />}
+              />
             </div>
           </div>
 

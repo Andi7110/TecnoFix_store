@@ -166,7 +166,6 @@ function ProductosPage() {
 
         <div className="section-heading">
           <div>
-            <p className="section-kicker">Vista separada</p>
             <h2>Productos agotados</h2>
             <p className="muted-text">
               Estos productos ya no aparecen en inventario porque su stock llego a cero.

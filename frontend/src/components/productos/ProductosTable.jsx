@@ -5,16 +5,53 @@ const moneyFormatter = new Intl.NumberFormat("es-SV", {
   currency: "USD",
 });
 
+function ProductsTableSkeleton() {
+  return (
+    <div className="surface-card products-table-wrapper inventory-table-wrapper products-table-wrapper--loading">
+      <div className="table-responsive">
+        <table className="table align-middle products-table inventory-table">
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Producto</th>
+              <th>Modulo</th>
+              <th>Categoria</th>
+              <th>Precios</th>
+              <th>Stock</th>
+              <th className="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <tr key={index}>
+                <td><span className="products-loading-cell products-loading-cell--photo" /></td>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--title" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+                <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--medium" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td><span className="products-loading-cell products-loading-cell--badge" /></td>
+                <td className="text-end"><span className="products-loading-cell products-loading-cell--button" /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function ProductosTable({
   productos,
   loading,
 }) {
   if (loading) {
-    return (
-      <div className="surface-card">
-        <p className="empty-state">Cargando productos...</p>
-      </div>
-    );
+    return <ProductsTableSkeleton />;
   }
 
   if (productos.length === 0) {

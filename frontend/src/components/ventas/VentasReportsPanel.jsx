@@ -146,7 +146,7 @@ function DailyContent({ report }) {
     <div className="ventas-report-workspace">
       <Banner
         kicker="Comercial diario"
-        title="Lectura ejecutiva del dia"
+        title="Resumen del dia"
         description="Unifica ventas, caja, utilidad y comportamiento de productos en una sola capa de lectura."
         generatedAt={report.generated_at}
         moduleName={report.modulo?.nombre}

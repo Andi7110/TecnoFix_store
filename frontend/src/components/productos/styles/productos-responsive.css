@@ -5,6 +5,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .products-filters--minimal .products-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .inventory-section__filters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -28,6 +32,10 @@
   }
 
   .products-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .products-filters--minimal .products-filter-grid {
     grid-template-columns: 1fr;
   }
 

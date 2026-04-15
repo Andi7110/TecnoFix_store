@@ -7,8 +7,10 @@ function ProductosFilters({
   onSubmit,
   onClear,
 }) {
+  const visibleModulos = modulos.filter((modulo) => modulo.nombre !== "Bitacora");
+
   return (
-    <form className="surface-card products-filters" onSubmit={onSubmit}>
+    <form className="surface-card products-filters products-filters--minimal" onSubmit={onSubmit}>
       <div className="section-heading">
         <div>
           <p className="section-kicker">Busqueda</p>
@@ -25,7 +27,7 @@ function ProductosFilters({
             onChange={(event) => onChange("modulo_id", event.target.value)}
           >
             <option value="">Todos</option>
-            {modulos.map((modulo) => (
+            {visibleModulos.map((modulo) => (
               <option key={modulo.id} value={modulo.id}>
                 {modulo.nombre}
               </option>

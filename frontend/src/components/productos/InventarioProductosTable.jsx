@@ -87,13 +87,28 @@ function InventarioProductosTable({
 
   function renderRows(items, loading, emptyMessage) {
     if (loading) {
-      return (
-        <tr>
-          <td colSpan={9} className="text-center muted-text py-4">
-            Cargando inventario...
+      return Array.from({ length: 4 }).map((_, index) => (
+        <tr key={`loading-${index}`}>
+          <td><span className="products-loading-cell products-loading-cell--photo" /></td>
+          <td>
+            <span className="products-loading-cell products-loading-cell--title" />
+            <span className="products-loading-cell products-loading-cell--small" />
           </td>
+          <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+          <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+          <td>
+            <span className="products-loading-cell products-loading-cell--medium" />
+            <span className="products-loading-cell products-loading-cell--small" />
+          </td>
+          <td><span className="products-loading-cell products-loading-cell--badge" /></td>
+          <td><span className="products-loading-cell products-loading-cell--badge" /></td>
+          <td>
+            <span className="products-loading-cell products-loading-cell--medium" />
+            <span className="products-loading-cell products-loading-cell--small" />
+          </td>
+          <td><span className="products-loading-cell products-loading-cell--button" /></td>
         </tr>
-      );
+      ));
     }
 
     if (items.length === 0) {
@@ -250,7 +265,7 @@ function InventarioProductosTable({
             </select>
           </div>
           <div className="inventory-section__filters-action">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn products-filter-actions__apply">
               Aplicar
             </button>
             <button
@@ -262,7 +277,7 @@ function InventarioProductosTable({
             </button>
           </div>
         </form>
-        <div className="surface-card products-table-wrapper inventory-table-wrapper">
+        <div className={`surface-card products-table-wrapper inventory-table-wrapper ${loading ? "products-table-wrapper--loading" : ""}`}>
           <div className="table-responsive">
             <table className="table align-middle products-table inventory-table">
               <thead>
