@@ -1,6 +1,6 @@
 <?php
-
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Bitacora\BitacoraController;
 use App\Http\Controllers\Api\Inventario\CategoriaController;
 use App\Http\Controllers\Api\Inventario\InventarioProductoController;
 use App\Http\Controllers\Api\Inventario\ModuloController;
@@ -55,4 +55,6 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::prefix('caja')->group(function (): void {
         Route::apiResource('movimientos', MovimientoCajaController::class)->only(['index', 'store', 'show']);
     });
+
+    Route::apiResource('bitacora', BitacoraController::class)->only(['index', 'show']);
 });

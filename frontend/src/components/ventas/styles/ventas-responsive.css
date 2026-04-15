@@ -1,0 +1,129 @@
+/* Ajustes responsive compartidos por las vistas de ventas. */
+
+@media (max-width: 992px) {
+  .ventas-report-controlbar,
+  .ventas-report-controlbar--three,
+  .ventas-report-banner,
+  .ventas-report-kpis,
+  .ventas-report-insights,
+  .ventas-report-grid--balanced,
+  .ventas-report-banner__meta,
+  .ventas-report-health {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ventas-report-banner {
+    flex-direction: column;
+  }
+
+  .venta-pos-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .venta-pos-hero,
+  .venta-pos-searchbar {
+    grid-template-columns: 1fr;
+  }
+
+  .venta-pos-hero {
+    flex-direction: column;
+  }
+
+  .venta-form__payment-row,
+  .venta-pos-hero__stats,
+  .venta-pos-suggestions__grid,
+  .ventas-reportes,
+  .ventas-report-grid,
+  .ventas-report-metrics,
+  .ventas-filters__grid,
+  .venta-form__grid,
+  .venta-form__catalog,
+  .venta-form__summary,
+  .venta-detail-modal__meta,
+  .venta-detail-modal__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ventas-report-form,
+  .ventas-report-form--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .ventas-report-controlbar,
+  .ventas-report-controlbar--three,
+  .ventas-report-kpis,
+  .ventas-report-insights,
+  .ventas-report-grid--balanced,
+  .ventas-report-banner__meta,
+  .ventas-report-health {
+    grid-template-columns: 1fr;
+  }
+
+  .ventas-report-controlbar__actions,
+  .ventas-report-tabs,
+  .ventas-report-summary-list__item,
+  .ventas-report-ledger__row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ventas-report-summary-list__meta {
+    text-align: left;
+  }
+
+  .venta-pos-hero__stats,
+  .venta-pos-suggestions__grid,
+  .venta-pos-balance,
+  .ventas-reportes,
+  .ventas-report-grid,
+  .ventas-report-metrics,
+  .ventas-filters__grid,
+  .venta-form__grid,
+  .venta-form__catalog,
+  .venta-form__summary,
+  .venta-detail-modal__meta,
+  .venta-detail-modal__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .ventas-report-form,
+  .ventas-report-form--three {
+    grid-template-columns: 1fr;
+  }
+
+  .ventas-report-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .venta-form__product-card,
+  .venta-pos-suspended__item,
+  .venta-detail-modal__header,
+  .venta-detail-modal__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .venta-form__product-meta {
+    align-items: flex-start;
+  }
+
+  .venta-transfer-modal__header {
+    flex-direction: column;
+    padding-right: 0;
+  }
+
+  .venta-transfer-modal__actions {
+    justify-content: flex-start;
+  }
+
+  .venta-transfer-modal__close {
+    position: static;
+  }
+
+  .venta-transfer-modal__grid {
+    grid-template-columns: 1fr;
+  }
+}

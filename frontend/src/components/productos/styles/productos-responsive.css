@@ -1,0 +1,46 @@
+/* Ajustes responsive compartidos por productos. */
+
+@media (max-width: 992px) {
+  .products-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inventory-section__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inventory-section__filters-action {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .products-page__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .products-page__header-actions,
+  .products-filter-actions,
+  .products-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .products-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .products-table__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .inventory-section__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-section__filters-action {
+    grid-column: auto;
+  }
+}
