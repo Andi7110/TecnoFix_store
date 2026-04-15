@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
-import DashboardDaySummary from "../components/dashboard/DashboardDaySummary";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
@@ -10,23 +9,6 @@ function formatMoney(value) {
     style: "currency",
     currency: "USD",
   }).format(Number(value ?? 0));
-}
-
-function formatDateTime(value) {
-  if (!value) {
-    return "-";
-  }
-
-  return new Intl.DateTimeFormat("es-SV", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
-function formatActivityType(value) {
-  return String(value ?? "")
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function buildAlerts(summary) {
@@ -177,45 +159,6 @@ function ComparisonCard({ title, comparison, format = "money" }) {
   );
 }
 
-function RecentActivity({ items }) {
-  return (
-    <div className="surface-card dashboard-section-card">
-      <div className="section-heading">
-        <div>
-          <p className="section-kicker">Actividad reciente</p>
-          <h2>Movimiento del sistema</h2>
-          <p className="muted-text mb-0">
-            Ultimos eventos relevantes entre ventas, caja, reparaciones e inventario.
-          </p>
-        </div>
-      </div>
-
-      {items.length === 0 ? (
-        <p className="empty-state">Todavia no hay actividad reciente para mostrar.</p>
-      ) : (
-        <div className="dashboard-activity-list">
-          {items.map((item) => (
-            <article key={`${item.tipo}-${item.entidad_id}-${item.fecha}`} className="dashboard-activity-item">
-              <div className="dashboard-activity-item__badge">
-                {formatActivityType(item.tipo)}
-              </div>
-              <div className="dashboard-activity-item__content">
-                <strong>{item.titulo}</strong>
-                <span>{item.contexto}</span>
-                <p>{item.descripcion}</p>
-              </div>
-              <div className="dashboard-activity-item__meta">
-                <strong>{formatMoney(item.monto)}</strong>
-                <span>{formatDateTime(item.fecha)}</span>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function Dashboard() {
   const { summary, loading, error } = useDashboardSummary();
   const alerts = useMemo(() => buildAlerts(summary), [summary]);
@@ -288,13 +231,7 @@ function Dashboard() {
 
           <div className="dashboard-bottom-grid">
             <DashboardModulesTable rows={summary.ventas_por_modulo} />
-            <DashboardDaySummary
-              resumen={summary.resumen_dia}
-              generatedAt={summary.generated_at}
-            />
           </div>
-
-          <RecentActivity items={summary.actividad_reciente} />
         </>
       )}
     </section>

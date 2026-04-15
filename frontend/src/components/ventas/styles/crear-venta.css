@@ -1,0 +1,1079 @@
+/* Estilos de la vista /ventas/nueva y sus modales de venta. */
+
+.venta-form {
+  border: 1px solid var(--app-surface-border);
+  background:
+    radial-gradient(circle at top right, rgba(255, 196, 107, 0.18), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96));
+}
+
+.venta-form.surface-card:hover {
+  transform: none;
+  box-shadow: 0 18px 45px var(--app-surface-shadow);
+  border-color: var(--app-surface-border);
+}
+
+.venta-pos-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr);
+  gap: 1.25rem;
+}
+
+.venta-form__payment-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.venta-form__accounts-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 42px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.venta-form__accounts-button:hover,
+.venta-form__accounts-button:focus {
+  background: #111827 !important;
+  border-color: rgba(15, 23, 42, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-form__accounts-button--inline {
+  justify-content: flex-start;
+}
+
+.venta-pos-main,
+.venta-pos-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.venta-pos-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid #0f172a;
+  background: #0f172a;
+}
+
+.venta-pos-hero h2 {
+  margin: 0;
+  color: #ffffff;
+}
+
+.venta-pos-hero .section-kicker,
+.venta-pos-hero .muted-text {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.venta-pos-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(110px, 1fr));
+  gap: 0.75rem;
+}
+
+.venta-pos-hero__stat {
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.venta-pos-hero__stat strong {
+  font-size: 1.05rem;
+  color: #ffffff;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.venta-pos-searchbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: end;
+}
+
+.venta-pos-searchbar__field {
+  min-height: 52px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.venta-pos-searchbar__action {
+  min-height: 52px;
+  padding-inline: 1.3rem;
+  border-radius: 0.9rem;
+}
+
+.venta-form__picker,
+.venta-form__items {
+  margin-top: 1.5rem;
+}
+
+.venta-form__picker-header h3,
+.venta-form__items h3 {
+  margin: 0;
+  color: var(--app-ink);
+}
+
+.venta-form__search {
+  margin-top: 1rem;
+}
+
+.venta-form__catalog {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.venta-form__product-card {
+  width: 100%;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 1rem;
+  background: var(--app-surface);
+  color: var(--app-ink);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  text-align: left;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.venta-form__product-card:hover,
+.venta-form__product-card:focus {
+  transform: translateY(-0.1rem);
+  border-color: rgba(30, 168, 82, 0.3);
+  box-shadow: 0 14px 30px rgba(15, 18, 20, 0.08);
+}
+
+.venta-form__product-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.venta-pos-suggestions {
+  border-radius: 1.15rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 1rem;
+}
+
+.venta-pos-suspended {
+  border-radius: 1.15rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 1rem;
+}
+
+.venta-pos-suggestions__header h3 {
+  margin: 0;
+}
+
+.venta-pos-suggestions__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.venta-pos-suggestion {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+  color: var(--app-ink);
+  text-align: left;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.venta-pos-suggestion:hover,
+.venta-pos-suggestion:focus {
+  transform: translateY(-0.08rem);
+  border-color: rgba(34, 197, 94, 0.35);
+  box-shadow: 0 16px 24px rgba(15, 23, 42, 0.08);
+}
+
+.venta-pos-suggestion strong {
+  font-size: 0.96rem;
+}
+
+.venta-pos-suggestion small {
+  color: var(--app-muted);
+}
+
+.venta-pos-suggestion__badge {
+  width: fit-content;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.venta-pos-suspended__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.venta-pos-suspended__item {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+  padding: 0.95rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.venta-pos-suspended__item strong,
+.venta-pos-suspended__item span,
+.venta-pos-suspended__item small {
+  display: block;
+}
+
+.venta-pos-suspended__item small,
+.venta-pos-suspended__item span {
+  color: var(--app-muted);
+}
+
+.venta-pos-suspended__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ventas-qty-input {
+  max-width: 90px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.ventas-stock-warning {
+  border-color: rgba(220, 53, 69, 0.24);
+  background: linear-gradient(180deg, #fff6f6 0%, #ffe8e8 100%);
+  color: #922f2f;
+}
+
+.venta-form__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.venta-form__summary-card {
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: var(--app-surface);
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.venta-form__summary-card strong {
+  font-size: 1.15rem;
+  color: var(--app-ink);
+}
+
+.venta-form__summary-card--accent {
+  border-color: rgba(30, 168, 82, 0.22);
+  background: linear-gradient(135deg, rgba(30, 168, 82, 0.1), rgba(255, 255, 255, 0.7));
+}
+
+.venta-pos-sidebar__card {
+  border-radius: 1.1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.venta-pos-sidebar__card--accent {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.18), transparent 34%),
+    linear-gradient(135deg, #0f172a, #1e293b);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.venta-pos-sidebar__card--accent .muted-text,
+.venta-pos-sidebar__card--accent small,
+.venta-pos-sidebar__card--accent strong {
+  color: #f8fafc;
+}
+
+.venta-pos-sidebar__card--accent strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.venta-pos-sidebar__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.venta-pos-sidebar__row--total {
+  padding-top: 0.55rem;
+  border-top: 1px dashed var(--app-surface-border);
+  font-size: 1.02rem;
+}
+
+.venta-pos-quickcash {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.venta-pos-balance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.venta-pos-balance__item {
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f8fafc;
+  padding: 0.85rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.venta-pos-balance__item strong {
+  color: var(--app-ink);
+  font-size: 1.05rem;
+}
+
+.venta-pos-helper {
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.venta-form__money-input .input-group-text {
+  color: #000000 !important;
+}
+
+.venta-pos-helper--danger {
+  color: #b02a37;
+  font-weight: 600;
+}
+
+.venta-pos-transfer-note {
+  border-radius: 0.9rem;
+  border: 1px dashed rgba(30, 168, 82, 0.28);
+  background: rgba(30, 168, 82, 0.08);
+  color: var(--app-muted);
+  padding: 0.8rem 0.9rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.venta-pos-sidebar__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.venta-pos-sidebar__submit {
+  background: #1ea852 !important;
+  border: 1px solid #1ea852 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-pos-sidebar__submit:hover,
+.venta-pos-sidebar__submit:focus {
+  background: #189347 !important;
+  border-color: #189347 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-pos-sidebar__submit:disabled {
+  background: #7abf92 !important;
+  border-color: #7abf92 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.venta-pos-sidebar__suspend {
+  background: #dc3545 !important;
+  border: 1px solid #dc3545 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-pos-sidebar__suspend:hover,
+.venta-pos-sidebar__suspend:focus {
+  background: #bb2d3b !important;
+  border-color: #b02a37 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-create-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1490;
+  background: rgba(7, 10, 9, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.venta-create-modal__content {
+  width: min(96vw, 1180px);
+  max-height: 92vh;
+  overflow: auto;
+  border-radius: 1.3rem;
+}
+
+.venta-create-modal__content .venta-form {
+  margin-bottom: 0;
+}
+
+.venta-success-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.venta-transfer-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1520;
+  background: rgba(7, 10, 9, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.venta-transfer-modal__card {
+  width: min(92vw, 760px);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 1.25rem;
+  border: 1px solid var(--app-surface-border);
+  background: var(--app-surface);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.venta-transfer-modal__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  position: relative;
+  padding-right: 3.2rem;
+}
+
+.venta-transfer-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.venta-transfer-modal__secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid #0f172a !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__secondary-button:hover,
+.venta-transfer-modal__secondary-button:focus {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__save-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.9rem;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__close:hover,
+.venta-transfer-modal__close:focus {
+  background: #111827 !important;
+  border-color: rgba(15, 23, 42, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__copy-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.venta-transfer-modal__account-list {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.venta-transfer-modal__account-chip {
+  min-width: 180px;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+  color: var(--app-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.venta-transfer-modal__account-chip strong {
+  color: var(--app-ink);
+}
+
+.venta-transfer-modal__account-chip span {
+  color: var(--app-muted);
+  font-size: 0.84rem;
+}
+
+.venta-transfer-modal__account-chip:hover,
+.venta-transfer-modal__account-chip:focus {
+  transform: translateY(-0.05rem);
+  border-color: rgba(30, 168, 82, 0.28);
+}
+
+.venta-transfer-modal__account-chip.is-active {
+  border-color: rgba(30, 168, 82, 0.34);
+  background: rgba(30, 168, 82, 0.1);
+}
+
+.venta-transfer-modal__static-field {
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.venta-transfer-modal__static-field strong {
+  color: var(--app-ink);
+  font-size: 1rem;
+}
+
+.venta-transfer-modal__copy-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.venta-transfer-modal__footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.venta-transfer-modal__copy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  background: #1ea852 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__copy-button:hover,
+.venta-transfer-modal__copy-button:focus {
+  background: #189347 !important;
+  border-color: #189347 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__save-button {
+  border: 1px solid #1ea852 !important;
+  background: #1ea852 !important;
+  color: #ffffff !important;
+}
+
+.venta-transfer-modal__save-button:hover,
+.venta-transfer-modal__save-button:focus {
+  background: #189347 !important;
+  border-color: #189347 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid #dc3545 !important;
+  background: #dc3545 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__delete-button:hover,
+.venta-transfer-modal__delete-button:focus {
+  background: #bb2d3b !important;
+  border-color: #b02a37 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__header h3 {
+  margin: 0;
+  color: var(--app-ink);
+}
+
+.venta-transfer-modal__icon-button {
+  width: 2.7rem;
+  height: 2.7rem;
+  min-width: 2.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: none;
+  padding: 0;
+}
+
+.venta-transfer-modal__icon-button:hover,
+.venta-transfer-modal__icon-button:focus {
+  background: #111827 !important;
+  border-color: rgba(15, 23, 42, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-transfer-modal__copy-popover {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1ea852;
+  color: #ffffff;
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(30, 168, 82, 0.28);
+  z-index: 2;
+  animation: venta-copy-popover-in 220ms ease-out;
+}
+
+.venta-transfer-modal__copy-popover svg {
+  flex: 0 0 auto;
+}
+
+.venta-transfer-modal__copy-popover::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent #1ea852 transparent;
+}
+
+@keyframes venta-copy-popover-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.venta-transfer-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+:root[data-theme="dark"] .venta-form {
+  border-color: rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(250, 204, 21, 0.1), transparent 24%),
+    linear-gradient(180deg, rgba(17, 24, 22, 0.96), rgba(12, 18, 16, 0.96));
+}
+
+:root[data-theme="dark"] .venta-pos-hero {
+  border-color: rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, #0f1115 0%, #151922 42%, #0b0f14 100%);
+}
+
+:root[data-theme="dark"] .venta-pos-hero__stat {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .venta-form__product-card {
+  background: linear-gradient(180deg, rgba(22, 30, 28, 0.95), rgba(15, 21, 19, 0.95));
+}
+
+:root[data-theme="dark"] .venta-form__product-card:hover,
+:root[data-theme="dark"] .venta-form__product-card:focus,
+:root[data-theme="dark"] .venta-pos-suggestion:hover,
+:root[data-theme="dark"] .venta-pos-suggestion:focus {
+  border-color: rgba(34, 197, 94, 0.35);
+  box-shadow: 0 16px 26px rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme="dark"] .venta-pos-suggestions,
+:root[data-theme="dark"] .venta-pos-suspended {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-theme="dark"] .venta-pos-suggestion,
+:root[data-theme="dark"] .venta-pos-suspended__item {
+  background: linear-gradient(180deg, rgba(22, 30, 28, 0.96), rgba(15, 21, 19, 0.96));
+}
+
+:root[data-theme="dark"] .venta-pos-suggestion__badge {
+  background: rgba(34, 197, 94, 0.18);
+  color: #bbf7d0;
+}
+
+:root[data-theme="dark"] .venta-pos-suspended__item small,
+:root[data-theme="dark"] .venta-pos-suspended__item span {
+  color: #9fb4ab;
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__card {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__card--accent {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 34%),
+    linear-gradient(135deg, #0b1110, #121a18);
+  border-color: rgba(34, 197, 94, 0.14);
+}
+
+:root[data-theme="dark"] .venta-pos-balance__item {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .venta-form .surface-card,
+:root[data-theme="dark"] .venta-create-modal__content .surface-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .venta-create-modal__content .surface-card:hover {
+  transform: none;
+}
+
+:root[data-theme="dark"] .venta-form .table,
+:root[data-theme="dark"] .venta-form .ventas-detail-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #eff8f3;
+  --bs-table-border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .venta-form .ventas-detail-table td,
+:root[data-theme="dark"] .venta-form .ventas-detail-table th,
+:root[data-theme="dark"] .venta-form .product-name,
+:root[data-theme="dark"] .venta-form h2,
+:root[data-theme="dark"] .venta-form h3,
+:root[data-theme="dark"] .venta-form strong {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .venta-form .product-code,
+:root[data-theme="dark"] .venta-form .empty-state,
+:root[data-theme="dark"] .venta-form .muted-text,
+:root[data-theme="dark"] .venta-form .section-kicker,
+:root[data-theme="dark"] .venta-form .form-label {
+  color: #aabdb5 !important;
+}
+
+:root[data-theme="dark"] .venta-form .alert-danger {
+  background: rgba(220, 53, 69, 0.16);
+  border-color: rgba(220, 53, 69, 0.28);
+  color: #ffd7dc;
+}
+
+:root[data-theme="dark"] .venta-form .alert-warning {
+  background: rgba(250, 204, 21, 0.12);
+  border-color: rgba(250, 204, 21, 0.2);
+  color: #fde68a;
+}
+
+:root[data-theme="dark"] .venta-form .invalid-feedback,
+:root[data-theme="dark"] .venta-pos-helper--danger {
+  color: #ffb3ba;
+}
+
+:root[data-theme="dark"] .venta-pos-transfer-note {
+  border-color: rgba(34, 197, 94, 0.26);
+  background: rgba(34, 197, 94, 0.08);
+  color: #cfe7da;
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__submit {
+  background: #1f9d55 !important;
+  border-color: #1f9d55 !important;
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__submit:hover,
+:root[data-theme="dark"] .venta-pos-sidebar__submit:focus {
+  background: #188347 !important;
+  border-color: #188347 !important;
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__submit:disabled {
+  background: #355f47 !important;
+  border-color: #355f47 !important;
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__suspend {
+  background: #b42333 !important;
+  border-color: #b42333 !important;
+}
+
+:root[data-theme="dark"] .venta-pos-sidebar__suspend:hover,
+:root[data-theme="dark"] .venta-pos-sidebar__suspend:focus {
+  background: #931f2c !important;
+  border-color: #931f2c !important;
+}
+
+:root[data-theme="dark"] .venta-create-modal {
+  background: rgba(5, 8, 7, 0.78);
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__card {
+  background: linear-gradient(180deg, rgba(14, 20, 18, 0.98), rgba(9, 14, 12, 0.98));
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__header h3,
+:root[data-theme="dark"] .venta-transfer-modal__card .form-label,
+:root[data-theme="dark"] .venta-transfer-modal__card .muted-text {
+  color: #eff8f3 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__close {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__close:hover,
+:root[data-theme="dark"] .venta-transfer-modal__close:focus {
+  background: #1b2230 !important;
+  border-color: #3a4555 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__secondary-button {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+  color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__secondary-button:hover,
+:root[data-theme="dark"] .venta-transfer-modal__secondary-button:focus {
+  background: #1b2230 !important;
+  border-color: #3a4555 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__account-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__account-chip strong {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__account-chip span {
+  color: #aabdb5;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__account-chip.is-active {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.12);
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__static-field {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__static-field strong {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__copy-button {
+  background: #1f9d55 !important;
+  border-color: #1f9d55 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__copy-button:hover,
+:root[data-theme="dark"] .venta-transfer-modal__copy-button:focus {
+  background: #188347 !important;
+  border-color: #188347 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__save-button {
+  background: #1f9d55 !important;
+  border-color: #1f9d55 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__save-button:hover,
+:root[data-theme="dark"] .venta-transfer-modal__save-button:focus {
+  background: #188347 !important;
+  border-color: #188347 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__delete-button {
+  background: #b42333 !important;
+  border-color: #b42333 !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__delete-button:hover,
+:root[data-theme="dark"] .venta-transfer-modal__delete-button:focus {
+  background: #931f2c !important;
+  border-color: #931f2c !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__icon-button {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+
+:root[data-theme="dark"] .venta-transfer-modal__icon-button:hover,
+:root[data-theme="dark"] .venta-transfer-modal__icon-button:focus {
+  background: #1b2230 !important;
+  border-color: #3a4555 !important;
+}
+
+:root[data-theme="dark"] .venta-form__accounts-button {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+
+:root[data-theme="dark"] .venta-form__accounts-button:hover,
+:root[data-theme="dark"] .venta-form__accounts-button:focus {
+  background: #1b2230 !important;
+  border-color: #3a4555 !important;
+}
+
+:root[data-theme="dark"] .product-success-modal__card {
+  background: linear-gradient(180deg, rgba(14, 20, 18, 0.98), rgba(9, 14, 12, 0.98));
+  border-color: rgba(34, 197, 94, 0.22);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme="dark"] .product-success-modal__card h3,
+:root[data-theme="dark"] .product-success-modal__card .muted-text {
+  color: #eff8f3 !important;
+}
+
+:root[data-theme="dark"] .product-success-modal__icon {
+  color: #32d973;
+}

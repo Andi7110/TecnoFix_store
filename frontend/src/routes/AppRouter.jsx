@@ -3,6 +3,7 @@ import ProtectedRoute from "../components/auth/ProtectedRoute";
 import AppLayout from "../components/layout/AppLayout";
 import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/auth/LoginPage";
+import BitacoraPage from "../pages/bitacora/BitacoraPage";
 import CrearMovimientoCajaPage from "../pages/caja/CrearMovimientoCajaPage";
 import CajaMovimientosPage from "../pages/caja/CajaMovimientosPage";
 import CrearProductoPage from "../pages/productos/CrearProductoPage";
@@ -37,6 +38,7 @@ function AppRouter() {
             <Route path="/reparaciones" element={<ReparacionesPage />} />
             <Route path="/reparaciones/nueva" element={<CrearReparacionPage />} />
             <Route path="/reparaciones/:reparacionId/editar" element={<EditarReparacionPage />} />
+            <Route path="/bitacora" element={<BitacoraPage />} />
           </Route>
         </Route>
       </Routes>

@@ -57,6 +57,11 @@ class Modulo extends Model
         return $this->hasMany(MovimientoCaja::class);
     }
 
+    public function bitacoras(): HasMany
+    {
+        return $this->hasMany(Bitacora::class, 'modulo', 'nombre');
+    }
+
     public function reparaciones(): HasMany
     {
         return $this->hasMany(Reparacion::class);

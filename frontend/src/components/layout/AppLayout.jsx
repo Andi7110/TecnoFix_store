@@ -77,6 +77,14 @@ function ReportsIcon() {
   );
 }
 
+function BitacoraIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 3h14v18H5V3Zm3 4h8V5H8v2Zm0 4h8V9H8v2Zm0 4h5v-2H8v2Zm8.5 4a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5Zm0-1.5a1 1 0 1 1 0-2a1 1 0 0 1 0 2Z" />
+    </svg>
+  );
+}
+
 function SearchIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -212,6 +220,13 @@ function getPageMeta(pathname) {
     };
   }
 
+  if (pathname.startsWith("/bitacora")) {
+    return {
+      title: "Bitacora",
+      description: "Consulta el historial de movimientos y acciones del sistema.",
+    };
+  }
+
   if (pathname.startsWith("/productos/inventario")) {
     return {
       title: "Inventario",
@@ -233,7 +248,7 @@ function getPageMeta(pathname) {
 }
 
 function shouldShowBackButton(pathname) {
-  return !["/", "/productos", "/ventas", "/reparaciones", "/caja"].includes(pathname);
+  return !["/", "/productos", "/ventas", "/reparaciones", "/caja", "/bitacora"].includes(pathname);
 }
 
 function AppLayout() {
@@ -420,6 +435,7 @@ function AppLayout() {
     },
     { to: "/reparaciones", label: "Reparaciones", icon: <RepairsIcon /> },
     { to: "/caja", label: "Caja", icon: <CashIcon /> },
+    { to: "/bitacora", label: "Bitacora", icon: <BitacoraIcon /> },
   ];
 
   async function handleConfirmLogout() {
@@ -499,9 +515,9 @@ function AppLayout() {
                   className="btn app-topbar__back"
                   onClick={() => navigate(-1)}
                   title="Volver atras"
+                  aria-label="Volver atras"
                 >
                   <ArrowLeftIcon />
-                  <span>Atras</span>
                 </button>
               ) : null}
 

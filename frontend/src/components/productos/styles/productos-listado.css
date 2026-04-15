@@ -1,0 +1,122 @@
+/* Estilos de la vista /productos: encabezado, filtros y tabla. */
+
+.products-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.products-page__header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.products-page__create-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding-inline: 1rem;
+  background: #1ea852 !important;
+  border: 1px solid #1ea852 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.products-page__create-btn-content {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.products-page__create-btn:hover,
+.products-page__create-btn:focus {
+  background: #189347 !important;
+  border-color: #189347 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.products-page__create-btn-content span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.products-page__create-btn-content svg {
+  flex: 0 0 auto;
+  display: block;
+  align-self: center;
+}
+
+.products-page__create-btn-spinner {
+  color: #ffffff;
+}
+
+.products-page__header h2,
+.products-filters h2 {
+  color: var(--app-ink) !important;
+}
+
+.products-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.products-filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.products-filter-actions__apply {
+  background: #050505 !important;
+  border: 1px solid #050505 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.products-filter-actions__apply:hover,
+.products-filter-actions__apply:focus {
+  background: #111111 !important;
+  border-color: #111111 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.products-filter-actions__clear {
+  background: #d1d5db !important;
+  border: 1px solid #c1c7d0 !important;
+  color: #111827 !important;
+  box-shadow: none;
+}
+
+.products-filter-actions__clear:hover,
+.products-filter-actions__clear:focus {
+  background: #c2c8d1 !important;
+  border-color: #b4bbc6 !important;
+  color: #0f172a !important;
+  box-shadow: none;
+}
+
+.products-table th {
+  color: var(--app-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.products-table__actions {
+  display: inline-flex;
+  gap: 0.5rem;
+}

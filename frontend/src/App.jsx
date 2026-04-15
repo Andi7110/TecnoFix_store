@@ -1,5 +1,6 @@
 import "./App.css";
 import "./components/auth/auth.css";
+import "./components/bitacora/bitacora.css";
 import "./components/caja/caja.css";
 import "./components/dashboard/dashboard.css";
 import "./components/productos/productos.css";

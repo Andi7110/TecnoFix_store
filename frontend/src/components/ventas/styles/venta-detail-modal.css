@@ -1,0 +1,111 @@
+/* Estilos del modal de detalle de venta usado desde el historial. */
+
+.venta-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: rgba(7, 10, 9, 0.68);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.venta-detail-modal__card {
+  width: min(92vw, 960px);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 1.2rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-surface-border);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  padding: 1.25rem;
+}
+
+.venta-detail-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.venta-detail-modal__actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.venta-detail-modal__meta,
+.venta-detail-modal__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.venta-detail-modal__meta > div,
+.venta-detail-modal__summary > div,
+.venta-detail-modal__notes {
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.3);
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.venta-detail-modal__notes p {
+  color: var(--app-ink);
+}
+
+:root[data-theme="dark"] .venta-form__product-card,
+:root[data-theme="dark"] .venta-pos-suggestion,
+:root[data-theme="dark"] .venta-pos-suspended__item,
+:root[data-theme="dark"] .venta-pos-sidebar__card,
+:root[data-theme="dark"] .venta-pos-balance__item,
+:root[data-theme="dark"] .venta-detail-modal__meta > div,
+:root[data-theme="dark"] .venta-detail-modal__summary > div,
+:root[data-theme="dark"] .venta-detail-modal__notes {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .venta-detail-modal__card {
+  background: linear-gradient(180deg, #01050a 0%, #01050a 42%, #03080e 100%);
+  border-color: #30363d;
+}
+
+:root[data-theme="dark"] .venta-detail-modal__meta > div,
+:root[data-theme="dark"] .venta-detail-modal__summary > div,
+:root[data-theme="dark"] .venta-detail-modal__notes {
+  background: rgba(22, 27, 34, 0.72);
+  border-color: #30363d;
+}
+
+:root[data-theme="dark"] .venta-detail-modal__card h3,
+:root[data-theme="dark"] .venta-detail-modal__meta strong,
+:root[data-theme="dark"] .venta-detail-modal__summary strong,
+:root[data-theme="dark"] .venta-detail-modal__notes p,
+:root[data-theme="dark"] .venta-detail-modal .product-name,
+:root[data-theme="dark"] .venta-detail-modal .ventas-detail-table td {
+  color: #f0f6fc;
+}
+
+:root[data-theme="dark"] .venta-detail-modal .section-kicker,
+:root[data-theme="dark"] .venta-detail-modal .muted-text,
+:root[data-theme="dark"] .venta-detail-modal .product-code {
+  color: #9fb0c0 !important;
+}
+
+:root[data-theme="dark"] .venta-detail-modal .ventas-detail-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #f0f6fc;
+  --bs-table-border-color: #30363d;
+}
+
+:root[data-theme="dark"] .venta-detail-modal .ventas-detail-table th {
+  color: #f0f6fc;
+}
