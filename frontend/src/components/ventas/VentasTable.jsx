@@ -22,17 +22,51 @@ function formatMetodo(value) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function VentasTableSkeleton() {
+  return (
+    <div className="surface-card ventas-table-wrapper ventas-table-wrapper--loading">
+      <div className="table-responsive">
+        <table className="table align-middle products-table inventory-table ventas-table">
+          <thead>
+            <tr>
+              <th>Numero</th>
+              <th>Modulo</th>
+              <th>Fecha</th>
+              <th>Items</th>
+              <th>Metodo</th>
+              <th>Total</th>
+              <th className="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <tr key={index}>
+                <td>
+                  <span className="ventas-loading-cell ventas-loading-cell--title" />
+                  <span className="ventas-loading-cell ventas-loading-cell--small" />
+                </td>
+                <td><span className="ventas-loading-cell ventas-loading-cell--medium" /></td>
+                <td><span className="ventas-loading-cell ventas-loading-cell--medium" /></td>
+                <td><span className="ventas-loading-cell ventas-loading-cell--badge" /></td>
+                <td><span className="ventas-loading-cell ventas-loading-cell--medium" /></td>
+                <td><span className="ventas-loading-cell ventas-loading-cell--medium" /></td>
+                <td className="text-end"><span className="ventas-loading-cell ventas-loading-cell--button" /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function VentasTable({
   ventas,
   loading,
   onViewDetail,
 }) {
   if (loading) {
-    return (
-      <div className="surface-card">
-        <p className="empty-state">Cargando ventas...</p>
-      </div>
-    );
+    return <VentasTableSkeleton />;
   }
 
   if (ventas.length === 0) {
@@ -75,7 +109,7 @@ function VentasTable({
                 <td className="text-end">
                   <button
                     type="button"
-                    className="btn btn-sm btn-success"
+                    className="btn btn-sm ventas-table__detail-button"
                     onClick={() => onViewDetail(venta.id)}
                   >
                     Detalle

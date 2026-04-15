@@ -6,7 +6,7 @@ function VentasFilters({
   onClear,
 }) {
   return (
-    <form className="surface-card ventas-filters" onSubmit={onSubmit}>
+    <form className="surface-card ventas-filters ventas-filters--minimal" onSubmit={onSubmit}>
       <div className="section-heading">
         <div>
           <p className="section-kicker">Busqueda</p>
