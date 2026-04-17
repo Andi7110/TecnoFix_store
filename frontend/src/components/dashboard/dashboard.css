@@ -5,6 +5,52 @@
   margin-bottom: 1.35rem;
 }
 
+.dashboard-page {
+  position: relative;
+}
+
+.dashboard-login-success {
+  position: fixed;
+  top: 1.05rem;
+  right: 1.25rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid #2ea043;
+  background: #2ea043;
+  color: #f0fff4;
+  font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow:
+    0 10px 24px rgba(1, 4, 9, 0.24),
+    0 0 0 1px rgba(46, 160, 67, 0.12);
+  animation: dashboard-login-success-in 260ms ease-out;
+}
+
+.dashboard-login-success__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #f0fff4;
+  box-shadow:
+    0 0 0 0.18rem rgba(240, 255, 244, 0.18),
+    0 0 10px rgba(240, 255, 244, 0.2);
+}
+
+@keyframes dashboard-login-success-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .dashboard-command-center h2,
 .dashboard-card h3,
 .dashboard-day-summary strong,
@@ -75,6 +121,17 @@
   margin-bottom: 3.75rem;
   width: calc((100% - 4.6rem) / 5 * 4 + 3.45rem);
   max-width: 100%;
+}
+
+.dashboard-subheading {
+  margin-bottom: 1rem;
+}
+
+.dashboard-subheading h3 {
+  margin: 0;
+  color: var(--app-ink);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .dashboard-actions-shell .section-heading {
@@ -303,6 +360,114 @@
   gap: 1rem;
 }
 
+.dashboard-loading {
+  pointer-events: none;
+}
+
+.dashboard-loading-card,
+.dashboard-loading-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-loading-line {
+  display: block;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  transform-origin: left center;
+  animation: dashboard-loading-pulse 1s ease-in-out infinite;
+}
+
+.dashboard-loading-line + .dashboard-loading-line {
+  margin-top: 0.45rem;
+}
+
+.dashboard-loading-line--icon {
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 0.5rem;
+  flex: 0 0 1.55rem;
+}
+
+.dashboard-loading-line--label {
+  width: min(120px, 100%);
+  height: 0.78rem;
+}
+
+.dashboard-loading-line--small {
+  width: min(92px, 70%);
+  height: 0.62rem;
+}
+
+.dashboard-loading-line--medium {
+  width: min(140px, 84%);
+  height: 0.78rem;
+}
+
+.dashboard-loading-line--wide {
+  width: min(100%, 280px);
+  height: 0.78rem;
+}
+
+.dashboard-loading-line--value {
+  width: min(160px, 90%);
+  height: 1rem;
+}
+
+.dashboard-loading-line--button {
+  width: 5rem;
+  height: 1.9rem;
+  border-radius: 0.7rem;
+}
+
+.dashboard-loading-line--inline-end {
+  margin-left: auto;
+}
+
+.dashboard-loading-card--action {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(21, 128, 61, 0.12);
+  background: transparent;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 3rem;
+}
+
+.dashboard-loading-table {
+  position: relative;
+}
+
+.dashboard-loading-table .table-responsive {
+  opacity: 0.72;
+}
+
+.dashboard-loading-table::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  z-index: 3;
+  width: 100%;
+  height: 0.22rem;
+  overflow: hidden;
+  background: rgba(21, 128, 61, 0.12);
+}
+
+.dashboard-loading-table::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: 34%;
+  height: 0.22rem;
+  background: linear-gradient(90deg, transparent, #15803d, transparent);
+  animation: dashboard-loading-sweep 900ms ease-in-out infinite;
+}
+
 .dashboard-section-card .repairs-table th,
 .dashboard-section-card .repairs-table td {
   color: var(--app-ink);
@@ -365,6 +530,27 @@
 
 .dashboard-day-summary strong {
   font-size: 1.02rem;
+}
+
+@keyframes dashboard-loading-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+@keyframes dashboard-loading-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.68;
+    transform: translateY(-1px);
+  }
 }
 
 :root[data-theme="dark"] .dashboard-command-center h2,
@@ -445,6 +631,23 @@
 :root[data-theme="dark"] .dashboard-activity-item__badge {
   background: rgba(46, 160, 67, 0.14);
   color: #7ee787;
+}
+
+:root[data-theme="dark"] .dashboard-loading-line {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+:root[data-theme="dark"] .dashboard-loading-card--action {
+  border-color: rgba(34, 197, 94, 0.18);
+  background: transparent;
+}
+
+:root[data-theme="dark"] .dashboard-loading-table::before {
+  background: rgba(34, 197, 94, 0.16);
+}
+
+:root[data-theme="dark"] .dashboard-loading-table::after {
+  background: linear-gradient(90deg, transparent, #22c55e, transparent);
 }
 
 @media (max-width: 1200px) {

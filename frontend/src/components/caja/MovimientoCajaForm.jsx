@@ -13,7 +13,7 @@ function MovimientoCajaForm({
   onCancel,
 }) {
   return (
-    <form className="surface-card product-form" onSubmit={onSubmit}>
+    <form className="surface-card product-form cash-form" onSubmit={onSubmit}>
       <div className="section-heading">
         <div>
           <p className="section-kicker">Caja</p>
@@ -127,10 +127,10 @@ function MovimientoCajaForm({
       </div>
 
       <div className="products-filter-actions">
-        <button type="submit" className="btn btn-primary" disabled={saving}>
+        <button type="submit" className="btn products-filter-actions__apply" disabled={saving}>
           {saving ? "Guardando..." : "Registrar movimiento"}
         </button>
-        <button type="button" className="btn btn-light" onClick={onCancel}>
+        <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
           Cancelar
         </button>
       </div>

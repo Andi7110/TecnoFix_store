@@ -14,6 +14,7 @@ export function useLoginForm(redirectTo = "/") {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   function updateValue(name, value) {
@@ -28,10 +29,15 @@ export function useLoginForm(redirectTo = "/") {
     setSubmitting(true);
     setErrors({});
     setMessage("");
+    setSuccessMessage("");
 
     try {
       await login(values);
-      navigate(redirectTo, { replace: true });
+      setSuccessMessage("Sesion iniciada con exito");
+      window.sessionStorage.setItem("tecnofix-login-success", "1");
+      window.setTimeout(() => {
+        navigate(redirectTo, { replace: true });
+      }, 900);
     } catch (error) {
       if (error?.response?.status === 422) {
         setErrors(error.response.data.errors ?? {});
@@ -48,6 +54,7 @@ export function useLoginForm(redirectTo = "/") {
     values,
     errors,
     message,
+    successMessage,
     submitting,
     updateValue,
     submit,

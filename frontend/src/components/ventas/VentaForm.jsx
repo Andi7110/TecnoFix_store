@@ -1,5 +1,5 @@
 import { Check, Copy, CreditCard, ShareNetwork, X } from "../../icons/phosphor";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 function fieldError(errors, name) {
@@ -33,6 +33,7 @@ function formatDateTime(value) {
 function VentaForm({
   values,
   modulos,
+  categorias,
   items,
   productos,
   searchTerm,
@@ -57,6 +58,7 @@ function VentaForm({
   selectedTransferAccountId,
   isCreatingTransferAccount,
   loadingTransferAccounts,
+  loadingCategorias,
   savingTransferAccount,
   transferAccountsError,
   ventasSuspendidas,
@@ -87,6 +89,9 @@ function VentaForm({
 }) {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [transferActionMessage, setTransferActionMessage] = useState("");
+  const searchInputRef = useRef(null);
+  const scannerBufferRef = useRef("");
+  const scannerTimeoutRef = useRef(null);
   const quickAmounts = [10, 20, 50, 100];
   const moduloPorId = new Map(modulos.map((modulo) => [String(modulo.id), modulo.nombre]));
   const montoRecibidoInsuficiente = values.metodo_pago === "efectivo" && total > 0 && faltante > 0;
@@ -108,6 +113,87 @@ function VentaForm({
       }, 2200);
     }
   }
+
+  function focusSearchInput() {
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select?.();
+      });
+    }
+  }
+
+  function handleQuickSearchSubmit(rawValue = searchTerm) {
+    onSearchSubmit(rawValue);
+    focusSearchInput();
+  }
+
+  useEffect(() => {
+    if (!values.modulo_id) {
+      return;
+    }
+
+    focusSearchInput();
+  }, [values.modulo_id]);
+
+  useEffect(() => {
+    if (!values.modulo_id) {
+      scannerBufferRef.current = "";
+      return undefined;
+    }
+
+    function clearScannerBuffer() {
+      scannerBufferRef.current = "";
+
+      if (scannerTimeoutRef.current) {
+        window.clearTimeout(scannerTimeoutRef.current);
+        scannerTimeoutRef.current = null;
+      }
+    }
+
+    function handleScannerKeydown(event) {
+      const target = event.target;
+      const tagName = target?.tagName;
+      const isTypingField = target?.isContentEditable
+        || tagName === "INPUT"
+        || tagName === "TEXTAREA"
+        || tagName === "SELECT";
+
+      if (isTypingField) {
+        return;
+      }
+
+      if (event.key === "Enter" && scannerBufferRef.current) {
+        event.preventDefault();
+        onSearchChange(scannerBufferRef.current);
+        handleQuickSearchSubmit(scannerBufferRef.current);
+        clearScannerBuffer();
+        return;
+      }
+
+      if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) {
+        return;
+      }
+
+      scannerBufferRef.current += event.key;
+
+      if (scannerTimeoutRef.current) {
+        window.clearTimeout(scannerTimeoutRef.current);
+      }
+
+      scannerTimeoutRef.current = window.setTimeout(() => {
+        scannerBufferRef.current = "";
+        scannerTimeoutRef.current = null;
+      }, 180);
+    }
+
+    window.addEventListener("keydown", handleScannerKeydown);
+
+    return () => {
+      window.removeEventListener("keydown", handleScannerKeydown);
+      clearScannerBuffer();
+    };
+  }, [handleQuickSearchSubmit, onSearchChange, values.modulo_id]);
 
   async function copyTransferSummary() {
     if (!transferSummary || typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
@@ -200,6 +286,32 @@ function VentaForm({
             </div>
 
             <div>
+              <label className="form-label">Categoria</label>
+              <select
+                className={`form-select ${fieldError(errors, "categoria_id") ? "is-invalid" : ""}`}
+                value={values.categoria_id}
+                onChange={(event) => onChange("categoria_id", event.target.value)}
+                disabled={!values.modulo_id || loadingCategorias}
+              >
+                <option value="">
+                  {!values.modulo_id
+                    ? "Selecciona primero un modulo"
+                    : loadingCategorias
+                      ? "Cargando categorias..."
+                      : categorias.length === 0
+                        ? "No hay categorias disponibles"
+                        : "Todas las categorias"}
+                </option>
+                {categorias.map((categoria) => (
+                  <option key={categoria.id} value={categoria.id}>
+                    {categoria.nombre}
+                  </option>
+                ))}
+              </select>
+              <div className="invalid-feedback">{fieldError(errors, "categoria_id")}</div>
+            </div>
+
+            <div>
               <label className="form-label">Fecha de venta</label>
               <input
                 className={`form-control ${fieldError(errors, "fecha_venta") ? "is-invalid" : ""}`}
@@ -257,26 +369,28 @@ function VentaForm({
             <div className="venta-pos-searchbar__input">
               <label className="form-label">Busqueda rapida</label>
               <input
+                ref={searchInputRef}
                 className="form-control venta-pos-searchbar__field"
                 value={searchTerm}
                 onChange={(event) => onSearchChange(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
                     event.preventDefault();
-                    onSearchSubmit();
+                    handleQuickSearchSubmit();
                   }
                 }}
                 placeholder={values.modulo_id
-                  ? "Escribe codigo o nombre y presiona Enter"
+                  ? "Escanea o escribe codigo y presiona Enter"
                   : "Selecciona un modulo para habilitar la caja"}
                 disabled={!values.modulo_id}
+                autoComplete="off"
               />
             </div>
 
             <button
               type="button"
               className="btn btn-dark venta-pos-searchbar__action"
-              onClick={onSearchSubmit}
+              onClick={() => handleQuickSearchSubmit()}
               disabled={!values.modulo_id}
             >
               Agregar rapido
@@ -311,9 +425,25 @@ function VentaForm({
                   className="venta-form__product-card"
                   onClick={() => onAddProducto(producto)}
                 >
-                  <div>
-                    <div className="product-name">{producto.nombre}</div>
-                    <div className="product-code">{producto.codigo}</div>
+                  <div className="venta-form__product-main">
+                    <div className="venta-form__product-photo">
+                      {producto.foto_url ? (
+                        <img
+                          src={producto.foto_url}
+                          alt={producto.nombre}
+                          className="venta-form__product-photo-image"
+                        />
+                      ) : (
+                        <span>Sin foto</span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="product-name">{producto.nombre}</div>
+                      <div className="product-code">{producto.codigo}</div>
+                      <small className="muted-text">
+                        {producto.categoria?.nombre ?? "Sin categoria"}
+                      </small>
+                    </div>
                   </div>
                   <div className="venta-form__product-meta">
                     <span className={`inventory-stock-badge ${Number(producto.stock_bajo) ? "ventas-stock-warning" : ""}`}>
@@ -325,35 +455,6 @@ function VentaForm({
               ))}
             </div>
           </div>
-
-          {productosSugeridos.length > 0 ? (
-            <div className="venta-pos-suggestions">
-              <div className="venta-pos-suggestions__header">
-                <div>
-                  <p className="section-kicker">Smart upsell</p>
-                  <h3>Sugerencias para esta venta</h3>
-                </div>
-              </div>
-
-              <div className="venta-pos-suggestions__grid">
-                {productosSugeridos.map((producto) => (
-                  <button
-                    key={producto.id}
-                    type="button"
-                    className="venta-pos-suggestion"
-                    onClick={() => onAddProducto(producto)}
-                  >
-                    <span className="venta-pos-suggestion__badge">
-                      {Number(producto.stock_bajo) ? "Stock bajo" : "Margen sugerido"}
-                    </span>
-                    <strong>{producto.nombre}</strong>
-                    <small>{producto.codigo}</small>
-                    <span>{formatCurrency(producto.precio_venta)}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
 
           {ventasSuspendidas.length > 0 ? (
             <div className="venta-pos-suspended">

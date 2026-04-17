@@ -31,6 +31,16 @@
     align-items: stretch;
   }
 
+  .barcode-modal__toolbar,
+  .barcode-modal__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .barcode-modal__summary {
+    grid-template-columns: repeat(2, auto);
+  }
+
   .products-filter-grid {
     grid-template-columns: 1fr;
   }

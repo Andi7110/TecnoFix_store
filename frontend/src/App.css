@@ -112,6 +112,10 @@
   text-transform: uppercase;
 }
 
+.products-page__header .section-kicker {
+  display: none;
+}
+
 .app-nav {
   display: flex;
   flex-direction: column;

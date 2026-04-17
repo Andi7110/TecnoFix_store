@@ -16,12 +16,16 @@ function CrearVentaPage() {
       setTicketConfig(nextTicketConfig);
     },
   });
-  const { modulos } = useProductoCatalogos("", true);
+  const { modulos, categorias, loadingCategorias } = useProductoCatalogos(form.values.modulo_id, true);
+  const modulosPos = modulos.filter(
+    (modulo) => String(modulo.nombre ?? "").trim().toLowerCase() !== "bitacora",
+  );
 
   return (
     <section>
       <VentaForm
-        modulos={modulos}
+        modulos={modulosPos}
+        categorias={categorias}
         values={form.values}
         items={form.items}
         productos={form.productos}
@@ -47,6 +51,7 @@ function CrearVentaPage() {
         selectedTransferAccountId={form.selectedTransferAccountId}
         isCreatingTransferAccount={form.isCreatingTransferAccount}
         loadingTransferAccounts={form.loadingTransferAccounts}
+        loadingCategorias={loadingCategorias}
         savingTransferAccount={form.savingTransferAccount}
         transferAccountsError={form.transferAccountsError}
         ventasSuspendidas={form.ventasSuspendidas}

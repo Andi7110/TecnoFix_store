@@ -31,7 +31,7 @@ function CajaMovimientosPage() {
         </div>
 
         <div className="products-page__header-actions">
-          <Link to="/caja/nuevo" className="btn btn-primary">
+          <Link to="/caja/nuevo" className="btn products-page__create-btn">
             Nuevo movimiento
           </Link>
         </div>

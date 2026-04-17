@@ -2,14 +2,12 @@
 
 .venta-form {
   border: 1px solid var(--app-surface-border);
-  background:
-    radial-gradient(circle at top right, rgba(255, 196, 107, 0.18), transparent 24%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96));
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .venta-form.surface-card:hover {
   transform: none;
-  box-shadow: 0 18px 45px var(--app-surface-shadow);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
   border-color: var(--app-surface-border);
 }
 
@@ -34,18 +32,18 @@
   min-height: 42px;
   padding: 0.55rem 0.9rem;
   border-radius: 0.9rem;
-  border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  background: #0f172a !important;
-  color: #ffffff !important;
+  border: 1px solid var(--app-surface-border) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: var(--app-ink) !important;
   box-shadow: none;
   white-space: nowrap;
 }
 
 .venta-form__accounts-button:hover,
 .venta-form__accounts-button:focus {
-  background: #111827 !important;
-  border-color: rgba(15, 23, 42, 0.22) !important;
-  color: #ffffff !important;
+  background: rgba(30, 168, 82, 0.08) !important;
+  border-color: rgba(30, 168, 82, 0.24) !important;
+  color: var(--app-ink) !important;
   box-shadow: none;
 }
 
@@ -66,18 +64,18 @@
   gap: 1rem;
   padding: 1.25rem;
   border-radius: 1.25rem;
-  border: 1px solid #0f172a;
-  background: #0f172a;
+  border: 1px solid var(--app-surface-border);
+  background: #f3f4f6;
 }
 
 .venta-pos-hero h2 {
   margin: 0;
-  color: #ffffff;
+  color: var(--app-ink);
 }
 
 .venta-pos-hero .section-kicker,
 .venta-pos-hero .muted-text {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: var(--app-muted) !important;
 }
 
 .venta-pos-hero__stats {
@@ -88,8 +86,8 @@
 
 .venta-pos-hero__stat {
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--app-surface-border);
   padding: 0.9rem 1rem;
   display: flex;
   flex-direction: column;
@@ -98,7 +96,7 @@
 
 .venta-pos-hero__stat strong {
   font-size: 1.05rem;
-  color: #ffffff;
+  color: var(--app-ink);
   line-height: 1.2;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -159,6 +157,38 @@
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.venta-form__product-main {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.venta-form__product-photo {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--app-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0.35rem;
+}
+
+.venta-form__product-photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .venta-form__product-card:hover,
 .venta-form__product-card:focus {
   transform: translateY(-0.1rem);
@@ -176,14 +206,14 @@
 .venta-pos-suggestions {
   border-radius: 1.15rem;
   border: 1px solid var(--app-surface-border);
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.72);
   padding: 1rem;
 }
 
 .venta-pos-suspended {
   border-radius: 1.15rem;
   border: 1px solid var(--app-surface-border);
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.72);
   padding: 1rem;
 }
 
@@ -199,23 +229,22 @@
 }
 
 .venta-pos-suggestion {
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--app-surface-border);
   border-radius: 1rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+  background: rgba(255, 255, 255, 0.92);
   color: var(--app-ink);
   text-align: left;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .venta-pos-suggestion:hover,
 .venta-pos-suggestion:focus {
-  transform: translateY(-0.08rem);
   border-color: rgba(34, 197, 94, 0.35);
-  box-shadow: 0 16px 24px rgba(15, 23, 42, 0.08);
+  background: rgba(30, 168, 82, 0.05);
 }
 
 .venta-pos-suggestion strong {
@@ -245,9 +274,9 @@
 }
 
 .venta-pos-suspended__item {
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--app-surface-border);
   border-radius: 1rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+  background: rgba(255, 255, 255, 0.92);
   padding: 0.95rem 1rem;
   display: flex;
   align-items: center;
@@ -308,13 +337,13 @@
 
 .venta-form__summary-card--accent {
   border-color: rgba(30, 168, 82, 0.22);
-  background: linear-gradient(135deg, rgba(30, 168, 82, 0.1), rgba(255, 255, 255, 0.7));
+  background: rgba(30, 168, 82, 0.08);
 }
 
 .venta-pos-sidebar__card {
   border-radius: 1.1rem;
   border: 1px solid var(--app-surface-border);
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.88);
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -322,16 +351,14 @@
 }
 
 .venta-pos-sidebar__card--accent {
-  background:
-    radial-gradient(circle at top right, rgba(34, 197, 94, 0.18), transparent 34%),
-    linear-gradient(135deg, #0f172a, #1e293b);
-  border-color: rgba(15, 23, 42, 0.08);
+  background: #161b22;
+  border-color: #30363d;
 }
 
 .venta-pos-sidebar__card--accent .muted-text,
 .venta-pos-sidebar__card--accent small,
 .venta-pos-sidebar__card--accent strong {
-  color: #f8fafc;
+  color: #eff8f3;
 }
 
 .venta-pos-sidebar__card--accent strong {
@@ -366,8 +393,8 @@
 
 .venta-pos-balance__item {
   border-radius: 0.9rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: #f8fafc;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.84);
   padding: 0.85rem 0.9rem;
   display: flex;
   flex-direction: column;
@@ -433,17 +460,17 @@
 }
 
 .venta-pos-sidebar__suspend {
-  background: #dc3545 !important;
-  border: 1px solid #dc3545 !important;
-  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(220, 53, 69, 0.22) !important;
+  color: #b02a37 !important;
   box-shadow: none;
 }
 
 .venta-pos-sidebar__suspend:hover,
 .venta-pos-sidebar__suspend:focus {
-  background: #bb2d3b !important;
-  border-color: #b02a37 !important;
-  color: #ffffff !important;
+  background: rgba(220, 53, 69, 0.08) !important;
+  border-color: rgba(220, 53, 69, 0.3) !important;
+  color: #b02a37 !important;
   box-shadow: none;
 }
 
@@ -794,18 +821,16 @@
 
 :root[data-theme="dark"] .venta-form {
   border-color: rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at top right, rgba(250, 204, 21, 0.1), transparent 24%),
-    linear-gradient(180deg, rgba(17, 24, 22, 0.96), rgba(12, 18, 16, 0.96));
+  background: rgba(10, 15, 20, 0.94);
 }
 
 :root[data-theme="dark"] .venta-pos-hero {
   border-color: rgba(255, 255, 255, 0.06);
-  background: linear-gradient(180deg, #0f1115 0%, #151922 42%, #0b0f14 100%);
+  background: #161b22;
 }
 
 :root[data-theme="dark"] .venta-pos-hero__stat {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -813,12 +838,18 @@
   background: linear-gradient(180deg, rgba(22, 30, 28, 0.95), rgba(15, 21, 19, 0.95));
 }
 
+:root[data-theme="dark"] .venta-form__product-photo {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #aabdb5;
+}
+
 :root[data-theme="dark"] .venta-form__product-card:hover,
 :root[data-theme="dark"] .venta-form__product-card:focus,
 :root[data-theme="dark"] .venta-pos-suggestion:hover,
 :root[data-theme="dark"] .venta-pos-suggestion:focus {
   border-color: rgba(34, 197, 94, 0.35);
-  box-shadow: 0 16px 26px rgba(0, 0, 0, 0.28);
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .venta-pos-suggestions,
@@ -829,7 +860,7 @@
 
 :root[data-theme="dark"] .venta-pos-suggestion,
 :root[data-theme="dark"] .venta-pos-suspended__item {
-  background: linear-gradient(180deg, rgba(22, 30, 28, 0.96), rgba(15, 21, 19, 0.96));
+  background: rgba(255, 255, 255, 0.04);
 }
 
 :root[data-theme="dark"] .venta-pos-suggestion__badge {
@@ -847,14 +878,12 @@
 }
 
 :root[data-theme="dark"] .venta-pos-sidebar__card--accent {
-  background:
-    radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 34%),
-    linear-gradient(135deg, #0b1110, #121a18);
-  border-color: rgba(34, 197, 94, 0.14);
+  background: #161b22;
+  border-color: #30363d;
 }
 
 :root[data-theme="dark"] .venta-pos-balance__item {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 :root[data-theme="dark"] .venta-form .surface-card,
@@ -932,14 +961,15 @@
 }
 
 :root[data-theme="dark"] .venta-pos-sidebar__suspend {
-  background: #b42333 !important;
-  border-color: #b42333 !important;
+  background: rgba(180, 35, 51, 0.08) !important;
+  border-color: rgba(180, 35, 51, 0.28) !important;
+  color: #ffbec6 !important;
 }
 
 :root[data-theme="dark"] .venta-pos-sidebar__suspend:hover,
 :root[data-theme="dark"] .venta-pos-sidebar__suspend:focus {
-  background: #931f2c !important;
-  border-color: #931f2c !important;
+  background: rgba(180, 35, 51, 0.14) !important;
+  border-color: rgba(180, 35, 51, 0.36) !important;
 }
 
 :root[data-theme="dark"] .venta-create-modal {
@@ -1053,14 +1083,16 @@
 }
 
 :root[data-theme="dark"] .venta-form__accounts-button {
-  background: #161b22 !important;
-  border-color: #30363d !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #eff8f3 !important;
 }
 
 :root[data-theme="dark"] .venta-form__accounts-button:hover,
 :root[data-theme="dark"] .venta-form__accounts-button:focus {
-  background: #1b2230 !important;
-  border-color: #3a4555 !important;
+  background: rgba(34, 197, 94, 0.08) !important;
+  border-color: rgba(34, 197, 94, 0.18) !important;
+  color: #ffffff !important;
 }
 
 :root[data-theme="dark"] .product-success-modal__card {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import VentasReportsPanel from "../../components/ventas/VentasReportsPanel";
 import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos";
 import { useVentasReports } from "../../hooks/ventas/useVentasReports";
@@ -8,6 +8,19 @@ function VentasReportesPage() {
   const [dailyFilters, setDailyFilters] = useState(reports.initialFilters.daily);
   const [monthlyFilters, setMonthlyFilters] = useState(reports.initialFilters.monthly);
   const { modulos } = useProductoCatalogos("", true);
+  const reportModules = useMemo(
+    () =>
+      modulos.filter((modulo) => {
+        const normalizedName = String(modulo?.nombre ?? "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .trim()
+          .toLowerCase();
+
+        return normalizedName !== "bitacora";
+      }),
+    [modulos],
+  );
 
   function updateDailyFilter(name, value) {
     setDailyFilters((current) => ({
@@ -36,7 +49,7 @@ function VentasReportesPage() {
       </div>
 
       <VentasReportsPanel
-        modulos={modulos}
+        modulos={reportModules}
         dailyValues={dailyFilters}
         onDailyChange={updateDailyFilter}
         onDailySubmit={() => reports.generateDailyReport(dailyFilters)}

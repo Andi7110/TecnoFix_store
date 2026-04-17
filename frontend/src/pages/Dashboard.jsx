@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { useMemo } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
@@ -160,17 +160,144 @@ function ComparisonCard({ title, comparison, format = "money" }) {
   );
 }
 
+function DashboardLoadingSkeleton() {
+  return (
+    <div className="dashboard-loading" aria-hidden="true">
+      <div className="dashboard-actions-shell">
+        <div className="dashboard-actions-grid">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={`action-${index}`} className="dashboard-loading-card dashboard-loading-card--action">
+              <span className="dashboard-loading-line dashboard-loading-line--icon" />
+              <span className="dashboard-loading-line dashboard-loading-line--label" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="dashboard-metrics-grid">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <article key={`metric-${index}`} className="surface-card dashboard-metric-card dashboard-loading-card">
+            <div>
+              <span className="dashboard-loading-line dashboard-loading-line--small" />
+              <span className="dashboard-loading-line dashboard-loading-line--value" />
+            </div>
+            <span className="dashboard-loading-line dashboard-loading-line--medium" />
+          </article>
+        ))}
+      </div>
+
+      <div className="dashboard-alerts-grid">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <article key={`alert-${index}`} className="dashboard-alert-card dashboard-loading-card">
+            <div>
+              <span className="dashboard-loading-line dashboard-loading-line--medium" />
+              <span className="dashboard-loading-line dashboard-loading-line--wide" />
+            </div>
+            <span className="dashboard-loading-line dashboard-loading-line--button" />
+          </article>
+        ))}
+      </div>
+
+      <div className="dashboard-insights-grid">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <article key={`insight-${index}`} className="dashboard-insight-card dashboard-loading-card">
+            <span className="dashboard-loading-line dashboard-loading-line--small" />
+            <span className="dashboard-loading-line dashboard-loading-line--value" />
+            <span className="dashboard-loading-line dashboard-loading-line--wide" />
+          </article>
+        ))}
+      </div>
+
+      <div className="dashboard-comparison-grid">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <article key={`comparison-${index}`} className="dashboard-comparison-card dashboard-loading-card">
+            <span className="dashboard-loading-line dashboard-loading-line--small" />
+            <span className="dashboard-loading-line dashboard-loading-line--value" />
+            <span className="dashboard-loading-line dashboard-loading-line--medium" />
+            <span className="dashboard-loading-line dashboard-loading-line--small" />
+          </article>
+        ))}
+      </div>
+
+      <div className="dashboard-bottom-grid">
+        <div className="surface-card dashboard-section-card dashboard-loading-table">
+          <div className="section-heading">
+            <div>
+              <span className="dashboard-loading-line dashboard-loading-line--small" />
+              <span className="dashboard-loading-line dashboard-loading-line--medium" />
+            </div>
+          </div>
+          <div className="table-responsive mt-3">
+            <table className="table align-middle repairs-table">
+              <thead>
+                <tr>
+                  <th>Modulo</th>
+                  <th>Ventas</th>
+                  <th className="text-end">Total vendido</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <tr key={`row-${index}`}>
+                    <td><span className="dashboard-loading-line dashboard-loading-line--medium" /></td>
+                    <td><span className="dashboard-loading-line dashboard-loading-line--small" /></td>
+                    <td className="text-end"><span className="dashboard-loading-line dashboard-loading-line--medium dashboard-loading-line--inline-end" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Dashboard() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { summary, loading, error } = useDashboardSummary();
   const alerts = useMemo(() => buildAlerts(summary), [summary]);
   const insights = useMemo(() => buildInsights(summary), [summary]);
+  const [showLoginSuccess, setShowLoginSuccess] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.sessionStorage.getItem("tecnofix-login-success") === "1";
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.sessionStorage.getItem("tecnofix-login-success") === "1") {
+      setShowLoginSuccess(true);
+      window.sessionStorage.removeItem("tecnofix-login-success");
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowLoginSuccess(false);
+    }, 3200);
+
+    if (location.state && Object.keys(location.state).length > 0) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [location.pathname, location.state, navigate]);
 
   return (
     <section className="dashboard-page">
+      {showLoginSuccess ? (
+        <div className="dashboard-login-success" role="status" aria-live="polite">
+          <span className="dashboard-login-success__dot" />
+          <span>Registro exitoso</span>
+        </div>
+      ) : null}
+
       <div className="products-page__header dashboard-command-center">
         <div>
-          <p className="section-kicker">Dashboard</p>
-          <h2>Operacion diaria de TecnoFix</h2>
+          <h2>Inicio TecnoFix</h2>
           <p className="muted-text">
             Supervisa ventas, caja, inventario y taller desde una sola vista operativa.
           </p>
@@ -187,9 +314,7 @@ function Dashboard() {
       {error ? <div className="alert alert-danger">{error}</div> : null}
 
       {loading ? (
-        <div className="surface-card">
-          <p className="empty-state">Cargando resumen del dashboard...</p>
-        </div>
+        <DashboardLoadingSkeleton />
       ) : (
         <>
           <div className="dashboard-actions-shell">
@@ -220,6 +345,10 @@ function Dashboard() {
                 icon={<Package size={22} weight="bold" />}
               />
             </div>
+          </div>
+
+          <div className="dashboard-subheading">
+            <h3>Detalles de la tienda</h3>
           </div>
 
           <DashboardMetricCards today={summary.today} />

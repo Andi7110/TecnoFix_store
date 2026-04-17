@@ -28,12 +28,19 @@ function LoginForm({
   values,
   errors,
   message,
+  successMessage,
   submitting,
   onChange,
   onSubmit,
 }) {
   return (
     <form className="auth-card" onSubmit={onSubmit}>
+      {successMessage ? (
+        <div className="auth-card__success-badge" aria-live="polite">
+          <span className="auth-card__success-dot" />
+          <span>{successMessage}</span>
+        </div>
+      ) : null}
       <Box className="auth-card__panel auth-card__panel--brand">
         <Typography className="auth-card__brand" component="p">
           TecnoFix
@@ -66,7 +73,7 @@ function LoginForm({
         <Box className="auth-card__header">
           <Typography
             className="auth-card__eyebrow"
-            sx={{ color: "#72808d", fontFamily: "inherit" }}
+            sx={{ color: "#d4d4d4", fontFamily: "inherit" }}
           >
             Bienvenido
           </Typography>
@@ -81,35 +88,45 @@ function LoginForm({
         {message ? <Alert severity="error">{message}</Alert> : null}
 
         <Stack spacing={2.2}>
-          <TextField
-            id="username"
-            label="Usuario o email"
-            type="text"
-            value={values.username}
-            onChange={(event) => onChange("username", event.target.value)}
-            autoComplete="username"
-            error={Boolean(errors.username)}
-            helperText={errors.username?.[0] ?? " "}
-            fullWidth
-            size="medium"
-            sx={fieldStyles}
-            required
-          />
+          <Box className="auth-form__field">
+            <Typography component="label" htmlFor="username" className="auth-form__label">
+              Usuario o email
+            </Typography>
+            <TextField
+              id="username"
+              type="text"
+              value={values.username}
+              onChange={(event) => onChange("username", event.target.value)}
+              autoComplete="username"
+              error={Boolean(errors.username)}
+              helperText={errors.username?.[0] ?? " "}
+              placeholder="Usuario o email"
+              fullWidth
+              size="medium"
+              sx={fieldStyles}
+              required
+            />
+          </Box>
 
-          <TextField
-            id="password"
-            label="Contrasena"
-            type="password"
-            value={values.password}
-            onChange={(event) => onChange("password", event.target.value)}
-            autoComplete="current-password"
-            error={Boolean(errors.password)}
-            helperText={errors.password?.[0] ?? " "}
-            fullWidth
-            size="medium"
-            sx={fieldStyles}
-            required
-          />
+          <Box className="auth-form__field">
+            <Typography component="label" htmlFor="password" className="auth-form__label">
+              Contrasena
+            </Typography>
+            <TextField
+              id="password"
+              type="password"
+              value={values.password}
+              onChange={(event) => onChange("password", event.target.value)}
+              autoComplete="current-password"
+              error={Boolean(errors.password)}
+              helperText={errors.password?.[0] ?? " "}
+              placeholder="Contrasena"
+              fullWidth
+              size="medium"
+              sx={fieldStyles}
+              required
+            />
+          </Box>
 
           <FormControlLabel
             className="auth-form__check"
@@ -118,13 +135,13 @@ function LoginForm({
                 checked={values.remember}
                 onChange={(event) => onChange("remember", event.target.checked)}
                 sx={{
-                  color: "#8f97a3",
-                  "&.Mui-checked": { color: "#0b4052" },
+                  color: "#8f8f8f",
+                  "&.Mui-checked": { color: "#ffffff" },
                 }}
               />
             }
             label="Recordar sesion"
-            sx={{ color: "#586371", m: 0 }}
+            sx={{ color: "#c4c4c4", m: 0 }}
           />
 
           <button
@@ -141,33 +158,32 @@ function LoginForm({
 }
 
 const fieldStyles = {
-  "& .MuiInputLabel-root": {
-    color: "#465465",
-  },
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: "#0b4052",
-  },
   "& .MuiOutlinedInput-root": {
-    color: "#18202a",
-    backgroundColor: "#ffffff",
+    color: "#f5f5f5",
+    backgroundColor: "#181818",
     borderRadius: "0.75rem",
     "& fieldset": {
-      borderColor: "#d6dee7",
+      borderColor: "#2c2c2c",
     },
     "&:hover fieldset": {
-      borderColor: "#a7b5c5",
+      borderColor: "#4b4b4b",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#0b4052",
+      borderColor: "#ffffff",
       borderWidth: "1px",
     },
   },
+  "& .MuiInputBase-input::placeholder": {
+    color: "#7a7a7a",
+    opacity: 1,
+  },
   "& .MuiFormHelperText-root": {
     marginLeft: 0,
-    color: "#7a8694",
+    marginTop: "0.45rem",
+    color: "#8f8f8f",
   },
   "& .MuiFormHelperText-root.Mui-error": {
-    color: "#d54c63",
+    color: "#f87171",
   },
 };
 

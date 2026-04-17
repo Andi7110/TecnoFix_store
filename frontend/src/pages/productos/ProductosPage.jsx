@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus } from "../../icons/phosphor";
+import { Plus, Printer } from "../../icons/phosphor";
+import ProductBarcodeModal from "../../components/productos/ProductBarcodeModal";
 import ProductosFilters from "../../components/productos/ProductosFilters";
 import ProductosTable from "../../components/productos/ProductosTable";
 import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos";
@@ -48,6 +49,7 @@ function ProductosPage() {
   );
   const [isOpeningCreate, setIsOpeningCreate] = useState(false);
   const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(false);
+  const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
 
   useEffect(() => {
     setIsProductsAlertDismissed(false);
@@ -85,8 +87,17 @@ function ProductosPage() {
         </div>
 
         <div className="products-page__header-actions">
+          <button
+            type="button"
+            className="btn products-page__barcode-btn"
+            onClick={() => setIsBarcodeModalOpen(true)}
+            disabled={productos.length === 0}
+          >
+            <Printer size={18} weight="bold" aria-hidden="true" />
+            <span>Imprimir codigos</span>
+          </button>
           <Link to="/productos/inventario" className="btn btn-light">
-            Submodulo inventario
+            Inventario
           </Link>
           <button
             type="button"
@@ -178,6 +189,12 @@ function ProductosPage() {
           loading={loading}
         />
       </div>
+
+      <ProductBarcodeModal
+        isOpen={isBarcodeModalOpen}
+        productos={productos}
+        onClose={() => setIsBarcodeModalOpen(false)}
+      />
     </section>
   );
 }

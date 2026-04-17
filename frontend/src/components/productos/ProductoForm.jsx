@@ -45,7 +45,7 @@ function ProductoForm({
 
   return (
     <>
-      <form className="surface-card product-form" onSubmit={onSubmit}>
+      <form className={`surface-card product-form ${isEdit ? "product-form--edit" : ""}`} onSubmit={onSubmit}>
         <div className="section-heading">
           <div>
             <p className="section-kicker">Formulario</p>

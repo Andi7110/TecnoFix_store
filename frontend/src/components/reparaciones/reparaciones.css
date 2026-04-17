@@ -5,6 +5,60 @@
   margin-top: 1rem;
 }
 
+.repairs-filters.surface-card {
+  padding: 1rem;
+  border-radius: 0.95rem;
+  background: transparent;
+  border-color: var(--app-surface-border);
+  box-shadow: none;
+}
+
+.repairs-filters.surface-card::before {
+  display: none;
+}
+
+.repairs-filters.surface-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--app-surface-border);
+}
+
+.repairs-filters .section-heading {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--app-surface-border);
+}
+
+.repairs-filters .section-kicker {
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.12em;
+}
+
+.repairs-filters h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--app-ink);
+}
+
+.repairs-filters .form-label {
+  margin-bottom: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.repairs-filters .form-control,
+.repairs-filters .form-select {
+  min-height: 2.55rem;
+  border-radius: 0.75rem;
+  background: var(--app-field-bg);
+  border-color: var(--app-field-border);
+  box-shadow: none;
+}
+
+.repairs-filters .products-filter-actions {
+  justify-content: flex-end;
+  margin-top: 0.9rem;
+}
+
 .repairs-table th {
   color: var(--app-muted);
   font-size: 0.78rem;
@@ -14,6 +68,12 @@
 
 .repairs-table-card {
   margin-top: 1rem;
+}
+
+.repairs-table td,
+.repairs-table th {
+  background: transparent;
+  border-color: var(--app-surface-border);
 }
 
 .repair-form {
@@ -70,30 +130,36 @@
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
+  border: 1px solid transparent;
 }
 
 .repair-status--registrado {
-  background: rgba(33, 150, 243, 0.12);
+  background: rgba(33, 150, 243, 0.08);
+  border-color: rgba(33, 150, 243, 0.18);
   color: #195ea8;
 }
 
 .repair-status--en_proceso {
-  background: rgba(255, 152, 0, 0.14);
+  background: rgba(255, 152, 0, 0.1);
+  border-color: rgba(255, 152, 0, 0.18);
   color: #9b5d00;
 }
 
 .repair-status--terminado {
-  background: rgba(76, 175, 80, 0.14);
+  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.18);
   color: #2d7a31;
 }
 
 .repair-status--entregado {
-  background: rgba(56, 142, 60, 0.14);
+  background: rgba(56, 142, 60, 0.1);
+  border-color: rgba(56, 142, 60, 0.18);
   color: #225825;
 }
 
 .repair-status--cancelado {
-  background: rgba(183, 28, 28, 0.12);
+  background: rgba(183, 28, 28, 0.08);
+  border-color: rgba(183, 28, 28, 0.16);
   color: #8c2020;
 }
 
@@ -123,6 +189,43 @@
   gap: 1rem;
   align-items: center;
   margin-bottom: 0.5rem;
+}
+
+:root[data-theme="dark"] .repairs-filters.surface-card,
+:root[data-theme="dark"] .repairs-table td,
+:root[data-theme="dark"] .repairs-table th,
+:root[data-theme="dark"] .repair-history-item {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .repairs-filters.surface-card,
+:root[data-theme="dark"] .repair-history-item {
+  background: transparent;
+}
+
+:root[data-theme="dark"] .repair-status--registrado {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.18);
+  color: #d8f3ff;
+}
+
+:root[data-theme="dark"] .repair-status--en_proceso {
+  background: rgba(251, 191, 36, 0.12);
+  border-color: rgba(251, 191, 36, 0.18);
+  color: #fef3c7;
+}
+
+:root[data-theme="dark"] .repair-status--terminado,
+:root[data-theme="dark"] .repair-status--entregado {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.18);
+  color: #dcfce7;
+}
+
+:root[data-theme="dark"] .repair-status--cancelado {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.18);
+  color: #fee2e2;
 }
 
 @media (max-width: 992px) {

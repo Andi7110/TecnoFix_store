@@ -3,6 +3,7 @@ import {
   createTransferAccount,
   deleteTransferAccount,
   createVenta,
+  getDailySalesReport,
   listTransferAccounts,
 } from "../../api/ventas";
 import { listProductos } from "../../api/productos";
@@ -22,6 +23,7 @@ function getLocalDateTimeValue() {
 function createInitialValues() {
   return {
     modulo_id: "",
+    categoria_id: "",
     fecha_venta: getLocalDateTimeValue(),
     descuento: "",
     metodo_pago: "efectivo",
@@ -38,6 +40,15 @@ function normalizeText(value) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
+}
+
+function normalizeScannerInput(value) {
+  return normalizeText(
+    String(value ?? "")
+      .replace(/\r?\n/g, "")
+      .replace(/^\*+|\*+$/g, "")
+      .trim(),
+  );
 }
 
 function loadFromStorage(key, fallback) {
@@ -157,6 +168,7 @@ export function useVentaForm({ onSuccess }) {
   const [transferAccountsError, setTransferAccountsError] = useState("");
   const [ventasSuspendidas, setVentasSuspendidas] = useState(() => loadFromStorage(SUSPENDED_SALES_KEY, []));
   const [loadingProductos, setLoadingProductos] = useState(false);
+  const [topProductosIds, setTopProductosIds] = useState([]);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
@@ -261,11 +273,59 @@ export function useVentaForm({ onSuccess }) {
     };
   }, [values.modulo_id]);
 
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadTopProductos() {
+      if (!values.modulo_id) {
+        setTopProductosIds([]);
+        return;
+      }
+
+      try {
+        const report = await getDailySalesReport({
+          modulo_id: values.modulo_id,
+        });
+
+        if (ignore) {
+          return;
+        }
+
+        const topIds = Array.isArray(report?.top_productos)
+          ? report.top_productos
+            .map((item) => Number(item?.producto_id))
+            .filter((value) => Number.isFinite(value) && value > 0)
+          : [];
+
+        setTopProductosIds(topIds);
+      } catch {
+        if (!ignore) {
+          setTopProductosIds([]);
+        }
+      }
+    }
+
+    loadTopProductos();
+
+    return () => {
+      ignore = true;
+    };
+  }, [values.modulo_id]);
+
   const filteredProductos = useMemo(() => {
     const term = normalizeText(searchTerm);
+    const selectedCategoriaId = String(values.categoria_id ?? "");
+    const topRank = new Map(topProductosIds.map((id, index) => [Number(id), index]));
 
-    return productos
+    const visibleProductos = productos
       .filter((producto) => {
+        const matchesCategoria = !selectedCategoriaId
+          || String(producto.categoria_id ?? producto.categoria?.id ?? "") === selectedCategoriaId;
+
+        if (!matchesCategoria) {
+          return false;
+        }
+
         if (!term) {
           return true;
         }
@@ -273,8 +333,19 @@ export function useVentaForm({ onSuccess }) {
         return normalizeText(producto.nombre).includes(term)
           || normalizeText(producto.codigo).includes(term);
       })
-      .slice(0, 8);
-  }, [productos, searchTerm]);
+      .sort((first, second) => {
+        const firstRank = topRank.has(Number(first.id)) ? topRank.get(Number(first.id)) : Number.POSITIVE_INFINITY;
+        const secondRank = topRank.has(Number(second.id)) ? topRank.get(Number(second.id)) : Number.POSITIVE_INFINITY;
+
+        if (firstRank !== secondRank) {
+          return firstRank - secondRank;
+        }
+
+        return Number(second.id) - Number(first.id);
+      });
+
+    return selectedCategoriaId ? visibleProductos : visibleProductos.slice(0, 8);
+  }, [productos, searchTerm, topProductosIds, values.categoria_id]);
 
   const subtotal = useMemo(
     () => items.reduce(
@@ -301,7 +372,7 @@ export function useVentaForm({ onSuccess }) {
   const productosSugeridos = useMemo(() => {
     const seleccionados = new Set(items.map((item) => Number(item.producto_id)));
 
-    return productos
+    return filteredProductos
       .filter((producto) => !seleccionados.has(Number(producto.id)))
       .sort((first, second) => {
         const firstLowStock = Number(first.stock_bajo) ? 1 : 0;
@@ -321,7 +392,7 @@ export function useVentaForm({ onSuccess }) {
         return Number(second.stock ?? 0) - Number(first.stock ?? 0);
       })
       .slice(0, 4);
-  }, [items, productos]);
+  }, [filteredProductos, items]);
   const resumenVenta = useMemo(() => ({
     items_count: items.reduce((accumulator, item) => accumulator + Number(item.cantidad ?? 0), 0),
     productos_count: items.length,
@@ -344,6 +415,7 @@ export function useVentaForm({ onSuccess }) {
     setValues((current) => ({
       ...current,
       [name]: nextValue,
+      ...(name === "modulo_id" ? { categoria_id: "" } : {}),
     }));
 
     setErrors((current) => ({
@@ -357,6 +429,7 @@ export function useVentaForm({ onSuccess }) {
       setMontoRecibido("");
       setMontoTransferencia("");
     }
+
   }
 
   function formatDiscount() {
@@ -410,18 +483,18 @@ export function useVentaForm({ onSuccess }) {
     }));
   }
 
-  function addProductoBySearch() {
+  function addProductoBySearch(rawValue = searchTerm) {
     if (!values.modulo_id) {
       return;
     }
 
-    const term = normalizeText(searchTerm);
+    const term = normalizeScannerInput(rawValue);
 
     if (!term) {
       return;
     }
 
-    const exactMatch = productos.find((producto) => (
+    const exactMatch = filteredProductos.find((producto) => (
       normalizeText(producto.codigo) === term || normalizeText(producto.nombre) === term
     ));
 

@@ -18,13 +18,50 @@ function actionLabel(action) {
   }[action] ?? action;
 }
 
+function BitacoraTableSkeleton() {
+  return (
+    <div className="surface-card bitacora-table-wrapper products-table-wrapper inventory-table-wrapper products-table-wrapper--loading">
+      <div className="table-responsive">
+        <table className="table align-middle bitacora-table inventory-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Modulo</th>
+              <th>Accion</th>
+              <th>Descripcion</th>
+              <th>Ruta</th>
+              <th className="text-end">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <tr key={index}>
+                <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--title" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+                <td><span className="products-loading-cell products-loading-cell--badge" /></td>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--title" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+                <td className="text-end"><span className="products-loading-cell products-loading-cell--small" /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function BitacoraTable({ movimientos, loading }) {
   if (loading) {
-    return (
-      <div className="surface-card">
-        <p className="empty-state">Cargando bitacora...</p>
-      </div>
-    );
+    return <BitacoraTableSkeleton />;
   }
 
   if (movimientos.length === 0) {
@@ -36,9 +73,9 @@ function BitacoraTable({ movimientos, loading }) {
   }
 
   return (
-    <div className="surface-card bitacora-table-wrapper">
+    <div className="surface-card bitacora-table-wrapper products-table-wrapper inventory-table-wrapper">
       <div className="table-responsive">
-        <table className="table align-middle bitacora-table">
+        <table className="table align-middle bitacora-table inventory-table">
           <thead>
             <tr>
               <th>Fecha</th>
