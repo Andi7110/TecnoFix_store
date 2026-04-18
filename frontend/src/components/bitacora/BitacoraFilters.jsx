@@ -9,7 +9,7 @@ const MODULE_OPTIONS = [
 
 function BitacoraFilters({ values, onChange, onSubmit, onClear }) {
   return (
-    <form className="surface-card bitacora-filters" onSubmit={onSubmit}>
+    <form className="surface-card bitacora-filters products-filters--minimal" onSubmit={onSubmit}>
       <div className="section-heading">
         <div>
           <p className="section-kicker">Auditoria</p>
@@ -17,7 +17,7 @@ function BitacoraFilters({ values, onChange, onSubmit, onClear }) {
         </div>
       </div>
 
-      <div className="bitacora-filters__grid">
+      <div className="bitacora-filters__grid products-filter-grid">
         <div>
           <label className="form-label">Buscar</label>
           <input
@@ -82,10 +82,10 @@ function BitacoraFilters({ values, onChange, onSubmit, onClear }) {
       </div>
 
       <div className="products-filter-actions">
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn products-filter-actions__apply">
           Aplicar filtros
         </button>
-        <button type="button" className="btn btn-light" onClick={onClear}>
+        <button type="button" className="btn products-filter-actions__clear" onClick={onClear}>
           Limpiar
         </button>
       </div>

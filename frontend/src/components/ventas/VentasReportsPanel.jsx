@@ -82,6 +82,82 @@ function Banner({ kicker, title, description, generatedAt, moduleName }) {
   );
 }
 
+function ReportTableSkeleton({ columns = 4, rows = 4 }) {
+  return (
+    <div className="ventas-report-table-shell ventas-report-table-shell--loading">
+      <div className="table-responsive">
+        <table className="table align-middle ventas-report-table">
+          <thead>
+            <tr>
+              {Array.from({ length: columns }).map((_, index) => (
+                <th key={`head-${index}`}>
+                  <span className="ventas-report-loading-cell ventas-report-loading-cell--header" />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: rows }).map((_, rowIndex) => (
+              <tr key={`row-${rowIndex}`}>
+                {Array.from({ length: columns }).map((_, colIndex) => (
+                  <td key={`cell-${rowIndex}-${colIndex}`}>
+                    <span className="ventas-report-loading-cell ventas-report-loading-cell--medium" />
+                    {colIndex === 0 ? <span className="ventas-report-loading-cell ventas-report-loading-cell--small" /> : null}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function WorkspaceSkeleton({ title, description, mode = "daily" }) {
+  const isMonthly = mode === "monthly";
+  const tableColumns = isMonthly ? 3 : 4;
+
+  return (
+    <div className="ventas-report-workspace ventas-report-workspace--loading" aria-hidden="true">
+      <div className="ventas-report-banner ventas-report-banner--loading">
+        <div className="ventas-report-loading-block ventas-report-loading-block--title" />
+        <div className="ventas-report-loading-block ventas-report-loading-block--text" />
+        <div className="ventas-report-loading-block ventas-report-loading-block--text ventas-report-loading-block--short" />
+      </div>
+
+      <div className="ventas-report-kpis">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={`kpi-${index}`} className="ventas-report-kpi ventas-report-kpi--loading">
+            <span className="ventas-report-loading-cell ventas-report-loading-cell--small" />
+            <span className="ventas-report-loading-cell ventas-report-loading-cell--medium" />
+          </div>
+        ))}
+      </div>
+
+      <div className="ventas-report-insights">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={`insight-${index}`} className="ventas-report-insight ventas-report-insight--loading">
+            <span className="ventas-report-loading-cell ventas-report-loading-cell--medium" />
+            <span className="ventas-report-loading-cell ventas-report-loading-cell--wide" />
+            <span className="ventas-report-loading-cell ventas-report-loading-cell--wide ventas-report-loading-cell--shorter" />
+          </div>
+        ))}
+      </div>
+
+      <div className="ventas-report-panel ventas-report-panel--loading-copy">
+        <div className="ventas-report-panel__header">
+          <div>
+            <h4>{title}</h4>
+            <p className="muted-text mb-0">{description}</p>
+          </div>
+        </div>
+        <ReportTableSkeleton columns={tableColumns} rows={4} />
+      </div>
+    </div>
+  );
+}
+
 function SummaryList({ title, items, emptyMessage }) {
   return (
     <section className="ventas-report-panel">
@@ -415,7 +491,13 @@ function DailyWorkspace({ modulos, dailyValues, onDailyChange, onDailySubmit, on
         </div>
       </form>
       {dailyError ? <div className="alert alert-danger mb-0">{dailyError}</div> : null}
-      {dailyLoading ? <p className="empty-state">Generando reporte diario...</p> : null}
+      {dailyLoading ? (
+        <WorkspaceSkeleton
+          title="Generando reporte diario"
+          description="Estamos consolidando ventas, caja y productos para mostrar el cierre del dia."
+          mode="daily"
+        />
+      ) : null}
       {!dailyLoading && dailyReport ? <DailyContent report={dailyReport} /> : null}
     </article>
   );
@@ -460,7 +542,13 @@ function MonthlyWorkspace({ modulos, monthlyValues, onMonthlyChange, onMonthlySu
         </div>
       </form>
       {monthlyError ? <div className="alert alert-danger mb-0">{monthlyError}</div> : null}
-      {monthlyLoading ? <p className="empty-state">Generando estado de resultados...</p> : null}
+      {monthlyLoading ? (
+        <WorkspaceSkeleton
+          title="Generando estado mensual"
+          description="Estamos ordenando ingresos, costos y gastos para calcular el resultado del periodo."
+          mode="monthly"
+        />
+      ) : null}
       {!monthlyLoading && monthlyReport ? <MonthlyContent report={monthlyReport} /> : null}
     </article>
   );
@@ -477,22 +565,24 @@ function HistoryWorkspace({ history, historyLoading, historyError }) {
         </div>
       </div>
       {historyError ? <div className="alert alert-danger mb-0">{historyError}</div> : null}
-      {historyLoading ? <p className="empty-state">Cargando historial...</p> : (
-        <div className="table-responsive">
-          <table className="table align-middle ventas-report-table">
-            <thead><tr><th>Reporte</th><th>Periodo</th><th>Modulo</th><th>Generado por</th><th>Creado</th></tr></thead>
-            <tbody>
-              {history.length > 0 ? history.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.titulo}</td>
-                  <td>{item.tipo_reporte === "diario_ventas" ? formatDate(item.fecha_reporte) : item.payload?.periodo?.etiqueta ?? "-"}</td>
-                  <td>{item.modulo?.nombre ?? "Todos"}</td>
-                  <td>{item.generado_por_usuario?.name ?? "Sistema"}</td>
-                  <td>{formatDateTime(item.created_at)}</td>
-                </tr>
-              )) : <tr><td colSpan={5} className="muted-text text-center">Todavia no has guardado cierres.</td></tr>}
-            </tbody>
-          </table>
+      {historyLoading ? <ReportTableSkeleton columns={5} rows={4} /> : (
+        <div className="ventas-report-table-shell">
+          <div className="table-responsive">
+            <table className="table align-middle ventas-report-table">
+              <thead><tr><th>Reporte</th><th>Periodo</th><th>Modulo</th><th>Generado por</th><th>Creado</th></tr></thead>
+              <tbody>
+                {history.length > 0 ? history.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.titulo}</td>
+                    <td>{item.tipo_reporte === "diario_ventas" ? formatDate(item.fecha_reporte) : item.payload?.periodo?.etiqueta ?? "-"}</td>
+                    <td>{item.modulo?.nombre ?? "Todos"}</td>
+                    <td>{item.generado_por_usuario?.name ?? "Sistema"}</td>
+                    <td>{formatDateTime(item.created_at)}</td>
+                  </tr>
+                )) : <tr><td colSpan={5} className="muted-text text-center">Todavia no has guardado cierres.</td></tr>}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </article>

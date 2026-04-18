@@ -1,13 +1,56 @@
 import { Link } from "react-router-dom";
 import ReparacionEstadoBadge from "./ReparacionEstadoBadge";
 
+function ReparacionesTableSkeleton() {
+  return (
+    <div className="surface-card products-table-wrapper inventory-table-wrapper products-table-wrapper--loading repairs-table-card">
+      <div className="table-responsive">
+        <table className="table align-middle repairs-table inventory-table">
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Cliente</th>
+              <th>Equipo</th>
+              <th>Ingreso</th>
+              <th>Montos</th>
+              <th>Estado</th>
+              <th className="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <tr key={index}>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--title" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--medium" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--medium" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td><span className="products-loading-cell products-loading-cell--medium" /></td>
+                <td>
+                  <span className="products-loading-cell products-loading-cell--medium" />
+                  <span className="products-loading-cell products-loading-cell--small" />
+                </td>
+                <td><span className="products-loading-cell products-loading-cell--badge" /></td>
+                <td className="text-end"><span className="products-loading-cell products-loading-cell--button" /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function ReparacionesTable({ reparaciones, loading }) {
   if (loading) {
-    return (
-      <div className="surface-card">
-        <p className="empty-state">Cargando reparaciones...</p>
-      </div>
-    );
+    return <ReparacionesTableSkeleton />;
   }
 
   if (reparaciones.length === 0) {
@@ -19,9 +62,9 @@ function ReparacionesTable({ reparaciones, loading }) {
   }
 
   return (
-    <div className="surface-card products-table-wrapper repairs-table-card">
+    <div className="surface-card products-table-wrapper inventory-table-wrapper repairs-table-card">
       <div className="table-responsive">
-        <table className="table align-middle repairs-table">
+        <table className="table align-middle repairs-table inventory-table">
           <thead>
             <tr>
               <th>Codigo</th>
@@ -59,12 +102,14 @@ function ReparacionesTable({ reparaciones, loading }) {
                   <ReparacionEstadoBadge estado={reparacion.estado_reparacion} />
                 </td>
                 <td className="text-end">
-                  <Link
-                    to={`/reparaciones/${reparacion.id}/editar`}
-                    className="btn btn-sm btn-outline-dark"
-                  >
-                    Ver detalle
-                  </Link>
+                  <div className="products-table__actions">
+                    <Link
+                      to={`/reparaciones/${reparacion.id}/editar`}
+                      className="btn btn-sm"
+                    >
+                      Ver detalle
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}

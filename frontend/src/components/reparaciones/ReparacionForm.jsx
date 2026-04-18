@@ -263,10 +263,10 @@ function ReparacionForm({
       </div>
 
       <div className="products-filter-actions mt-4">
-        <button type="submit" className="btn btn-primary" disabled={saving}>
+        <button type="submit" className="btn products-filter-actions__apply" disabled={saving}>
           {saving ? "Guardando..." : isEdit ? "Actualizar reparacion" : "Registrar reparacion"}
         </button>
-        <button type="button" className="btn btn-light" onClick={onCancel}>
+        <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
           Cancelar
         </button>
       </div>

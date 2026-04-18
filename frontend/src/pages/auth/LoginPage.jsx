@@ -7,7 +7,7 @@ function LoginPage() {
   const location = useLocation();
   const { isAuthenticated, loading } = useAuth();
   const redirectTo = location.state?.from?.pathname ?? "/";
-  const { values, errors, message, submitting, updateValue, submit } =
+  const { values, errors, message, successMessage, submitting, updateValue, submit } =
     useLoginForm(redirectTo);
 
   if (!loading && isAuthenticated) {
@@ -21,6 +21,7 @@ function LoginPage() {
           values={values}
           errors={errors}
           message={message}
+          successMessage={successMessage}
           submitting={submitting}
           onChange={updateValue}
           onSubmit={submit}

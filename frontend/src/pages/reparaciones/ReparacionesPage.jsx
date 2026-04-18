@@ -28,7 +28,7 @@ function ReparacionesPage() {
         </div>
 
         <div className="products-page__header-actions">
-          <Link to="/reparaciones/nueva" className="btn btn-primary">
+          <Link to="/reparaciones/nueva" className="btn products-page__create-btn">
             Nueva reparacion
           </Link>
         </div>
