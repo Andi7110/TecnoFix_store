@@ -1,9 +1,9 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
-import { Money, Package, ShoppingCart, Wrench } from "../icons/phosphor";
+import { Barcode, CalendarBlank, Pulse, Receipt, Screwdriver, Vault } from "../icons/phosphor";
 
 function formatMoney(value) {
   return new Intl.NumberFormat("es-SV", {
@@ -102,16 +102,20 @@ function buildInsights(summary) {
 
 function QuickAction({ title, description, to, tone = "default", icon }) {
   return (
-    <Link to={to} className={`dashboard-quick-action dashboard-quick-action--${tone}`}>
+    <Link to={to} className={`dashboard-quick-action dashboard-quick-action--${tone} h-100`}>
       <span className="dashboard-quick-action__symbol" aria-hidden="true">{icon}</span>
-      <span className="dashboard-quick-action__label">{title}</span>
+      <span className="dashboard-quick-action__copy">
+        <span className="dashboard-quick-action__label">{title}</span>
+        <span className="dashboard-quick-action__description">{description}</span>
+      </span>
     </Link>
   );
 }
 
 function AlertCard({ alert }) {
   return (
-    <article className={`dashboard-alert-card dashboard-alert-card--${alert.tone} dashboard-alert-card--${alert.id}`}>
+    <article className={`dashboard-alert-card dashboard-alert-card--${alert.tone} dashboard-alert-card--${alert.id} h-100`}>
+      <span className="dashboard-alert-card__marker" aria-hidden="true" />
       <div>
         <strong>{alert.title}</strong>
         <p>{alert.body}</p>
@@ -125,7 +129,7 @@ function AlertCard({ alert }) {
 
 function InsightCard({ insight }) {
   return (
-    <article className="dashboard-insight-card">
+    <article className="dashboard-insight-card h-100">
       <span className="muted-text">{insight.title}</span>
       <strong>{insight.value}</strong>
       <p>{insight.body}</p>
@@ -149,7 +153,7 @@ function ComparisonCard({ title, comparison, format = "money" }) {
     : String(Math.abs(delta));
 
   return (
-    <article className={`dashboard-comparison-card ${positive ? "is-up" : negative ? "is-down" : "is-flat"}`}>
+    <article className={`dashboard-comparison-card h-100 ${positive ? "is-up" : negative ? "is-down" : "is-flat"}`}>
       <span className="muted-text">{title}</span>
       <strong>{formattedCurrent}</strong>
       <p>Ayer: {formattedPrevious}</p>
@@ -254,60 +258,56 @@ function DashboardLoadingSkeleton() {
 }
 
 function Dashboard() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const { summary, loading, error } = useDashboardSummary();
   const alerts = useMemo(() => buildAlerts(summary), [summary]);
   const insights = useMemo(() => buildInsights(summary), [summary]);
-  const [showLoginSuccess, setShowLoginSuccess] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window.sessionStorage.getItem("tecnofix-login-success") === "1";
-  });
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.sessionStorage.getItem("tecnofix-login-success") === "1") {
-      setShowLoginSuccess(true);
-      window.sessionStorage.removeItem("tecnofix-login-success");
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setShowLoginSuccess(false);
-    }, 3200);
-
-    if (location.state && Object.keys(location.state).length > 0) {
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [location.pathname, location.state, navigate]);
+  const generatedAt = summary.generated_at ? new Date(summary.generated_at).toLocaleString() : "-";
 
   return (
-    <section className="dashboard-page">
-      {showLoginSuccess ? (
-        <div className="dashboard-login-success" role="status" aria-live="polite">
-          <span className="dashboard-login-success__dot" />
-          <span>Registro exitoso</span>
-        </div>
-      ) : null}
+    <section className="products-page dashboard-page container-fluid px-0">
+      <div className="products-page__panel dashboard-command-center">
+        <div className="products-page__header">
+        <div className="row g-3 align-items-stretch w-100">
+          <div className="col-12 col-xl-7">
+              <div className="products-page__header-copy h-100">
+                <div className="d-flex align-items-center gap-2 flex-wrap mb-2">
+                    <span className="badge products-page__badge">Panel operativo</span>
+                    <span className="badge products-page__badge products-page__badge--soft">
+                      TecnoFix
+                    </span>
+                  </div>
 
-      <div className="products-page__header dashboard-command-center">
-        <div>
-          <h2>Inicio TecnoFix</h2>
-          <p className="muted-text">
-            Supervisa ventas, caja, inventario y taller desde una sola vista operativa.
-          </p>
-        </div>
+                    <h2>Inicio TecnoFix</h2>
+                    <p className="muted-text">
+                      Supervisa ventas, caja, inventario y taller desde una sola vista operativa.
+                    </p>
+                  </div>
+                </div>
 
-        <div className="products-page__header-actions dashboard-command-center__meta">
-          <div>
-            <span className="muted-text">Actualizado</span>
-            <strong>{summary.generated_at ? new Date(summary.generated_at).toLocaleString() : "-"}</strong>
-          </div>
+          <div className="col-12 col-xl-5">
+              <div className="products-page__header-actions dashboard-command-center__inline-status h-100 d-flex flex-column flex-sm-row gap-2 justify-content-xl-end align-items-stretch align-items-sm-center">
+                  <div className="dashboard-command-center__inline-item">
+                    <span className="dashboard-command-center__icon" aria-hidden="true">
+                      <Pulse size={18} weight="bold" />
+                    </span>
+                    <div>
+                      <span className="muted-text">Estado</span>
+                      <strong>En linea</strong>
+                    </div>
+                  </div>
+
+                  <div className="dashboard-command-center__inline-item">
+                    <span className="dashboard-command-center__icon" aria-hidden="true">
+                      <CalendarBlank size={18} weight="bold" />
+                    </span>
+                    <div>
+                      <span className="muted-text">Actualizado</span>
+                      <strong>{generatedAt}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
         </div>
       </div>
 
@@ -318,66 +318,88 @@ function Dashboard() {
       ) : (
         <>
           <div className="dashboard-actions-shell">
-            <div className="dashboard-actions-grid">
-              <QuickAction
-                title="Nueva venta"
-                description="Abre el flujo de caja y registra una venta nueva."
-                to="/ventas"
-                tone="primary"
-                icon={<ShoppingCart size={22} weight="bold" />}
-              />
-              <QuickAction
-                title="Nueva reparacion"
-                description="Ingresa un equipo, su diagnostico y condiciones iniciales."
-                to="/reparaciones/nueva"
-                icon={<Wrench size={22} weight="bold" />}
-              />
-              <QuickAction
-                title="Registrar caja"
-                description="Agrega entradas o salidas y controla el balance operativo."
-                to="/caja/nuevo"
-                icon={<Money size={22} weight="bold" />}
-              />
-              <QuickAction
-                title="Nuevo producto"
-                description="Incorpora articulos al catalogo y define sus precios."
-                to="/productos/nuevo"
-                icon={<Package size={22} weight="bold" />}
-              />
+            <div className="row g-3">
+              <div className="col-12 col-sm-6 col-xl-3">
+                <QuickAction
+                  title="Nueva venta"
+                  description="Abre el flujo de caja y registra una venta nueva."
+                  to="/ventas"
+                  tone="primary"
+                  icon={<Receipt size={22} weight="bold" />}
+                />
+              </div>
+              <div className="col-12 col-sm-6 col-xl-3">
+                <QuickAction
+                  title="Nueva reparacion"
+                  description="Ingresa un equipo, su diagnostico y condiciones iniciales."
+                  to="/reparaciones/nueva"
+                  icon={<Screwdriver size={22} weight="bold" />}
+                />
+              </div>
+              <div className="col-12 col-sm-6 col-xl-3">
+                <QuickAction
+                  title="Registrar caja"
+                  description="Agrega entradas o salidas y controla el balance operativo."
+                  to="/caja/nuevo"
+                  icon={<Vault size={22} weight="bold" />}
+                />
+              </div>
+              <div className="col-12 col-sm-6 col-xl-3">
+                <QuickAction
+                  title="Nuevo producto"
+                  description="Incorpora articulos al catalogo y define sus precios."
+                  to="/productos/nuevo"
+                  icon={<Barcode size={22} weight="bold" />}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="dashboard-subheading">
+          <div className="dashboard-subheading d-flex align-items-center">
             <h3>Detalles de la tienda</h3>
           </div>
 
           <DashboardMetricCards today={summary.today} />
 
-          <div className="dashboard-alerts-grid">
+          <div className="row g-3 mb-3">
             {alerts.map((alert) => (
-              <AlertCard key={alert.id} alert={alert} />
+              <div key={alert.id} className="col-12 col-lg-6">
+                <AlertCard alert={alert} />
+              </div>
             ))}
           </div>
 
-          <div className="dashboard-insights-grid">
+          <div className="row g-3 mb-3">
             {insights.map((insight) => (
-              <InsightCard key={insight.id} insight={insight} />
+              <div key={insight.id} className="col-12 col-md-6 col-xl-4">
+                <InsightCard insight={insight} />
+              </div>
             ))}
           </div>
 
-          <div className="dashboard-comparison-grid">
-            <ComparisonCard title="Ventas vs ayer" comparison={summary.comparativo_vs_ayer.ventas} />
-            <ComparisonCard title="Entradas vs ayer" comparison={summary.comparativo_vs_ayer.entradas} />
-            <ComparisonCard title="Salidas vs ayer" comparison={summary.comparativo_vs_ayer.salidas} />
-            <ComparisonCard
-              title="Reparaciones vs ayer"
-              comparison={summary.comparativo_vs_ayer.reparaciones_pendientes}
-              format="count"
-            />
+          <div className="row g-3 mb-3">
+            <div className="col-12 col-sm-6 col-xl-3">
+              <ComparisonCard title="Ventas vs ayer" comparison={summary.comparativo_vs_ayer.ventas} />
+            </div>
+            <div className="col-12 col-sm-6 col-xl-3">
+              <ComparisonCard title="Entradas vs ayer" comparison={summary.comparativo_vs_ayer.entradas} />
+            </div>
+            <div className="col-12 col-sm-6 col-xl-3">
+              <ComparisonCard title="Salidas vs ayer" comparison={summary.comparativo_vs_ayer.salidas} />
+            </div>
+            <div className="col-12 col-sm-6 col-xl-3">
+              <ComparisonCard
+                title="Reparaciones vs ayer"
+                comparison={summary.comparativo_vs_ayer.reparaciones_pendientes}
+                format="count"
+              />
+            </div>
           </div>
 
-          <div className="dashboard-bottom-grid">
-            <DashboardModulesTable rows={summary.ventas_por_modulo} />
+          <div className="row g-3">
+            <div className="col-12">
+              <DashboardModulesTable rows={summary.ventas_por_modulo} />
+            </div>
           </div>
         </>
       )}

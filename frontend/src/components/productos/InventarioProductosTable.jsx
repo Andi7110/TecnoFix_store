@@ -211,15 +211,19 @@ function InventarioProductosTable({
             <span />
           </div>
         ) : null}
-        <h3 className="inventory-section__title">{title}</h3>
         <form
-          className="inventory-section__filters"
+          className="inventory-section__filters row g-2 align-items-end"
           onSubmit={(event) => {
             event.preventDefault();
             onFiltersApply();
           }}
         >
-          <div>
+          <div className="col-12">
+            <span className="inventory-section__filter-title">
+              Filtro {title}
+            </span>
+          </div>
+          <div className="col-12 col-md-6 col-xl-3">
             <label className="form-label">Nombre</label>
             <input
               className="form-control"
@@ -228,7 +232,7 @@ function InventarioProductosTable({
               onChange={(event) => onFilterChange("nombre", event.target.value)}
             />
           </div>
-          <div>
+          <div className="col-12 col-md-6 col-xl-2">
             <label className="form-label">Codigo</label>
             <input
               className="form-control"
@@ -237,7 +241,7 @@ function InventarioProductosTable({
               onChange={(event) => onFilterChange("codigo", event.target.value)}
             />
           </div>
-          <div>
+          <div className="col-12 col-md-6 col-xl-3">
             <label className="form-label">Categoria</label>
             <select
               className="form-select"
@@ -252,7 +256,7 @@ function InventarioProductosTable({
               ))}
             </select>
           </div>
-          <div>
+          <div className="col-12 col-md-6 col-xl-2">
             <label className="form-label">Estado</label>
             <select
               className="form-select"
@@ -264,13 +268,13 @@ function InventarioProductosTable({
               <option value="0">Inactivo</option>
             </select>
           </div>
-          <div className="inventory-section__filters-action">
+          <div className="inventory-section__filters-action col-12 col-xl-2">
             <button type="submit" className="btn products-filter-actions__apply">
               Aplicar
             </button>
             <button
               type="button"
-              className="btn btn-light"
+              className="btn products-filter-actions__clear"
               onClick={onFiltersClear}
             >
               Limpiar

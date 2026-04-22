@@ -8,22 +8,28 @@
 .cash-summary-card.surface-card,
 .cash-form.surface-card {
   padding: 1rem;
-  border-radius: 0.95rem;
-  background: transparent;
-  border-color: var(--app-surface-border);
+  border-radius: 1.05rem;
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(21, 128, 61, 0.14);
   box-shadow: none;
 }
 
-.cash-summary-card.surface-card::before,
 .cash-form.surface-card::before {
   display: none;
+}
+
+.cash-summary-card.surface-card::before {
+  display: block;
+  height: 0.24rem;
+  background: linear-gradient(90deg, #15803d, #22c55e, #86efac);
+  opacity: 1;
 }
 
 .cash-summary-card.surface-card:hover,
 .cash-form.surface-card:hover {
   transform: none;
   box-shadow: none;
-  border-color: var(--app-surface-border);
+  border-color: rgba(21, 128, 61, 0.14);
 }
 
 .cash-summary-card {
@@ -46,11 +52,11 @@
 }
 
 .cash-summary-card--accent {
-  border-color: rgba(30, 168, 82, 0.16);
+  border-color: rgba(21, 128, 61, 0.18);
 }
 
 .cash-summary-card--success {
-  border-color: rgba(20, 124, 88, 0.16);
+  border-color: rgba(21, 128, 61, 0.18);
 }
 
 .cash-filters .products-filter-actions {
@@ -91,6 +97,14 @@
   border-color: var(--app-surface-border);
 }
 
+.cash-table th {
+  color: #15803d;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .cash-form .section-heading {
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--app-surface-border);
@@ -120,12 +134,68 @@
   display: block;
 }
 
+:root[data-theme="dark"] .cash-page__panel {
+  border-color: rgba(34, 197, 94, 0.22);
+  background:
+    radial-gradient(circle at 88% 14%, rgba(34, 197, 94, 0.12), transparent 26%),
+    linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+}
+
+:root[data-theme="dark"] .cash-page__panel::after,
+:root[data-theme="dark"] .cash-summary-card.surface-card::before,
+:root[data-theme="dark"] .cash-table-card.surface-card::before {
+  background: linear-gradient(90deg, #39ff7a, #22c55e, #b6ffcf);
+  box-shadow:
+    0 0 14px rgba(57, 255, 122, 0.46),
+    0 0 28px rgba(57, 255, 122, 0.22);
+}
+
+:root[data-theme="dark"] .cash-page .products-page__badge--soft {
+  background: rgba(57, 255, 122, 0.12);
+  color: #39ff7a;
+}
+
 :root[data-theme="dark"] .cash-summary-card.surface-card,
 :root[data-theme="dark"] .cash-form.surface-card,
 :root[data-theme="dark"] .cash-table td,
 :root[data-theme="dark"] .cash-table th {
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .cash-summary-card.surface-card,
+:root[data-theme="dark"] .cash-table-card.surface-card {
+  background: rgba(13, 17, 23, 0.72);
+}
+
+:root[data-theme="dark"] .cash-filters.surface-card {
   background: transparent;
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .cash-filters .section-kicker,
+:root[data-theme="dark"] .cash-table th,
+:root[data-theme="dark"] .cash-summary-card .section-kicker {
+  color: #39ff7a !important;
+  text-shadow: 0 0 12px rgba(57, 255, 122, 0.28);
+}
+
+:root[data-theme="dark"] .cash-filters .form-control,
+:root[data-theme="dark"] .cash-filters .form-select {
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .cash-table-card .cash-table {
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: rgba(139, 148, 158, 0.08);
+}
+
+:root[data-theme="dark"] .cash-table-card .cash-table td,
+:root[data-theme="dark"] .cash-table-card .cash-table th {
   border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .cash-table-card .cash-table tbody tr:hover {
+  background: rgba(139, 148, 158, 0.08);
 }
 
 :root[data-theme="dark"] .cash-table__badge--entrada {

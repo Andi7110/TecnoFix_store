@@ -2,25 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Printer } from "../../icons/phosphor";
 import ProductBarcodeModal from "../../components/productos/ProductBarcodeModal";
-import ProductosFilters from "../../components/productos/ProductosFilters";
 import ProductosTable from "../../components/productos/ProductosTable";
-import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos";
 import { useProductosFilters } from "../../hooks/productos/useProductosFilters";
 import { useProductosList } from "../../hooks/productos/useProductosList";
 
 function ProductosPage() {
   const navigate = useNavigate();
-  const {
-    filters,
-    draftFilters,
-    updateDraftFilter,
-    applyFilters,
-    clearFilters,
-  } = useProductosFilters();
-  const { modulos, categorias, loadingCategorias } = useProductoCatalogos(
-    draftFilters.modulo_id,
-    true,
-  );
+  const { filters } = useProductosFilters();
   const listFilters = useMemo(
     () => ({
       ...filters,
@@ -76,64 +64,68 @@ function ProductosPage() {
   }
 
   return (
-    <section>
-      <div className="products-page__header">
-        <div>
-          <p className="section-kicker">Inventario</p>
-          <h2>Gestion de productos</h2>
-          <p className="muted-text">
-            Consulta, filtra y revisa tu catalogo segun disponibilidad de stock.
-          </p>
+    <section className="products-page container-fluid px-0">
+      <div className="products-page__panel">
+        <div className="products-page__header">
+          <div className="row g-3 align-items-stretch w-100">
+            <div className="col-12 col-xl-7">
+              <div className="products-page__header-copy h-100">
+                <div className="d-flex align-items-center gap-2 flex-wrap mb-2">
+                  <span className="badge products-page__badge">Inventario</span>
+                  <span className="badge products-page__badge products-page__badge--soft">
+                    Catalogo activo
+                  </span>
+                </div>
+                <h2>Gestion de productos</h2>
+                <p className="muted-text">
+                  Consulta, filtra y revisa tu catalogo segun disponibilidad de stock.
+                </p>
+              </div>
+            </div>
+
+            <div className="col-12 col-xl-5">
+              <div className="products-page__header-actions h-100 d-flex flex-column flex-sm-row gap-2 justify-content-xl-end align-items-stretch align-items-sm-center">
+                <button
+                  type="button"
+                  className="btn products-page__barcode-btn"
+                  onClick={() => setIsBarcodeModalOpen(true)}
+                  disabled={productos.length === 0}
+                >
+                  <Printer size={18} weight="bold" aria-hidden="true" />
+                  <span>Imprimir codigos</span>
+                </button>
+                <Link to="/productos/inventario" className="btn products-page__inventory-btn">
+                  Inventario
+                </Link>
+                <button
+                  type="button"
+                  className="btn products-page__create-btn"
+                  onClick={handleOpenCreate}
+                  disabled={isOpeningCreate}
+                >
+                  <span className="products-page__create-btn-content">
+                    {isOpeningCreate ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm products-page__create-btn-spinner"
+                          aria-hidden="true"
+                        />
+                        <span>Cargando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus size={18} weight="bold" aria-hidden="true" />
+                        <span>Nuevo producto</span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="products-page__header-actions">
-          <button
-            type="button"
-            className="btn products-page__barcode-btn"
-            onClick={() => setIsBarcodeModalOpen(true)}
-            disabled={productos.length === 0}
-          >
-            <Printer size={18} weight="bold" aria-hidden="true" />
-            <span>Imprimir codigos</span>
-          </button>
-          <Link to="/productos/inventario" className="btn btn-light">
-            Inventario
-          </Link>
-          <button
-            type="button"
-            className="btn products-page__create-btn"
-            onClick={handleOpenCreate}
-            disabled={isOpeningCreate}
-          >
-            <span className="products-page__create-btn-content">
-              {isOpeningCreate ? (
-                <>
-                  <span
-                    className="spinner-border spinner-border-sm products-page__create-btn-spinner"
-                    aria-hidden="true"
-                  />
-                  <span>Cargando...</span>
-                </>
-              ) : (
-                <>
-                  <Plus size={18} weight="bold" aria-hidden="true" />
-                  <span>Nuevo producto</span>
-                </>
-              )}
-            </span>
-          </button>
-        </div>
       </div>
-
-      <ProductosFilters
-        values={draftFilters}
-        modulos={modulos}
-        categorias={categorias}
-        loadingCategorias={loadingCategorias}
-        onChange={updateDraftFilter}
-        onSubmit={applyFilters}
-        onClear={clearFilters}
-      />
 
       {productosCriticos.length > 0 && !isProductsAlertDismissed ? (
         <div className="alert alert-warning products-alert">
@@ -153,41 +145,47 @@ function ProductosPage() {
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
 
-      <div className="inventory-section">
-        <div className="section-heading">
-          <div>
-            <p className="section-kicker">Catalogo</p>
-            <h2>Productos disponibles</h2>
-            <p className="muted-text">
-              Aqui se muestran los productos con stock disponible para venta e inventario.
-            </p>
+      <div className="row g-3">
+        <div className="col-12">
+          <div className="inventory-section">
+            <div className="section-heading">
+              <div>
+                <p className="section-kicker">Catalogo</p>
+                <h2>Productos disponibles</h2>
+                <p className="muted-text">
+                  Aqui se muestran los productos con stock disponible para venta e inventario.
+                </p>
+              </div>
+            </div>
+
+            <ProductosTable
+              productos={productosDisponibles}
+              loading={loading}
+            />
           </div>
         </div>
 
-        <ProductosTable
-          productos={productosDisponibles}
-          loading={loading}
-        />
-      </div>
+        <div className="col-12">
+          <div className="inventory-section inventory-section--separated">
+            <div className="inventory-section__divider" aria-hidden="true">
+              <span />
+            </div>
 
-      <div className="inventory-section inventory-section--separated">
-        <div className="inventory-section__divider" aria-hidden="true">
-          <span />
-        </div>
+            <div className="section-heading">
+              <div>
+                <h2>Productos agotados</h2>
+                <p className="muted-text">
+                  Estos productos ya no aparecen en inventario porque su stock llego a cero.
+                </p>
+              </div>
+            </div>
 
-        <div className="section-heading">
-          <div>
-            <h2>Productos agotados</h2>
-            <p className="muted-text">
-              Estos productos ya no aparecen en inventario porque su stock llego a cero.
-            </p>
+            <ProductosTable
+              productos={productosAgotados}
+              loading={loading}
+            />
           </div>
         </div>
-
-        <ProductosTable
-          productos={productosAgotados}
-          loading={loading}
-        />
       </div>
 
       <ProductBarcodeModal

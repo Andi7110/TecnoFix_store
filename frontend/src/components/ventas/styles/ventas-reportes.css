@@ -918,3 +918,245 @@
 :root[data-theme="dark"] .ventas-report-table-shell--loading::after {
   background: linear-gradient(90deg, transparent, #22c55e, transparent);
 }
+
+/* Alinea /ventas/reportes con el lenguaje visual de Productos. */
+.ventas-reportes-page .ventas-report-center {
+  gap: 1.25rem;
+}
+
+.ventas-reportes-page .ventas-report-center__hero.surface-card,
+.ventas-reportes-page .ventas-report-shell.surface-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.05rem;
+  border: 1px solid rgba(21, 128, 61, 0.14);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: none;
+}
+
+.ventas-reportes-page .ventas-report-center__hero.surface-card {
+  padding: 1.15rem;
+}
+
+.ventas-reportes-page .ventas-report-shell.surface-card {
+  padding: 1.15rem;
+}
+
+.ventas-reportes-page .ventas-report-center__hero.surface-card::before,
+.ventas-reportes-page .ventas-report-shell.surface-card::before {
+  display: block;
+  height: 0.24rem;
+  background: linear-gradient(90deg, #15803d, #22c55e, #86efac);
+  opacity: 1;
+}
+
+.ventas-reportes-page .ventas-report-center__hero.surface-card:hover,
+.ventas-reportes-page .ventas-report-shell.surface-card:hover {
+  transform: none;
+  border-color: rgba(21, 128, 61, 0.14);
+  box-shadow: none;
+}
+
+.ventas-reportes-page .ventas-report-shell__header {
+  padding-bottom: 0.95rem;
+  border-bottom: 1px solid rgba(21, 128, 61, 0.14);
+}
+
+.ventas-reportes-page .ventas-report-center__hero h3,
+.ventas-reportes-page .ventas-report-shell__header h3,
+.ventas-reportes-page .ventas-report-banner h3,
+.ventas-reportes-page .ventas-report-panel h4 {
+  color: var(--app-ink);
+}
+
+.ventas-reportes-page .ventas-report-center__hero .section-kicker,
+.ventas-reportes-page .ventas-report-shell__header .section-kicker,
+.ventas-reportes-page .ventas-report-banner .section-kicker {
+  color: #15803d;
+}
+
+.ventas-reportes-page .ventas-report-controlbar {
+  padding: 0.9rem;
+  border: 1px solid rgba(21, 128, 61, 0.14);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.ventas-reportes-page .ventas-report-controlbar .form-control,
+.ventas-reportes-page .ventas-report-controlbar .form-select {
+  border-color: rgba(21, 128, 61, 0.16);
+}
+
+.ventas-reportes-page .ventas-report-controlbar__actions .btn {
+  min-height: 2.45rem;
+  border-radius: 0.75rem;
+  padding-inline: 0.95rem;
+  box-shadow: none;
+}
+
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-primary {
+  border: 1px solid #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+}
+
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-primary:hover,
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-primary:focus {
+  border-color: #166534 !important;
+  background: #166534 !important;
+  color: #ffffff !important;
+}
+
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-success,
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-outline-dark {
+  border: 1px solid rgba(21, 128, 61, 0.16) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: var(--app-ink) !important;
+}
+
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-success:hover,
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-success:focus,
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-outline-dark:hover,
+.ventas-reportes-page .ventas-report-controlbar__actions .btn-outline-dark:focus {
+  border-color: #15803d !important;
+  background: #dcfce7 !important;
+  color: var(--app-ink) !important;
+}
+
+.ventas-reportes-page .ventas-report-tabs__item {
+  border-radius: 999px;
+  border-color: rgba(21, 128, 61, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--app-muted);
+  box-shadow: none;
+}
+
+.ventas-reportes-page .ventas-report-tabs__item:hover,
+.ventas-reportes-page .ventas-report-tabs__item:focus,
+.ventas-reportes-page .ventas-report-tabs__item.is-active {
+  border-color: #15803d;
+  background: #dcfce7;
+  color: var(--app-ink);
+  box-shadow: none;
+}
+
+.ventas-reportes-page .ventas-report-banner,
+.ventas-reportes-page .ventas-report-kpi,
+.ventas-reportes-page .ventas-report-insight,
+.ventas-reportes-page .ventas-report-panel,
+.ventas-reportes-page .ventas-report-health__item,
+.ventas-reportes-page .ventas-report-summary-list__item,
+.ventas-reportes-page .ventas-report-ledger__row,
+.ventas-reportes-page .ventas-report-banner__meta > div,
+.ventas-reportes-page .ventas-report-metric {
+  border: 1px solid rgba(21, 128, 61, 0.14);
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: none;
+}
+
+.ventas-reportes-page .ventas-report-kpi--accent,
+.ventas-reportes-page .ventas-report-kpi--success,
+.ventas-reportes-page .ventas-report-insight--accent,
+.ventas-reportes-page .ventas-report-insight--success,
+.ventas-reportes-page .ventas-report-metric--accent,
+.ventas-reportes-page .ventas-report-metric--success,
+.ventas-reportes-page .ventas-report-ledger__row--accent {
+  border-color: rgba(21, 128, 61, 0.18);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.ventas-reportes-page .ventas-report-table-shell {
+  overflow: hidden;
+  border: 1px solid rgba(21, 128, 61, 0.14);
+  border-radius: 1.05rem;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.ventas-reportes-page .ventas-report-table th {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.ventas-reportes-page .ventas-report-table th,
+.ventas-reportes-page .ventas-report-table td {
+  border-color: var(--app-surface-border);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-center__hero.surface-card,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-shell.surface-card,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-table-shell {
+  background: rgba(13, 17, 23, 0.72);
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-center__hero.surface-card::before,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-shell.surface-card::before {
+  background: linear-gradient(90deg, #39ff7a, #22c55e, #b6ffcf);
+  box-shadow:
+    0 0 14px rgba(57, 255, 122, 0.46),
+    0 0 28px rgba(57, 255, 122, 0.22);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-shell__header {
+  border-bottom-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-center__hero .section-kicker,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-shell__header .section-kicker,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-banner .section-kicker,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-table th {
+  color: #39ff7a !important;
+  text-shadow: 0 0 12px rgba(57, 255, 122, 0.28);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-banner,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-kpi,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-insight,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-panel,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-health__item,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-summary-list__item,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-ledger__row,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-banner__meta > div,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-metric {
+  background: rgba(13, 17, 23, 0.72);
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar .form-control,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar .form-select {
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-primary {
+  border-color: #39ff7a !important;
+  background: #22c55e !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 18px rgba(57, 255, 122, 0.22);
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-primary:hover,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-primary:focus {
+  background: #16a34a !important;
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-success,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-outline-dark,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-tabs__item {
+  background: rgba(13, 17, 23, 0.72) !important;
+  border-color: rgba(57, 255, 122, 0.18) !important;
+  color: #eff8f3 !important;
+}
+
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-success:hover,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-success:focus,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-outline-dark:hover,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-controlbar__actions .btn-outline-dark:focus,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-tabs__item:hover,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-tabs__item:focus,
+:root[data-theme="dark"] .ventas-reportes-page .ventas-report-tabs__item.is-active {
+  background: rgba(57, 255, 122, 0.12) !important;
+  border-color: #39ff7a !important;
+  color: #eff8f3 !important;
+  box-shadow: none;
+}

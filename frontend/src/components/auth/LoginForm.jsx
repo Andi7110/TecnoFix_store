@@ -1,13 +1,16 @@
+import { useState } from "react";
 import {
   Alert,
   Box,
   Checkbox,
   FormControlLabel,
+  IconButton,
+  InputAdornment,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { ShieldCheck, Sparkle } from "../../icons/phosphor";
+import { CheckCircle, Eye, EyeSlash, ShieldCheck, Sparkle } from "../../icons/phosphor";
 
 function PowerLogo() {
   return (
@@ -32,13 +35,22 @@ function LoginForm({
   submitting,
   onChange,
   onSubmit,
+  onAcceptSuccess,
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <form className="auth-card" onSubmit={onSubmit}>
       {successMessage ? (
-        <div className="auth-card__success-badge" aria-live="polite">
-          <span className="auth-card__success-dot" />
-          <span>{successMessage}</span>
+        <div className="auth-success-modal" role="dialog" aria-modal="true" aria-labelledby="auth-success-title">
+          <div className="auth-success-modal__card">
+            <CheckCircle className="auth-success-modal__icon" size={70} weight="fill" aria-hidden="true" />
+            <h2 id="auth-success-title">{successMessage}</h2>
+            <p>Se registro correctamente.</p>
+            <button type="button" className="btn auth-success-modal__button" onClick={onAcceptSuccess}>
+              Aceptar
+            </button>
+          </div>
         </div>
       ) : null}
       <Box className="auth-card__panel auth-card__panel--brand">
@@ -114,7 +126,7 @@ function LoginForm({
             </Typography>
             <TextField
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={values.password}
               onChange={(event) => onChange("password", event.target.value)}
               autoComplete="current-password"
@@ -124,6 +136,23 @@ function LoginForm({
               fullWidth
               size="medium"
               sx={fieldStyles}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        className="auth-form__password-toggle"
+                        type="button"
+                        edge="end"
+                        aria-label={showPassword ? "Ocultar contrasena" : "Ver contrasena"}
+                        onClick={() => setShowPassword((current) => !current)}
+                      >
+                        {showPassword ? <EyeSlash size={21} /> : <Eye size={21} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
               required
             />
           </Box>

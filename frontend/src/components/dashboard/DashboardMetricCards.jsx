@@ -37,15 +37,17 @@ function DashboardMetricCards({ today }) {
   ];
 
   return (
-    <div className="dashboard-metrics-grid">
+    <div className="dashboard-metrics-grid row g-3">
       {cards.map((card) => (
-        <article key={card.label} className={`surface-card dashboard-metric-card dashboard-metric-card--${card.tone ?? "default"}`}>
-          <div>
-            <p className="section-kicker">{card.label}</p>
-            <h3>{card.value}</h3>
-          </div>
-          <span className="muted-text">{card.hint}</span>
-        </article>
+        <div key={card.label} className="col-12 col-lg-6">
+          <article className={`surface-card dashboard-metric-card dashboard-metric-card--${card.tone ?? "default"} h-100`}>
+            <div>
+              <p className="section-kicker">{card.label}</p>
+              <h3>{card.value}</h3>
+            </div>
+            <span className="muted-text">{card.hint}</span>
+          </article>
+        </div>
       ))}
     </div>
   );
