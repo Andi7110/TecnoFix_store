@@ -33,11 +33,7 @@ export function useLoginForm(redirectTo = "/") {
 
     try {
       await login(values);
-      setSuccessMessage("Sesion iniciada con exito");
-      window.sessionStorage.setItem("tecnofix-login-success", "1");
-      window.setTimeout(() => {
-        navigate(redirectTo, { replace: true });
-      }, 900);
+      setSuccessMessage("Registro exitoso");
     } catch (error) {
       if (error?.response?.status === 422) {
         setErrors(error.response.data.errors ?? {});
@@ -50,6 +46,10 @@ export function useLoginForm(redirectTo = "/") {
     }
   }
 
+  function acceptSuccess() {
+    navigate(redirectTo, { replace: true });
+  }
+
   return {
     values,
     errors,
@@ -58,5 +58,6 @@ export function useLoginForm(redirectTo = "/") {
     submitting,
     updateValue,
     submit,
+    acceptSuccess,
   };
 }

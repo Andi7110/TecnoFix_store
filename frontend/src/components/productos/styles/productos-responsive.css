@@ -31,6 +31,10 @@
     align-items: stretch;
   }
 
+  .products-page__header-actions .btn {
+    width: 100%;
+  }
+
   .barcode-modal__toolbar,
   .barcode-modal__footer {
     flex-direction: column;

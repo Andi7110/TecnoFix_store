@@ -6,10 +6,12 @@
 }
 
 .repairs-filters.surface-card {
-  padding: 1rem;
-  border-radius: 0.95rem;
+  margin-top: 1.05rem;
+  padding: 1.05rem 0 0;
+  border-radius: 0;
   background: transparent;
-  border-color: var(--app-surface-border);
+  border: 0;
+  border-top: 1px solid rgba(21, 128, 61, 0.14);
   box-shadow: none;
 }
 
@@ -24,13 +26,14 @@
 }
 
 .repairs-filters .section-heading {
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--app-surface-border);
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 .repairs-filters .section-kicker {
   margin-bottom: 0.2rem;
   letter-spacing: 0.12em;
+  color: #15803d;
 }
 
 .repairs-filters h2 {
@@ -50,7 +53,7 @@
   min-height: 2.55rem;
   border-radius: 0.75rem;
   background: var(--app-field-bg);
-  border-color: var(--app-field-border);
+  border-color: rgba(21, 128, 61, 0.16);
   box-shadow: none;
 }
 
@@ -60,10 +63,11 @@
 }
 
 .repairs-table th {
-  color: var(--app-muted);
+  color: #15803d;
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 .repairs-table-card {
@@ -191,16 +195,66 @@
   margin-bottom: 0.5rem;
 }
 
+:root[data-theme="dark"] .repairs-page__panel {
+  border-color: rgba(34, 197, 94, 0.22);
+  background:
+    radial-gradient(circle at 88% 14%, rgba(34, 197, 94, 0.12), transparent 26%),
+    linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+}
+
+:root[data-theme="dark"] .repairs-page__panel::after,
+:root[data-theme="dark"] .repairs-table-card.surface-card::before {
+  background: linear-gradient(90deg, #39ff7a, #22c55e, #b6ffcf);
+  box-shadow:
+    0 0 14px rgba(57, 255, 122, 0.46),
+    0 0 28px rgba(57, 255, 122, 0.22);
+}
+
+:root[data-theme="dark"] .repairs-page .products-page__badge--soft {
+  background: rgba(57, 255, 122, 0.12);
+  color: #39ff7a;
+}
+
 :root[data-theme="dark"] .repairs-filters.surface-card,
 :root[data-theme="dark"] .repairs-table td,
 :root[data-theme="dark"] .repairs-table th,
 :root[data-theme="dark"] .repair-history-item {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(57, 255, 122, 0.18);
 }
 
 :root[data-theme="dark"] .repairs-filters.surface-card,
 :root[data-theme="dark"] .repair-history-item {
   background: transparent;
+}
+
+:root[data-theme="dark"] .repairs-filters .section-kicker,
+:root[data-theme="dark"] .repairs-table th {
+  color: #39ff7a !important;
+  text-shadow: 0 0 12px rgba(57, 255, 122, 0.28);
+}
+
+:root[data-theme="dark"] .repairs-filters .form-control,
+:root[data-theme="dark"] .repairs-filters .form-select {
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .repairs-table-card.surface-card {
+  background: rgba(13, 17, 23, 0.72);
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+:root[data-theme="dark"] .repairs-table-card .repairs-table {
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: rgba(139, 148, 158, 0.08);
+}
+
+:root[data-theme="dark"] .repairs-table-card .repairs-table td,
+:root[data-theme="dark"] .repairs-table-card .repairs-table th {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .repairs-table-card .repairs-table tbody tr:hover {
+  background: rgba(139, 148, 158, 0.08);
 }
 
 :root[data-theme="dark"] .repair-status--registrado {

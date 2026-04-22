@@ -18,8 +18,8 @@ function ProductosFilters({
         </div>
       </div>
 
-      <div className="products-filter-grid">
-        <div>
+      <div className="products-filter-grid row g-3">
+        <div className="col-12 col-md-6 col-xl">
           <label className="form-label">Modulo</label>
           <select
             className="form-select"
@@ -35,7 +35,7 @@ function ProductosFilters({
           </select>
         </div>
 
-        <div>
+        <div className="col-12 col-md-6 col-xl">
           <label className="form-label">Categoria</label>
           <select
             className="form-select"
@@ -52,7 +52,7 @@ function ProductosFilters({
           </select>
         </div>
 
-        <div>
+        <div className="col-12 col-md-6 col-xl">
           <label className="form-label">Nombre</label>
           <input
             className="form-control"
@@ -62,7 +62,7 @@ function ProductosFilters({
           />
         </div>
 
-        <div>
+        <div className="col-12 col-md-6 col-xl">
           <label className="form-label">Codigo</label>
           <input
             className="form-control"
@@ -72,7 +72,7 @@ function ProductosFilters({
           />
         </div>
 
-        <div>
+        <div className="col-12 col-md-6 col-xl">
           <label className="form-label">Stock bajo</label>
           <select
             className="form-select"
@@ -85,7 +85,7 @@ function ProductosFilters({
         </div>
       </div>
 
-      <div className="products-filter-actions">
+      <div className="products-filter-actions d-flex flex-column flex-sm-row justify-content-sm-end gap-2">
         <button type="submit" className="btn products-filter-actions__apply">
           Aplicar filtros
         </button>

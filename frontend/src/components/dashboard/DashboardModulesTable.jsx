@@ -7,7 +7,7 @@ function formatMoney(value) {
 
 function DashboardModulesTable({ rows }) {
   return (
-    <div className="surface-card dashboard-section-card">
+    <div className="surface-card dashboard-section-card h-100">
       <div className="section-heading">
         <div>
           <p className="section-kicker">Ventas por modulo</p>

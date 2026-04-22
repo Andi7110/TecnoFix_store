@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ChartLine, Plus } from "../../icons/phosphor";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import VentaDetailModal from "../../components/ventas/VentaDetailModal";
 import VentasFilters from "../../components/ventas/VentasFilters";
@@ -23,24 +24,40 @@ function VentasPage() {
   const ventaDetail = useVentaDetail();
 
   return (
-    <section>
-      <div className="products-page__header">
-        <div>
-          <p className="section-kicker">Ventas</p>
-          <h2>Historial de ventas</h2>
-          <p className="muted-text">
-            Registra articulos vendidos y consulta el detalle de cada operacion.
-          </p>
-        </div>
+    <section className="products-page ventas-page container-fluid px-0">
+      <div className="products-page__panel ventas-page__panel">
+        <div className="products-page__header">
+          <div className="row g-3 align-items-stretch w-100">
+            <div className="col-12 col-xl-7">
+              <div className="products-page__header-copy h-100">
+                <div className="d-flex align-items-center gap-2 flex-wrap mb-2">
+                  <span className="badge products-page__badge">Ventas</span>
+                  <span className="badge products-page__badge products-page__badge--soft">
+                    Historial activo
+                  </span>
+                </div>
+                <h2>Historial de ventas</h2>
+                <p className="muted-text">
+                  Registra articulos vendidos y consulta el detalle de cada operacion.
+                </p>
+              </div>
+            </div>
 
-        <div className="products-page__header-actions">
-          <Link to="/ventas/nueva" className="btn venta-page__new-button">
-            <span className="venta-page__new-button-symbol" aria-hidden="true">+</span>
-            <span>Nueva venta</span>
-          </Link>
-          <Link to="/ventas/reportes" className="btn venta-page__reports-button">
-            Reportes
-          </Link>
+            <div className="col-12 col-xl-5">
+              <div className="products-page__header-actions h-100 d-flex flex-column flex-sm-row gap-2 justify-content-xl-end align-items-stretch align-items-sm-center">
+                <Link to="/ventas/reportes" className="btn products-page__inventory-btn venta-page__reports-button">
+                  <ChartLine size={18} weight="bold" aria-hidden="true" />
+                  <span>Reportes</span>
+                </Link>
+                <Link to="/ventas/nueva" className="btn products-page__create-btn venta-page__new-button">
+                  <span className="products-page__create-btn-content">
+                    <Plus size={18} weight="bold" aria-hidden="true" />
+                    <span>Nueva venta</span>
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
