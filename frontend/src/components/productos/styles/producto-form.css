@@ -1,11 +1,16 @@
-/* Estilos de las vistas crear/editar producto y sus modales. */
+/* ==========================================================================
+   Producto form - crear/editar producto
+   Afecta las vistas de formulario de producto y los modales de validacion.
+   ========================================================================== */
 
+/* Separacion general de filtros, formulario y tablas cuando comparten pantalla. */
 .products-filters,
 .product-form,
 .products-table-wrapper {
   margin-bottom: 1.5rem;
 }
 
+/* Card principal del formulario. */
 .product-form.surface-card {
   padding: 1.1rem;
   border-radius: 1rem;
@@ -24,6 +29,7 @@
   border-color: var(--app-surface-border);
 }
 
+/* Encabezado del formulario: kicker, titulo, descripcion y stock actual. */
 .product-form .section-heading {
   padding-bottom: 0.9rem;
   margin-bottom: 1rem;
@@ -35,6 +41,7 @@
   color: var(--app-ink);
 }
 
+/* Campos comunes del formulario: inputs, selects y textarea. */
 .product-form .form-control,
 .product-form .form-select {
   min-height: 2.75rem;
@@ -44,17 +51,41 @@
   box-shadow: none;
 }
 
+/* Campo de fotografia: corrige el input file nativo y su boton interno. */
+.product-form input[type="file"].form-control {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  line-height: 2.75rem;
+  text-overflow: ellipsis;
+}
+
+.product-form input[type="file"].form-control::file-selector-button {
+  min-height: 2.75rem;
+  margin: 0 0.85rem 0 0;
+  padding: 0 0.9rem;
+  border: 0;
+  border-right: 1px solid var(--app-field-border);
+  background: #f3f4f6;
+  color: var(--app-ink);
+  font-weight: 500;
+}
+
 .product-form textarea.form-control {
   min-height: auto;
   resize: vertical;
 }
 
+/* Estados focus de campos. */
 .product-form .form-control:focus,
 .product-form .form-select:focus {
   border-color: rgba(30, 168, 82, 0.24);
   box-shadow: 0 0 0 0.2rem rgba(30, 168, 82, 0.08);
 }
 
+/* Inputs compuestos con prefijos/sufijos, por ejemplo codigo, precios y stock. */
 .product-form .input-group > .form-control,
 .product-form .input-group > .form-select,
 .product-form .input-group > .input-group-text,
@@ -66,6 +97,7 @@
   border-radius: 0.8rem;
 }
 
+/* Card pequena de stock actual en modo edicion. */
 .product-form__stock-box {
   min-width: 120px;
   padding: 0.85rem 1rem;
@@ -76,16 +108,18 @@
   flex-direction: column;
 }
 
+/* Checkbox de estado inicial. */
 .product-form__checkbox {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
 }
 
+/* Botones finales del formulario: guardar/actualizar y cancelar. */
 .product-form__submit {
-  background: #1ea852 !important;
-  border: 1px solid #1ea852 !important;
-  color: #ffffff !important;
+  background: #00f150 !important;
+  border: 1px solid #39ff7a !important;
+  color: #080808 !important;
   box-shadow: none;
 }
 
@@ -112,6 +146,7 @@
   box-shadow: none;
 }
 
+/* Inputs monetarios: precio compra y precio venta. */
 .product-money-input .input-group-text {
   min-width: 3rem;
   justify-content: center;
@@ -126,6 +161,7 @@
   letter-spacing: 0.02em;
 }
 
+/* Input de stock inicial y sus botones +/- */
 .product-stock-input .input-group-text {
   min-width: 4rem;
   justify-content: center;
@@ -144,10 +180,12 @@
   border-color: rgba(15, 20, 18, 0.08);
 }
 
+/* Ajuste especifico cuando el formulario esta en modo edicion. */
 .product-form--edit .products-filter-grid {
   align-items: start;
 }
 
+/* Modal de exito al crear/actualizar producto. */
 .product-success-modal {
   position: fixed;
   inset: 0;
@@ -180,6 +218,7 @@
   color: #1ea852;
 }
 
+/* Modal de validacion/error del formulario. */
 .product-form-modal {
   position: fixed;
   inset: 0;
@@ -213,6 +252,7 @@
   margin-top: 1rem;
 }
 
+/* Animacion de entrada para modales del formulario. */
 @keyframes product-success-pop {
   0% {
     opacity: 0;
@@ -224,83 +264,120 @@
   }
 }
 
+/* Modo oscuro del formulario: card, textos, campos, inputs compuestos y modales. */
+
+/* Modal de exito: se mantiene claro para resaltar confirmaciones positivas. */
 :root[data-theme="dark"] .product-success-modal__card {
   background: #f7fff9;
   border-color: rgba(30, 168, 82, 0.26);
 }
 
+/* Card principal del formulario en modo oscuro. */
 :root[data-theme="dark"] .product-form.surface-card {
   background: rgba(10, 15, 20, 0.94);
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: none;
 }
 
+/* Hover de la card del formulario. */
 :root[data-theme="dark"] .product-form.surface-card:hover {
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
 }
 
+/* Linea divisoria bajo el encabezado del formulario. */
 :root[data-theme="dark"] .product-form .section-heading {
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
+/* Textos principales: titulo, labels y valores destacados. */
 :root[data-theme="dark"] .product-form .section-heading h2,
 :root[data-theme="dark"] .product-form .form-label,
 :root[data-theme="dark"] .product-form strong {
   color: #eff8f3;
 }
 
+/* Textos secundarios: ayudas, descripciones y notas pequenas. */
 :root[data-theme="dark"] .product-form .muted-text,
 :root[data-theme="dark"] .product-form small {
   color: #aabdb5 !important;
 }
 
+/* Campos base del formulario: inputs y selects cerrados. */
 :root[data-theme="dark"] .product-form .form-control,
 :root[data-theme="dark"] .product-form .form-select {
   background: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.08);
   color: #eff8f3;
+  color-scheme: dark;
 }
 
+/* Opciones desplegadas de los select, por ejemplo el campo Modulo. */
+:root[data-theme="dark"] .product-form .form-select option {
+  background: #0d1117;
+  color: #ffffff;
+}
+
+/* Opcion seleccionada dentro del desplegable del select. */
+:root[data-theme="dark"] .product-form .form-select option:checked {
+  background: #0d1117;
+  color: #ffffff;
+}
+
+/* Boton interno del input de fotografia. */
+:root[data-theme="dark"] .product-form input[type="file"].form-control::file-selector-button {
+  border-right-color: rgba(255, 255, 255, 0.08);
+  background: #39ff7a;
+  color: #050505;
+}
+
+/* Campos deshabilitados o de solo lectura, como stock minimo. */
 :root[data-theme="dark"] .product-form .form-control:disabled,
 :root[data-theme="dark"] .product-form .form-control[readonly] {
   background: rgba(255, 255, 255, 0.03);
   color: #cfe7da;
 }
 
+/* Estado focus de inputs y selects. */
 :root[data-theme="dark"] .product-form .form-control:focus,
 :root[data-theme="dark"] .product-form .form-select:focus {
   border-color: rgba(34, 197, 94, 0.22);
   box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.08);
 }
 
+/* Caja de stock actual en modo editar. */
 :root[data-theme="dark"] .product-form__stock-box {
   background: rgba(34, 197, 94, 0.08);
   border-color: rgba(34, 197, 94, 0.16);
 }
 
+/* Prefijo visual de campos monetarios, como el simbolo $. */
 :root[data-theme="dark"] .product-money-input .input-group-text {
-  background: #161b22;
+  background: #0d1117;
   border-color: #30363d;
-  color: #39ff7a;
+  color: #fdfdfd;
   text-shadow: 0 0 12px rgba(57, 255, 122, 0.16);
 }
 
+/* Sufijos y botones del input de stock inicial. */
 :root[data-theme="dark"] .product-stock-input .input-group-text,
 :root[data-theme="dark"] .product-stock-input__button {
-  background: #161b22 !important;
+  background: #0d1117 !important;
   border-color: #30363d !important;
-  color: #eff8f3 !important;
+  color: #ffffff !important;
 }
 
+/* Titulo dentro del modal de exito. */
 :root[data-theme="dark"] .product-success-modal__card h3 {
   color: #144026;
 }
 
+/* Card del modal de validacion/error. */
 :root[data-theme="dark"] .product-form-modal__card {
   background: #fff8f8;
   border-color: rgba(220, 53, 69, 0.24);
 }
 
+/* Titulo del modal de validacion/error. */
 :root[data-theme="dark"] .product-form-modal__card h3 {
   color: #7a1d27;
 }

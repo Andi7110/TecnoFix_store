@@ -39,6 +39,14 @@ class StoreReparacionRequest extends FormRequest
             'fecha_estimada_entrega' => ['nullable', 'date'],
             'observacion' => ['nullable', 'string'],
             'estado_reparacion' => ['nullable', Rule::in(['registrado', 'en_proceso', 'terminado', 'entregado', 'cancelado'])],
+            'costos' => ['nullable', 'array'],
+            'costos.*.tipo_costo' => ['required_with:costos', Rule::in(['pieza', 'insumo', 'servicio_externo', 'otro'])],
+            'costos.*.descripcion' => ['required_with:costos', 'string', 'max:180'],
+            'costos.*.monto' => ['required_with:costos', 'numeric', 'min:0.01'],
+            'costos.*.fecha_costo' => ['nullable', 'date'],
+            'costos.*.proveedor' => ['nullable', 'string', 'max:150'],
+            'costos.*.referencia' => ['nullable', 'string', 'max:100'],
+            'costos.*.observacion' => ['nullable', 'string'],
         ];
     }
 

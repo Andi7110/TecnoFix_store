@@ -132,6 +132,94 @@ function buildMonthlyHtml(report) {
   `;
 }
 
+function buildRepairDailyHtml(report) {
+  const metrics = [
+    ["Ingresadas", String(report.resumen.ingresadas)],
+    ["Entregadas", String(report.resumen.entregadas)],
+    ["Ingresos caja", formatCurrency(report.resumen.ingresos_caja)],
+    ["Costos", formatCurrency(report.resumen.costos_reparacion)],
+    ["Utilidad", formatCurrency(report.resumen.utilidad_reparaciones)],
+    ["Margen utilidad", formatPercent(report.resumen.margen_utilidad_porcentaje)],
+    ["Valor estimado", formatCurrency(report.resumen.valor_estimado)],
+    ["Saldo abierto", formatCurrency(report.resumen.saldo_pendiente_abierto)],
+  ];
+
+  return `
+    <h1 style="margin:0 0 8px;font-size:24px;color:#0f172a;">Reporte diario de reparaciones</h1>
+    <p style="margin:0;color:#475569;">Fecha: ${escapeHtml(report.fecha)}${report.modulo?.nombre ? ` | Modulo: ${escapeHtml(report.modulo.nombre)}` : ""}</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;">
+      ${metrics.map(([label, value]) => `
+        <div style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#f8fafc;">
+          <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#64748b;">${escapeHtml(label)}</div>
+          <div style="margin-top:6px;font-size:18px;font-weight:700;color:#0f172a;">${escapeHtml(value)}</div>
+        </div>
+      `).join("")}
+    </div>
+    ${buildSection("Estado actual", ["Estado", "Cantidad", "Saldo"], report.estado_actual, [
+      { render: (row) => row.estado },
+      { render: (row) => row.total },
+      { render: (row) => formatCurrency(row.saldo_pendiente) },
+    ])}
+    ${buildSection("Ingresos por modulo", ["Modulo", "Movimientos", "Total"], report.ingresos_por_modulo, [
+      { render: (row) => row.modulo_nombre },
+      { render: (row) => row.movimientos },
+      { render: (row) => formatCurrency(row.total) },
+    ])}
+    ${buildSection("Costos por tipo", ["Tipo", "Movimientos", "Total"], report.costos_por_tipo, [
+      { render: (row) => row.tipo_costo },
+      { render: (row) => row.movimientos },
+      { render: (row) => formatCurrency(row.total) },
+    ])}
+    ${buildSection("Entregas recientes", ["Codigo", "Cliente", "Equipo", "Costo"], report.entregas_recientes, [
+      { render: (row) => row.codigo_reparacion },
+      { render: (row) => row.cliente_nombre },
+      { render: (row) => row.equipo },
+      { render: (row) => formatCurrency(row.costo_reparacion) },
+    ])}
+  `;
+}
+
+function buildRepairMonthlyHtml(report) {
+  const metrics = [
+    ["Ingresadas", String(report.resumen.ingresadas)],
+    ["Entregadas", String(report.resumen.entregadas)],
+    ["Ingresos caja", formatCurrency(report.resumen.ingresos_caja)],
+    ["Costos", formatCurrency(report.resumen.costos_reparacion)],
+    ["Utilidad", formatCurrency(report.resumen.utilidad_reparaciones)],
+    ["Margen utilidad", formatPercent(report.resumen.margen_utilidad_porcentaje)],
+    ["Valor entregado", formatCurrency(report.resumen.valor_entregado)],
+    ["Saldo abierto", formatCurrency(report.resumen.saldo_pendiente_abierto)],
+  ];
+
+  return `
+    <h1 style="margin:0 0 8px;font-size:24px;color:#0f172a;">Reporte mensual de reparaciones</h1>
+    <p style="margin:0;color:#475569;">Periodo: ${escapeHtml(report.periodo.etiqueta)}${report.modulo?.nombre ? ` | Modulo: ${escapeHtml(report.modulo.nombre)}` : ""}</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;">
+      ${metrics.map(([label, value]) => `
+        <div style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#f8fafc;">
+          <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#64748b;">${escapeHtml(label)}</div>
+          <div style="margin-top:6px;font-size:18px;font-weight:700;color:#0f172a;">${escapeHtml(value)}</div>
+        </div>
+      `).join("")}
+    </div>
+    ${buildSection("Ingresos por dia", ["Fecha", "Movimientos", "Total"], report.ingresos_por_dia, [
+      { render: (row) => row.fecha },
+      { render: (row) => row.movimientos },
+      { render: (row) => formatCurrency(row.total) },
+    ])}
+    ${buildSection("Costos por tipo", ["Tipo", "Movimientos", "Total"], report.costos_por_tipo, [
+      { render: (row) => row.tipo_costo },
+      { render: (row) => row.movimientos },
+      { render: (row) => formatCurrency(row.total) },
+    ])}
+    ${buildSection("Reparaciones por estado", ["Estado", "Cantidad", "Valor"], report.reparaciones_por_estado, [
+      { render: (row) => row.estado },
+      { render: (row) => row.total },
+      { render: (row) => formatCurrency(row.valor) },
+    ])}
+  `;
+}
+
 export function exportReportToPdf(type, report) {
   if (typeof window === "undefined" || !report) {
     return;
@@ -143,8 +231,27 @@ export function exportReportToPdf(type, report) {
     return;
   }
 
-  const title = type === "daily" ? "Reporte diario de ventas" : "Estado de resultados mensual";
-  const body = type === "daily" ? buildDailyHtml(report) : buildMonthlyHtml(report);
+  const builders = {
+    daily: {
+      title: "Reporte diario de ventas",
+      body: buildDailyHtml,
+    },
+    monthly: {
+      title: "Estado de resultados mensual",
+      body: buildMonthlyHtml,
+    },
+    "repair-daily": {
+      title: "Reporte diario de reparaciones",
+      body: buildRepairDailyHtml,
+    },
+    "repair-monthly": {
+      title: "Reporte mensual de reparaciones",
+      body: buildRepairMonthlyHtml,
+    },
+  };
+  const builder = builders[type] ?? builders.daily;
+  const title = builder.title;
+  const body = builder.body(report);
 
   printWindow.document.write(`
     <!doctype html>

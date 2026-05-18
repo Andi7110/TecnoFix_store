@@ -12,6 +12,7 @@ class RegistrarReparacionAction
     public function __construct(
         private readonly UpsertClienteAction $upsertCliente,
         private readonly CambiarEstadoReparacionAction $cambiarEstadoReparacion,
+        private readonly RegistrarCostoReparacionAction $registrarCostoReparacion,
     ) {
     }
 
@@ -41,9 +42,14 @@ class RegistrarReparacionAction
 
             $this->cambiarEstadoReparacion->initialize($reparacion, 'Reparacion registrada.');
 
+            foreach ($data['costos'] ?? [] as $costo) {
+                $this->registrarCostoReparacion->execute($reparacion, $costo);
+            }
+
             return $reparacion->load([
                 'cliente',
                 'modulo:id,nombre,estado',
+                'costos' => fn ($query) => $query->orderByDesc('fecha_costo')->orderByDesc('id'),
                 'historiales',
             ])->loadCount('historiales');
         });

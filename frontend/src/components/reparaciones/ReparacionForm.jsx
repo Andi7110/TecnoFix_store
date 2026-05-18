@@ -5,6 +5,7 @@ function fieldError(errors, name) {
 }
 
 function ReparacionForm({
+  formId,
   title,
   values,
   loading,
@@ -17,6 +18,9 @@ function ReparacionForm({
   formatMoneyField,
   onSubmit,
   onCancel,
+  readOnly = false,
+  onEdit,
+  hideActions = false,
 }) {
   if (loading) {
     return (
@@ -27,17 +31,27 @@ function ReparacionForm({
   }
 
   return (
-    <form className="surface-card product-form repair-form" onSubmit={onSubmit} noValidate>
+    <form id={formId} className={`surface-card product-form repair-form ${readOnly ? "repair-form--readonly" : ""}`} onSubmit={onSubmit} noValidate>
       <div className="section-heading">
         <div>
           <p className="section-kicker">Taller</p>
           <h2>{title}</h2>
         </div>
+        {readOnly ? (
+          <div className="repair-form__header-actions">
+            <button type="button" className="btn products-filter-actions__apply" onClick={onEdit}>
+              Editar
+            </button>
+            <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
+              Salir
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null}
 
-      <div className="row g-3">
+      <fieldset className="row g-3" disabled={readOnly}>
         <div className="col-md-4">
           <label className="form-label">Modulo</label>
           <input
@@ -260,16 +274,18 @@ function ReparacionForm({
           />
           <div className="invalid-feedback">{fieldError(errors, "observacion")}</div>
         </div>
-      </div>
+      </fieldset>
 
-      <div className="products-filter-actions mt-4">
-        <button type="submit" className="btn products-filter-actions__apply" disabled={saving}>
-          {saving ? "Guardando..." : isEdit ? "Actualizar reparacion" : "Registrar reparacion"}
-        </button>
-        <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
-          Cancelar
-        </button>
-      </div>
+      {!readOnly && !hideActions ? (
+        <div className="products-filter-actions mt-4">
+          <button type="submit" className="btn products-filter-actions__apply" disabled={saving}>
+            {saving ? "Guardando..." : isEdit ? "Actualizar reparacion" : "Registrar reparacion"}
+          </button>
+          <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
+            Cancelar
+          </button>
+        </div>
+      ) : null}
     </form>
   );
 }

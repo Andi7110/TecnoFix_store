@@ -10,10 +10,9 @@ import CrearProductoPage from "../pages/productos/CrearProductoPage";
 import EditarProductoPage from "../pages/productos/EditarProductoPage";
 import InventarioProductosPage from "../pages/productos/InventarioProductosPage";
 import ProductosPage from "../pages/productos/ProductosPage";
-import CrearReparacionPage from "../pages/reparaciones/CrearReparacionPage";
 import EditarReparacionPage from "../pages/reparaciones/EditarReparacionPage";
 import ReparacionesPage from "../pages/reparaciones/ReparacionesPage";
-import CrearVentaPage from "../pages/ventas/CrearVentaPage";
+import ReparacionesReportesPage from "../pages/reparaciones/ReparacionesReportesPage";
 import VentasPage from "../pages/ventas/VentasPage";
 import VentasReportesPage from "../pages/ventas/VentasReportesPage";
 
@@ -33,10 +32,9 @@ function AppRouter() {
             <Route path="/productos/nuevo" element={<CrearProductoPage />} />
             <Route path="/productos/:productoId/editar" element={<EditarProductoPage />} />
             <Route path="/ventas" element={<VentasPage />} />
-            <Route path="/ventas/nueva" element={<CrearVentaPage />} />
             <Route path="/ventas/reportes" element={<VentasReportesPage />} />
             <Route path="/reparaciones" element={<ReparacionesPage />} />
-            <Route path="/reparaciones/nueva" element={<CrearReparacionPage />} />
+            <Route path="/reparaciones/reportes" element={<ReparacionesReportesPage />} />
             <Route path="/reparaciones/:reparacionId/editar" element={<EditarReparacionPage />} />
             <Route path="/bitacora" element={<BitacoraPage />} />
           </Route>

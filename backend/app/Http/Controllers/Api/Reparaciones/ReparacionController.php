@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Reparaciones;
 use App\Actions\Reparaciones\RegistrarReparacionAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Reparaciones\IndexReparacionRequest;
+use App\Http\Requests\Reparaciones\EntregarReparacionRequest;
 use App\Http\Requests\Reparaciones\StoreReparacionRequest;
 use App\Http\Requests\Reparaciones\UpdateEstadoReparacionRequest;
 use App\Http\Requests\Reparaciones\UpdateReparacionRequest;
@@ -53,6 +54,20 @@ class ReparacionController extends Controller
     {
         return new ReparacionResource(
             $this->reparacionService->changeStatus($reparacione, $request->validated())
+        );
+    }
+
+    public function entregar(EntregarReparacionRequest $request, Reparacion $reparacione): ReparacionResource
+    {
+        return new ReparacionResource(
+            $this->reparacionService->deliverAndCharge($reparacione, $request->validated())
+        );
+    }
+
+    public function abonar(EntregarReparacionRequest $request, Reparacion $reparacione): ReparacionResource
+    {
+        return new ReparacionResource(
+            $this->reparacionService->registerPayment($reparacione, $request->validated())
         );
     }
 }

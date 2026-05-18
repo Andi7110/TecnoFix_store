@@ -6,6 +6,8 @@ import ProductosTable from "../../components/productos/ProductosTable";
 import { useProductosFilters } from "../../hooks/productos/useProductosFilters";
 import { useProductosList } from "../../hooks/productos/useProductosList";
 
+const STOCK_ALERT_STORAGE_KEY = "tecnofix.products.stockAlertSeen";
+
 function ProductosPage() {
   const navigate = useNavigate();
   const { filters } = useProductosFilters();
@@ -36,12 +38,18 @@ function ProductosPage() {
     [productos],
   );
   const [isOpeningCreate, setIsOpeningCreate] = useState(false);
-  const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(false);
+  const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(
+    () => window.localStorage.getItem(STOCK_ALERT_STORAGE_KEY) === "true",
+  );
   const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
 
   useEffect(() => {
-    setIsProductsAlertDismissed(false);
-  }, [productosCriticos]);
+    if (productosCriticos.length === 0 || isProductsAlertDismissed) {
+      return;
+    }
+
+    window.localStorage.setItem(STOCK_ALERT_STORAGE_KEY, "true");
+  }, [isProductsAlertDismissed, productosCriticos.length]);
 
   useEffect(() => {
     if (!isOpeningCreate) {
@@ -64,67 +72,53 @@ function ProductosPage() {
   }
 
   return (
-    <section className="products-page container-fluid px-0">
-      <div className="products-page__panel">
-        <div className="products-page__header">
-          <div className="row g-3 align-items-stretch w-100">
-            <div className="col-12 col-xl-7">
-              <div className="products-page__header-copy h-100">
-                <div className="d-flex align-items-center gap-2 flex-wrap mb-2">
-                  <span className="badge products-page__badge">Inventario</span>
-                  <span className="badge products-page__badge products-page__badge--soft">
-                    Catalogo activo
-                  </span>
-                </div>
-                <h2>Gestion de productos</h2>
-                <p className="muted-text">
-                  Consulta, filtra y revisa tu catalogo segun disponibilidad de stock.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-12 col-xl-5">
-              <div className="products-page__header-actions h-100 d-flex flex-column flex-sm-row gap-2 justify-content-xl-end align-items-stretch align-items-sm-center">
-                <button
-                  type="button"
-                  className="btn products-page__barcode-btn"
-                  onClick={() => setIsBarcodeModalOpen(true)}
-                  disabled={productos.length === 0}
-                >
-                  <Printer size={18} weight="bold" aria-hidden="true" />
-                  <span>Imprimir codigos</span>
-                </button>
-                <Link to="/productos/inventario" className="btn products-page__inventory-btn">
-                  Inventario
-                </Link>
-                <button
-                  type="button"
-                  className="btn products-page__create-btn"
-                  onClick={handleOpenCreate}
-                  disabled={isOpeningCreate}
-                >
-                  <span className="products-page__create-btn-content">
-                    {isOpeningCreate ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm products-page__create-btn-spinner"
-                          aria-hidden="true"
-                        />
-                        <span>Cargando...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Plus size={18} weight="bold" aria-hidden="true" />
-                        <span>Nuevo producto</span>
-                      </>
-                    )}
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
+    <section className="products-page products-page--minimal">
+      <div className="products-page__header products-page__header--minimal">
+        <div>
+          <p className="section-kicker">Productos</p>
+          <h2>Gestion de productos</h2>
+          <p className="muted-text">
+            Consulta, agrega y revisa tus productos.
+          </p>
         </div>
 
+        <div className="products-page__header-actions">
+          <button
+            type="button"
+            className="btn products-page__barcode-btn"
+            onClick={() => setIsBarcodeModalOpen(true)}
+            disabled={productos.length === 0}
+          >
+            <Printer size={18} weight="bold" aria-hidden="true" />
+            <span>Imprimir codigos</span>
+          </button>
+          <Link to="/productos/inventario" className="btn products-page__inventory-btn">
+            Inventario
+          </Link>
+          <button
+            type="button"
+            className="btn products-page__create-btn"
+            onClick={handleOpenCreate}
+            disabled={isOpeningCreate}
+          >
+            <span className="products-page__create-btn-content">
+              {isOpeningCreate ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm products-page__create-btn-spinner"
+                    aria-hidden="true"
+                  />
+                  <span>Cargando...</span>
+                </>
+              ) : (
+                <>
+                  <Plus size={18} weight="bold" aria-hidden="true" />
+                  <span>Agregar producto</span>
+                </>
+              )}
+            </span>
+          </button>
+        </div>
       </div>
 
       {productosCriticos.length > 0 && !isProductsAlertDismissed ? (
@@ -136,7 +130,10 @@ function ProductosPage() {
             type="button"
             className="products-alert__close"
             aria-label="Cerrar alerta"
-            onClick={() => setIsProductsAlertDismissed(true)}
+            onClick={() => {
+              window.localStorage.setItem(STOCK_ALERT_STORAGE_KEY, "true");
+              setIsProductsAlertDismissed(true);
+            }}
           >
             ×
           </button>
@@ -150,10 +147,9 @@ function ProductosPage() {
           <div className="inventory-section">
             <div className="section-heading">
               <div>
-                <p className="section-kicker">Catalogo</p>
-                <h2>Productos disponibles</h2>
+                <p className="section-kicker">Productos recientes</p>
+                <h2></h2>
                 <p className="muted-text">
-                  Aqui se muestran los productos con stock disponible para venta e inventario.
                 </p>
               </div>
             </div>

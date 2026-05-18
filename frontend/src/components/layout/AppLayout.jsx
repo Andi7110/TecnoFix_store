@@ -433,7 +433,14 @@ function AppLayout() {
         { to: "/ventas/reportes", label: "Reportes", icon: <ReportsIcon /> },
       ],
     },
-    { to: "/reparaciones", label: "Reparaciones", icon: <RepairsIcon /> },
+    {
+      to: "/reparaciones",
+      label: "Reparaciones",
+      icon: <RepairsIcon />,
+      children: [
+        { to: "/reparaciones/reportes", label: "Reportes", icon: <ReportsIcon /> },
+      ],
+    },
     { to: "/caja", label: "Caja", icon: <CashIcon /> },
     { to: "/bitacora", label: "Bitacora", icon: <BitacoraIcon /> },
   ];

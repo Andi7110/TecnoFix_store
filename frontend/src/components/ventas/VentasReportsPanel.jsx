@@ -228,16 +228,40 @@ function DailyContent({ report }) {
         moduleName={report.modulo?.nombre}
       />
 
-      <div className="ventas-report-kpis">
-        <Metric label="Ventas netas" value={formatCurrency(report.resumen.ventas_netas)} tone="accent" />
-        <Metric label="Utilidad bruta" value={formatCurrency(report.resumen.utilidad_bruta)} tone="success" />
-        <Metric label="Margen bruto" value={formatPercent(report.resumen.margen_bruto_porcentaje)} />
-        <Metric label="Ticket promedio" value={formatCurrency(report.resumen.ticket_promedio)} />
-        <Metric label="Items vendidos" value={report.resumen.items_vendidos} />
-        <Metric label="Caja neta" value={formatCurrency(report.caja.neto)} />
+      <div className="ventas-report-daily-overview">
+        <section className="ventas-report-primary-card">
+          <div className="ventas-report-primary-card__header">
+            <span>Resultado comercial</span>
+            <strong>{formatCurrency(report.resumen.ventas_netas)}</strong>
+          </div>
+          <div className="ventas-report-primary-card__grid">
+            <div>
+              <span>Utilidad bruta</span>
+              <strong>{formatCurrency(report.resumen.utilidad_bruta)}</strong>
+            </div>
+            <div>
+              <span>Margen bruto</span>
+              <strong>{formatPercent(report.resumen.margen_bruto_porcentaje)}</strong>
+            </div>
+            <div>
+              <span>Costo de ventas</span>
+              <strong>{formatCurrency(report.resumen.costo_ventas)}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="ventas-report-operation-card">
+          <h4>Operacion del dia</h4>
+          <div className="ventas-report-operation-list">
+            <div><span>Ventas registradas</span><strong>{report.resumen.ventas_count}</strong></div>
+            <div><span>Items vendidos</span><strong>{report.resumen.items_vendidos}</strong></div>
+            <div><span>Ticket promedio</span><strong>{formatCurrency(report.resumen.ticket_promedio)}</strong></div>
+            <div><span>Caja neta</span><strong>{formatCurrency(report.caja.neto)}</strong></div>
+          </div>
+        </section>
       </div>
 
-      <div className="ventas-report-insights">
+      <div className="ventas-report-insights ventas-report-insights--readable">
         {insights.map((item) => <Insight key={item.id} title={item.title} body={item.body} tone={item.tone} />)}
       </div>
 

@@ -1,5 +1,11 @@
-/* Estilos de la vista /productos: encabezado, filtros y tabla. */
+/* ==========================================================================
+   Productos listado - estilos base heredados
+   Estos bloques mantienen compatibilidad con el diseño anterior de /productos.
+   Al final del archivo esta la capa "products-page--minimal" que sobrescribe
+   varios de estos estilos para las vistas actuales.
+   ========================================================================== */
 
+/* Panel decorativo anterior del encabezado de productos. */
 .products-page__panel {
   position: relative;
   overflow: hidden;
@@ -20,6 +26,7 @@
   background: linear-gradient(90deg, #15803d, #22c55e, #86efac);
 }
 
+/* Encabezado interno anterior: titulo, descripcion y badges. */
 .products-page__header {
   position: relative;
   z-index: 1;
@@ -42,6 +49,7 @@
   min-height: 8rem;
 }
 
+/* Badges anteriores del encabezado. En el diseño minimalista ya no se renderizan. */
 .products-page__badge {
   width: fit-content;
   border: 1px solid rgba(21, 128, 61, 0.2);
@@ -58,6 +66,7 @@
   color: #15803d;
 }
 
+/* Grupo de acciones del encabezado: imprimir codigos, inventario y crear producto. */
 .products-page__header-actions {
   display: flex;
   gap: 0.75rem;
@@ -69,6 +78,7 @@
   flex: 1 1 0;
 }
 
+/* Boton para abrir el modal de impresion de codigos. */
 .products-page__barcode-btn {
   display: inline-flex;
   align-items: center;
@@ -96,6 +106,7 @@
   cursor: not-allowed;
 }
 
+/* Boton principal para crear producto. */
 .products-page__create-btn {
   display: inline-flex;
   align-items: center;
@@ -111,6 +122,7 @@
   flex: 1.15 1 0;
 }
 
+/* Link/boton para navegar al submodulo Inventario. */
 .products-page__inventory-btn {
   display: inline-flex;
   align-items: center;
@@ -132,6 +144,7 @@
   box-shadow: none;
 }
 
+/* Contenido interno del boton Crear producto: icono, texto y spinner. */
 .products-page__create-btn-content {
   display: inline-flex;
   flex-direction: row;
@@ -166,6 +179,7 @@
   color: #ffffff;
 }
 
+/* Tipografia del encabezado de productos y formularios de filtros. */
 .products-page__header h2,
 .products-filters h2 {
   color: var(--app-ink) !important;
@@ -184,6 +198,7 @@
   font-size: 0.94rem;
 }
 
+/* Filtros minimalistas reutilizados por listados de productos. */
 .products-filters--minimal.surface-card {
   margin-top: 1.05rem;
   padding: 1.05rem 0 0;
@@ -220,6 +235,7 @@
   font-size: 1rem;
 }
 
+/* Grid base de filtros. Tambien lo reutiliza el formulario de producto. */
 .products-filter-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -253,6 +269,7 @@
   box-shadow: none;
 }
 
+/* Botonera de filtros: aplicar y limpiar. */
 .products-filter-actions {
   display: flex;
   gap: 0.75rem;
@@ -316,6 +333,7 @@
   box-shadow: none;
 }
 
+/* Encabezados y acciones dentro de tablas de productos. */
 .products-table th {
   color: #15803d;
   font-size: 0.78rem;
@@ -346,10 +364,12 @@
   box-shadow: none;
 }
 
+/* Wrapper de tabla en estado loading. */
 .products-table-wrapper--loading {
   position: relative;
 }
 
+/* Modal para imprimir codigos de barra. */
 .barcode-modal {
   position: fixed;
   inset: 0;
@@ -472,6 +492,7 @@
   margin-top: 1rem;
 }
 
+/* Barras, lineas y celdas skeleton usadas mientras cargan productos. */
 .products-table-wrapper--loading .table-responsive {
   opacity: 0.72;
 }
@@ -566,6 +587,7 @@
   border-radius: 0.7rem;
 }
 
+/* Animacion horizontal del skeleton de carga. */
 @keyframes products-loading-sweep {
   0% {
     transform: translateX(-120%);
@@ -575,6 +597,7 @@
   }
 }
 
+/* Pulso de las celdas skeleton. */
 @keyframes products-row-fade {
   0%,
   100% {
@@ -587,6 +610,7 @@
   }
 }
 
+/* Modo oscuro para acciones, panel anterior, filtros y modal de codigos. */
 :root[data-theme="dark"] .products-table__actions .btn {
   border-color: rgba(57, 255, 122, 0.22) !important;
   color: #eff8f3 !important;
@@ -736,4 +760,278 @@
   background: rgba(46, 160, 67, 0.14) !important;
   border-color: rgba(46, 160, 67, 0.26) !important;
   color: #eff8f3 !important;
+}
+
+/* ==========================================================================
+   Productos - estilo minimalista
+   Replica el lenguaje visual aplicado en Dashboard: encabezado plano, acciones
+   con borde fino, superficies transparentes y tablas limpias.
+   ========================================================================== */
+
+/* Contenedor principal de /productos y /productos/inventario cuando usan diseño minimalista. */
+.products-page--minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Card del encabezado principal con titulo y acciones. */
+.products-page--minimal .products-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.95rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.products-page--minimal .products-page__header .section-kicker {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #15803d;
+  letter-spacing: 0.12em;
+}
+
+.products-page--minimal .products-page__header h2 {
+  margin-bottom: 0.38rem;
+  color: var(--app-ink) !important;
+  font-size: clamp(1.55rem, 2.2vw, 2.15rem);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.products-page--minimal .products-page__header .muted-text {
+  max-width: 38rem;
+  margin-bottom: 0;
+  font-size: 0.94rem;
+}
+
+/* Acciones del header minimalista: imprimir, inventario y nuevo producto. */
+.products-page--minimal .products-page__header-actions {
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex: 0 1 34rem;
+}
+
+.products-page--minimal .products-page__header-actions .btn {
+  min-height: 2.65rem;
+  flex: 1 1 0;
+  border-radius: 0.95rem;
+  box-shadow: none !important;
+  transition:
+    transform 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease;
+}
+
+.products-page--minimal .products-page__barcode-btn,
+.products-page--minimal .products-page__inventory-btn {
+  background: transparent !important;
+  border: 1px solid rgba(30, 168, 82, 0.28) !important;
+  color: var(--app-ink) !important;
+}
+
+.products-page--minimal .products-page__create-btn {
+  background: transparent !important;
+  border: 2px solid rgba(30, 168, 82, 0.46) !important;
+  color: var(--app-ink) !important;
+}
+
+.products-page--minimal .products-page__barcode-btn:hover,
+.products-page--minimal .products-page__barcode-btn:focus,
+.products-page--minimal .products-page__inventory-btn:hover,
+.products-page--minimal .products-page__inventory-btn:focus,
+.products-page--minimal .products-page__create-btn:hover,
+.products-page--minimal .products-page__create-btn:focus {
+  transform: translateY(-2px);
+  background: rgba(30, 168, 82, 0.045) !important;
+  border-color: #1ea852 !important;
+  color: var(--app-ink) !important;
+}
+
+.products-page--minimal .products-page__create-btn-spinner {
+  color: #166534;
+}
+
+/* Secciones internas como Catalogo, Productos disponibles y Productos agotados. */
+.products-page--minimal .inventory-section {
+  margin-bottom: 1.5rem;
+}
+
+.products-page--minimal .inventory-section .section-heading {
+  margin-bottom: 1rem;
+}
+
+.products-page--minimal .inventory-section .section-kicker {
+  color: var(--app-ink);
+  letter-spacing: 0.08em;
+}
+
+.products-page--minimal .inventory-section h2 {
+  color: var(--app-ink);
+}
+
+.products-page--minimal .inventory-section__divider {
+  margin-bottom: 1.35rem;
+}
+
+.products-page--minimal .inventory-section__divider span {
+  background: var(--app-surface-border);
+}
+
+/* Alerta de productos con stock critico. */
+.products-page--minimal .products-alert {
+  border-color: rgba(180, 83, 9, 0.18);
+  border-radius: 0.95rem;
+  background: transparent;
+  color: var(--app-ink);
+}
+
+/* Superficie minimalista de tablas. */
+.products-page--minimal .inventory-table-wrapper.surface-card,
+.products-page--minimal .products-table-wrapper.surface-card {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: transparent;
+  color: var(--app-ink);
+  box-shadow: none;
+}
+
+.products-page--minimal .inventory-table-wrapper.surface-card::before,
+.products-page--minimal .products-table-wrapper.surface-card::before {
+  display: none;
+}
+
+.products-page--minimal .inventory-table-wrapper.surface-card:hover,
+.products-page--minimal .products-table-wrapper.surface-card:hover {
+  transform: none;
+  border-color: var(--app-surface-border);
+  box-shadow: none;
+}
+
+/* Tabla minimalista: colores base y hover. */
+.products-page--minimal .products-table,
+.products-page--minimal .inventory-table {
+  margin-bottom: 0;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--app-ink);
+  --bs-table-border-color: var(--app-surface-border);
+  --bs-table-hover-color: var(--app-ink);
+  --bs-table-hover-bg: var(--app-table-row-hover);
+}
+
+/* Encabezados de tabla con gradiente verde para distinguir la tabla. */
+.products-page--minimal .products-table th,
+.products-page--minimal .inventory-table th {
+  background:
+    linear-gradient(180deg, rgba(30, 168, 82, 0.12), rgba(30, 168, 82, 0.045));
+  color: #14532d;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.products-page--minimal .products-table td,
+.products-page--minimal .products-table th,
+.products-page--minimal .inventory-table td,
+.products-page--minimal .inventory-table th {
+  background: transparent;
+  border-color: var(--app-surface-border);
+}
+
+/* Boton Detalle dentro de filas de tabla. */
+.products-page--minimal .products-table__actions .btn {
+  border-radius: 0.7rem;
+  background: transparent !important;
+  border: 1px solid var(--app-surface-border) !important;
+  color: var(--app-ink) !important;
+  box-shadow: none;
+  font-weight: 700;
+}
+
+.products-page--minimal .products-table__actions .btn:hover,
+.products-page--minimal .products-table__actions .btn:focus {
+  background: rgba(30, 168, 82, 0.045) !important;
+  border-color: rgba(30, 168, 82, 0.28) !important;
+  color: var(--app-ink) !important;
+}
+
+/* Modo oscuro especifico del diseño minimalista de productos. */
+:root[data-theme="dark"] .products-page--minimal .products-page__header .section-kicker {
+  color: #39ff7a !important;
+  text-shadow: none;
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-page__header {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-page__header h2,
+:root[data-theme="dark"] .products-page--minimal .inventory-section h2,
+:root[data-theme="dark"] .products-page--minimal .product-name,
+:root[data-theme="dark"] .products-page--minimal .products-table td,
+:root[data-theme="dark"] .products-page--minimal .products-table th {
+  color: #eff8f3 !important;
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-page__header .muted-text,
+:root[data-theme="dark"] .products-page--minimal .inventory-section .muted-text,
+:root[data-theme="dark"] .products-page--minimal .product-code,
+:root[data-theme="dark"] .products-page--minimal .products-table .muted-text {
+  color: #aabdb5 !important;
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-page__barcode-btn,
+:root[data-theme="dark"] .products-page--minimal .products-page__inventory-btn,
+:root[data-theme="dark"] .products-page--minimal .products-page__create-btn {
+  background: transparent !important;
+  border-color: rgba(34, 197, 94, 0.36) !important;
+  color: #eff8f3 !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-page__barcode-btn:hover,
+:root[data-theme="dark"] .products-page--minimal .products-page__barcode-btn:focus,
+:root[data-theme="dark"] .products-page--minimal .products-page__inventory-btn:hover,
+:root[data-theme="dark"] .products-page--minimal .products-page__inventory-btn:focus,
+:root[data-theme="dark"] .products-page--minimal .products-page__create-btn:hover,
+:root[data-theme="dark"] .products-page--minimal .products-page__create-btn:focus {
+  background: rgba(34, 197, 94, 0.08) !important;
+  border-color: #22c55e !important;
+  color: #eff8f3 !important;
+}
+
+:root[data-theme="dark"] .products-page--minimal .inventory-table-wrapper.surface-card,
+:root[data-theme="dark"] .products-page--minimal .products-table-wrapper.surface-card {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-table,
+:root[data-theme="dark"] .products-page--minimal .inventory-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #eff8f3;
+  --bs-table-border-color: rgba(255, 255, 255, 0.08);
+  --bs-table-hover-bg: rgba(139, 148, 158, 0.08);
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-table th,
+:root[data-theme="dark"] .products-page--minimal .inventory-table th {
+  background:
+    linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.06));
+  color: #bbf7d0 !important;
+  text-shadow: none;
 }

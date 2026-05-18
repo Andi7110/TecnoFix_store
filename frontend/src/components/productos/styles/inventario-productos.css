@@ -1,5 +1,10 @@
-/* Estilos de la vista de inventario de productos. */
+/* ==========================================================================
+   Inventario de productos - estilos base
+   Afecta la vista /productos/inventario y tambien las tablas reutilizadas
+   desde /productos cuando usan clases inventory-*.
+   ========================================================================== */
 
+/* Miniatura del producto en tablas de inventario/listado. */
 .inventory-photo {
   width: 44px;
   height: 44px;
@@ -8,6 +13,7 @@
   border: 1px solid var(--app-surface-border);
 }
 
+/* Contenedores de secciones: Accesorios, Libreria y secciones de listado. */
 .inventory-section {
   margin-bottom: 1.5rem;
 }
@@ -16,6 +22,7 @@
   margin-top: 3rem;
 }
 
+/* Separador visual entre secciones, por ejemplo entre Accesorios y Libreria. */
 .inventory-section__divider {
   display: flex;
   align-items: center;
@@ -30,6 +37,7 @@
     linear-gradient(90deg, transparent 0%, rgba(15, 20, 18, 0.12) 14%, rgba(30, 168, 82, 0.28) 50%, rgba(15, 20, 18, 0.12) 86%, transparent 100%);
 }
 
+/* Titulos auxiliares de seccion. */
 .inventory-section__title {
   margin: 0;
   font-size: 1.05rem;
@@ -37,6 +45,7 @@
   color: var(--app-ink);
 }
 
+/* Etiqueta superior de filtros: "Filtro accesorios" / "Filtro libreria". */
 .inventory-section__filter-title {
   width: fit-content;
   display: inline-flex;
@@ -52,6 +61,7 @@
   text-transform: uppercase;
 }
 
+/* Card de filtros del inventario. */
 .inventory-section__filters {
   margin: 0 0 0.9rem;
   padding: 0.9rem;
@@ -60,6 +70,7 @@
   background: rgba(255, 255, 255, 0.62);
 }
 
+/* Botonera Aplicar/Limpiar dentro de filtros. */
 .inventory-section__filters-action {
   display: flex;
   align-items: flex-end;
@@ -89,6 +100,7 @@
   box-shadow: none;
 }
 
+/* Acciones del encabezado de la vista inventario. */
 .inventory-products-page__actions {
   width: 100%;
 }
@@ -112,6 +124,7 @@
   }
 }
 
+/* Superficie y tabla principal de inventario. */
 .inventory-table-wrapper.surface-card {
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(21, 128, 61, 0.14);
@@ -129,6 +142,7 @@
   opacity: 1;
 }
 
+/* Configuracion Bootstrap para la tabla de inventario. */
 .inventory-table-wrapper .inventory-table {
   --bs-table-bg: transparent;
   --bs-table-color: var(--app-ink);
@@ -169,6 +183,7 @@
   color: var(--app-muted) !important;
 }
 
+/* Boton/imagen para abrir o mostrar fotografia del producto. */
 .inventory-photo-button {
   border: 0;
   background: transparent;
@@ -181,6 +196,7 @@
   cursor: default;
 }
 
+/* Badge numerico de stock. */
 .inventory-stock-badge {
   display: inline-flex;
   min-width: 2.75rem;
@@ -196,6 +212,7 @@
   box-shadow: none;
 }
 
+/* Modal para ampliar fotografia del producto. */
 .inventory-photo-modal {
   position: fixed;
   inset: 0;
@@ -243,6 +260,7 @@
   padding: 1rem;
 }
 
+/* Modo oscuro base de inventario: modal, filtros, textos, tabla y stock. */
 :root[data-theme="dark"] .inventory-photo-modal__content {
   background: #151b19;
   border-color: rgba(255, 255, 255, 0.12);
@@ -330,4 +348,145 @@
 
 :root[data-theme="dark"] .inventory-table-wrapper .inventory-table tbody tr:hover {
   background: rgba(139, 148, 158, 0.08);
+}
+
+/* ==========================================================================
+   Inventario - estilo minimalista
+   Complementa products-page--minimal para filtros, tablas y modales de foto.
+   ========================================================================== */
+
+/* Filtros planos del inventario en el diseño minimalista. */
+.products-page--minimal .inventory-section__filters {
+  margin: 0 0 0.9rem;
+  padding: 1.05rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--app-surface-border);
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Oculta separadores en la vista principal de inventario minimalista. */
+.inventory-products-page.products-page--minimal .inventory-section__divider {
+  display: none;
+}
+
+.inventory-products-page.products-page--minimal .inventory-section__filters {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Etiqueta "Filtro accesorios/libreria" en modo minimalista. */
+.products-page--minimal .inventory-section__filter-title {
+  min-height: auto;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #15803d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+/* Campos de filtros en modo minimalista. */
+.products-page--minimal .inventory-section__filters .form-label {
+  margin-bottom: 0.35rem;
+  color: var(--app-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.products-page--minimal .inventory-section__filters .form-control,
+.products-page--minimal .inventory-section__filters .form-select {
+  min-height: 2.55rem;
+  border-radius: 0.75rem;
+  background: var(--app-field-bg);
+  border-color: rgba(21, 128, 61, 0.16);
+  box-shadow: none;
+}
+
+/* Botonera compacta alineada con campos de filtro. */
+.products-page--minimal .inventory-section__filters-action {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  width: auto;
+  align-self: flex-end;
+}
+
+.products-page--minimal .inventory-section__filters-action .btn {
+  min-height: 2.25rem;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 5.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.65rem;
+  font-size: 0.82rem;
+}
+
+/* Stock y modal de foto bajo el diseño minimalista. */
+.products-page--minimal .inventory-stock-badge {
+  border-color: rgba(21, 128, 61, 0.18);
+  background: transparent;
+  color: #15803d;
+  box-shadow: none;
+}
+
+.products-page--minimal .inventory-photo-modal__content {
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+}
+
+.products-page--minimal .inventory-photo-modal__header {
+  background: transparent;
+  border-bottom-color: var(--app-surface-border);
+}
+
+/* Modo oscuro para filtros, stock y modal de foto en diseño minimalista. */
+:root[data-theme="dark"] .products-page--minimal .inventory-section__filters {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .products-page--minimal .inventory-section__filter-title {
+  background: transparent;
+  color: #39ff7a;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+:root[data-theme="dark"] .products-page--minimal .inventory-section__filters .form-label {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .products-page--minimal .inventory-section__filters .form-control,
+:root[data-theme="dark"] .products-page--minimal .inventory-section__filters .form-select {
+  background: var(--app-field-bg);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .products-page--minimal .inventory-stock-badge {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.18);
+  color: #bbf7d0 !important;
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .products-page--minimal .inventory-photo-modal__content {
+  background: #151b19;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .products-page--minimal .inventory-photo-modal__header {
+  background: transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+/* En tablet, las acciones de filtro ocupan todo el ancho disponible. */
+@media (max-width: 1199.98px) {
+  .products-page--minimal .inventory-section__filters-action {
+    width: 100%;
+  }
 }

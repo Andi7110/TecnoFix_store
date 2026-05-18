@@ -9,7 +9,6 @@ import {
 import { listProductos } from "../../api/productos";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
 
-const SUSPENDED_SALES_KEY = "tecnofix-pos-suspended-sales";
 const TICKET_CONFIG_KEY = "tecnofix-pos-ticket-config";
 
 function getLocalDateTimeValue() {
@@ -63,23 +62,6 @@ function loadFromStorage(key, fallback) {
   } catch {
     return fallback;
   }
-}
-
-function buildSuspendedSaleSnapshot({ values, items, montoRecibido, montoTransferencia }) {
-  const now = new Date();
-
-  return {
-    id: `suspended-${now.getTime()}`,
-    created_at: now.toISOString(),
-    modulo_id: values.modulo_id,
-    metodo_pago: values.metodo_pago,
-    observacion: values.observacion,
-    items_count: items.reduce((accumulator, item) => accumulator + Number(item.cantidad ?? 0), 0),
-    values,
-    items,
-    montoRecibido,
-    montoTransferencia,
-  };
 }
 
 function buildTransferSummary({
@@ -166,7 +148,6 @@ export function useVentaForm({ onSuccess }) {
   const [loadingTransferAccounts, setLoadingTransferAccounts] = useState(false);
   const [savingTransferAccount, setSavingTransferAccount] = useState(false);
   const [transferAccountsError, setTransferAccountsError] = useState("");
-  const [ventasSuspendidas, setVentasSuspendidas] = useState(() => loadFromStorage(SUSPENDED_SALES_KEY, []));
   const [loadingProductos, setLoadingProductos] = useState(false);
   const [topProductosIds, setTopProductosIds] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -180,14 +161,6 @@ export function useVentaForm({ onSuccess }) {
 
     window.localStorage.setItem(TICKET_CONFIG_KEY, JSON.stringify(ticketConfig));
   }, [ticketConfig]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(SUSPENDED_SALES_KEY, JSON.stringify(ventasSuspendidas));
-  }, [ventasSuspendidas]);
 
   useEffect(() => {
     let ignore = false;
@@ -673,46 +646,6 @@ export function useVentaForm({ onSuccess }) {
     setErrorMessage("");
   }
 
-  function suspendCurrentSale() {
-    if (items.length === 0) {
-      setErrors({
-        items: ["Agrega al menos un articulo antes de suspender la venta."],
-      });
-      return;
-    }
-
-    const snapshot = buildSuspendedSaleSnapshot({
-      values,
-      items,
-      montoRecibido,
-      montoTransferencia,
-    });
-
-    setVentasSuspendidas((current) => [snapshot, ...current].slice(0, 12));
-    resetForm();
-  }
-
-  function resumeSuspendedSale(saleId) {
-    const suspendedSale = ventasSuspendidas.find((sale) => sale.id === saleId);
-
-    if (!suspendedSale) {
-      return;
-    }
-
-    setValues(suspendedSale.values);
-    setItems(suspendedSale.items);
-    setMontoRecibido(suspendedSale.montoRecibido ?? "");
-    setMontoTransferencia(suspendedSale.montoTransferencia ?? "");
-    setSearchTerm("");
-    setErrors({});
-    setErrorMessage("");
-    setVentasSuspendidas((current) => current.filter((sale) => sale.id !== saleId));
-  }
-
-  function removeSuspendedSale(saleId) {
-    setVentasSuspendidas((current) => current.filter((sale) => sale.id !== saleId));
-  }
-
   async function submit(event) {
     event.preventDefault();
 
@@ -832,7 +765,6 @@ export function useVentaForm({ onSuccess }) {
     loadingTransferAccounts,
     savingTransferAccount,
     transferAccountsError,
-    ventasSuspendidas,
     updateField,
     formatDiscount,
     setSearchTerm,
@@ -852,9 +784,6 @@ export function useVentaForm({ onSuccess }) {
     addTransferAccount,
     saveSelectedTransferAccount,
     deleteSelectedTransferAccount,
-    suspendCurrentSale,
-    resumeSuspendedSale,
-    removeSuspendedSale,
     submit,
   };
 }

@@ -1,117 +1,122 @@
 import { Link } from "react-router-dom";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
+import CrearReparacionModal from "../components/reparaciones/CrearReparacionModal";
+import CrearVentaModal from "../components/ventas/CrearVentaModal";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
-import { Barcode, CalendarBlank, Pulse, Receipt, Screwdriver, Vault } from "../icons/phosphor";
+import { CashRegister, CalendarBlank, CheckCircle, DeviceMobileCamera, Package, Pulse, ShoppingCartSimple } from "../icons/phosphor";
 
-function formatMoney(value) {
-  return new Intl.NumberFormat("es-SV", {
-    style: "currency",
-    currency: "USD",
-  }).format(Number(value ?? 0));
-}
+// Alerta que se muestra cuando el resumen del dia no reporta problemas.
+const DEFAULT_ALERT = {
+  id: "healthy",
+  title: "Operacion estable",
+  body: "No se detectaron alertas criticas con la informacion consolidada de hoy.",
+  tone: "success",
+  ctaLabel: "Abrir dashboard",
+  to: "/",
+};
 
+// Convierte los datos del resumen en alertas visibles para el usuario.
 function buildAlerts(summary) {
-  const alerts = [];
+  // Extrae los valores usados por las reglas para evitar repetir rutas largas.
+  const {
+    today: {
+      productos_stock_bajo: stockBajo,
+      reparaciones_pendientes: reparacionesPendientes,
+      total_entradas: totalEntradas,
+      total_salidas: totalSalidas,
+    },
+    resumen_dia: {
+      modulos_con_ventas: modulosConVentas,
+    },
+  } = summary;
 
-  if (Number(summary.today.productos_stock_bajo) > 0) {
-    alerts.push({
-      id: "stock",
-      title: "Stock critico detectado",
-      body: `${summary.today.productos_stock_bajo} productos necesitan reposicion o revision inmediata.`,
-      tone: "warning",
-      ctaLabel: "Ver productos",
-      to: "/productos/inventario",
-    });
-  }
-
-  if (Number(summary.today.reparaciones_pendientes) > 0) {
-    alerts.push({
-      id: "repairs",
-      title: "Reparaciones pendientes en cola",
-      body: `${summary.today.reparaciones_pendientes} equipos siguen pendientes de gestion o entrega.`,
-      tone: "accent",
-      ctaLabel: "Ver reparaciones",
-      to: "/reparaciones",
-    });
-  }
-
-  if (Number(summary.resumen_dia.modulos_con_ventas) === 0) {
-    alerts.push({
-      id: "sales",
-      title: "Sin ventas registradas hoy",
-      body: "Conviene revisar si el flujo de ventas del dia ya fue iniciado correctamente.",
-      tone: "neutral",
-      ctaLabel: "Ir a ventas",
-      to: "/ventas",
-    });
-  }
-
-  if (Number(summary.today.total_salidas) > Number(summary.today.total_entradas)) {
-    alerts.push({
-      id: "cash",
-      title: "Salidas mayores que entradas",
-      body: "Las salidas de caja del dia superan las entradas registradas hasta el momento.",
-      tone: "warning",
-      ctaLabel: "Revisar caja",
-      to: "/caja",
-    });
-  }
-
-  if (alerts.length === 0) {
-    alerts.push({
-      id: "healthy",
-      title: "Operacion estable",
-      body: "No se detectaron alertas criticas con la informacion consolidada de hoy.",
-      tone: "success",
-      ctaLabel: "Abrir dashboard",
-      to: "/",
-    });
-  }
-
-  return alerts;
-}
-
-function buildInsights(summary) {
-  const topModulo = summary.ventas_por_modulo?.[0];
-
-  return [
+  // Cada regla define cuándo aparece una alerta y qué informacion muestra.
+  const alertRules = [
     {
-      id: "ventas",
-      title: "Ventas del dia",
-      value: formatMoney(summary.today.total_vendido),
-      body: topModulo
-        ? `${topModulo.modulo_nombre} lidera con ${formatMoney(topModulo.total_vendido)}.`
-        : "Aun no hay modulo lider registrado hoy.",
+      active: Number(stockBajo) > 0,
+      alert: {
+        id: "stock",
+        title: "Stock critico detectado",
+        body: `${stockBajo} productos necesitan reposicion o revision inmediata.`,
+        tone: "warning",
+        ctaLabel: "Ver productos",
+        to: "/productos/inventario",
+      },
     },
     {
-      id: "caja",
-      title: "Balance de caja",
-      value: formatMoney(summary.resumen_dia.balance_caja),
-      body: `${formatMoney(summary.today.total_entradas)} en entradas y ${formatMoney(summary.today.total_salidas)} en salidas.`,
+      active: Number(reparacionesPendientes) > 0,
+      alert: {
+        id: "repairs",
+        title: "Reparaciones pendientes en cola",
+        body: `${reparacionesPendientes} equipos siguen pendientes de gestion o entrega.`,
+        tone: "accent",
+        ctaLabel: "Ver reparaciones",
+        to: "/reparaciones",
+      },
     },
     {
-      id: "operacion",
-      title: "Capacidad operativa",
-      value: `${summary.resumen_dia.modulos_con_ventas} modulos activos`,
-      body: `${summary.today.reparaciones_pendientes} reparaciones pendientes y ${summary.today.productos_stock_bajo} alertas de stock.`,
+      active: Number(modulosConVentas) === 0,
+      alert: {
+        id: "sales",
+        title: "Sin ventas registradas hoy",
+        body: "Conviene revisar si el flujo de ventas del dia ya fue iniciado correctamente.",
+        tone: "neutral",
+        ctaLabel: "Ir a ventas",
+        to: "/ventas",
+      },
+    },
+    {
+      active: Number(totalSalidas) > Number(totalEntradas),
+      alert: {
+        id: "cash",
+        title: "Salidas mayores que entradas",
+        body: "Las salidas de caja del dia superan las entradas registradas hasta el momento.",
+        tone: "warning",
+        ctaLabel: "Revisar caja",
+        to: "/caja",
+      },
     },
   ];
+
+  const alerts = alertRules
+    .filter(({ active }) => active)
+    .map(({ alert }) => alert);
+
+  // Si ninguna regla se activa, el dashboard muestra una alerta positiva.
+  return alerts.length > 0 ? alerts : [DEFAULT_ALERT];
 }
 
-function QuickAction({ title, description, to, tone = "default", icon }) {
-  return (
-    <Link to={to} className={`dashboard-quick-action dashboard-quick-action--${tone} h-100`}>
+// Boton de acceso rapido a flujos principales del sistema.
+function QuickAction({ title, description, to, tone = "default", icon, onClick }) {
+  const className = `dashboard-quick-action dashboard-quick-action--${tone} h-100`;
+  const content = (
+    <>
       <span className="dashboard-quick-action__symbol" aria-hidden="true">{icon}</span>
       <span className="dashboard-quick-action__copy">
         <span className="dashboard-quick-action__label">{title}</span>
         <span className="dashboard-quick-action__description">{description}</span>
       </span>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" className={className} onClick={onClick}>
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link to={to} className={className}>
+      {content}
     </Link>
   );
 }
 
+// Card reutilizable para cada alerta operativa del dashboard.
 function AlertCard({ alert }) {
   return (
     <article className={`dashboard-alert-card dashboard-alert-card--${alert.tone} dashboard-alert-card--${alert.id} h-100`}>
@@ -127,46 +132,11 @@ function AlertCard({ alert }) {
   );
 }
 
-function InsightCard({ insight }) {
-  return (
-    <article className="dashboard-insight-card h-100">
-      <span className="muted-text">{insight.title}</span>
-      <strong>{insight.value}</strong>
-      <p>{insight.body}</p>
-    </article>
-  );
-}
-
-function ComparisonCard({ title, comparison, format = "money" }) {
-  const delta = Number(comparison?.delta ?? 0);
-  const positive = delta > 0;
-  const negative = delta < 0;
-
-  const formattedCurrent = format === "money"
-    ? formatMoney(comparison?.actual)
-    : String(comparison?.actual ?? 0);
-  const formattedPrevious = format === "money"
-    ? formatMoney(comparison?.anterior)
-    : String(comparison?.anterior ?? 0);
-  const formattedDelta = format === "money"
-    ? formatMoney(Math.abs(delta))
-    : String(Math.abs(delta));
-
-  return (
-    <article className={`dashboard-comparison-card h-100 ${positive ? "is-up" : negative ? "is-down" : "is-flat"}`}>
-      <span className="muted-text">{title}</span>
-      <strong>{formattedCurrent}</strong>
-      <p>Ayer: {formattedPrevious}</p>
-      <small>
-        {positive ? "Subio" : negative ? "Bajo" : "Sin cambio"} {formattedDelta}
-      </small>
-    </article>
-  );
-}
-
+// Estructura temporal que se muestra mientras carga el resumen del dashboard.
 function DashboardLoadingSkeleton() {
   return (
     <div className="dashboard-loading" aria-hidden="true">
+      {/* Placeholder de acciones rapidas. */}
       <div className="dashboard-actions-shell">
         <div className="dashboard-actions-grid">
           {Array.from({ length: 4 }).map((_, index) => (
@@ -178,6 +148,7 @@ function DashboardLoadingSkeleton() {
         </div>
       </div>
 
+      {/* Placeholder de cards de metricas. */}
       <div className="dashboard-metrics-grid">
         {Array.from({ length: 5 }).map((_, index) => (
           <article key={`metric-${index}`} className="surface-card dashboard-metric-card dashboard-loading-card">
@@ -190,6 +161,7 @@ function DashboardLoadingSkeleton() {
         ))}
       </div>
 
+      {/* Placeholder de alertas operativas. */}
       <div className="dashboard-alerts-grid">
         {Array.from({ length: 2 }).map((_, index) => (
           <article key={`alert-${index}`} className="dashboard-alert-card dashboard-loading-card">
@@ -202,27 +174,7 @@ function DashboardLoadingSkeleton() {
         ))}
       </div>
 
-      <div className="dashboard-insights-grid">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <article key={`insight-${index}`} className="dashboard-insight-card dashboard-loading-card">
-            <span className="dashboard-loading-line dashboard-loading-line--small" />
-            <span className="dashboard-loading-line dashboard-loading-line--value" />
-            <span className="dashboard-loading-line dashboard-loading-line--wide" />
-          </article>
-        ))}
-      </div>
-
-      <div className="dashboard-comparison-grid">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <article key={`comparison-${index}`} className="dashboard-comparison-card dashboard-loading-card">
-            <span className="dashboard-loading-line dashboard-loading-line--small" />
-            <span className="dashboard-loading-line dashboard-loading-line--value" />
-            <span className="dashboard-loading-line dashboard-loading-line--medium" />
-            <span className="dashboard-loading-line dashboard-loading-line--small" />
-          </article>
-        ))}
-      </div>
-
+      {/* Placeholder de tabla de ventas por modulo. */}
       <div className="dashboard-bottom-grid">
         <div className="surface-card dashboard-section-card dashboard-loading-table">
           <div className="section-heading">
@@ -258,109 +210,150 @@ function DashboardLoadingSkeleton() {
 }
 
 function Dashboard() {
-  const { summary, loading, error } = useDashboardSummary();
+  const [isCreateSaleModalOpen, setIsCreateSaleModalOpen] = useState(false);
+  const [isCreateRepairModalOpen, setIsCreateRepairModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  // Hook encargado de traer el resumen consolidado desde la API.
+  const { summary, loading, error, reload } = useDashboardSummary();
+
+  // useMemo evita recalcular alertas si el resumen no cambio.
   const alerts = useMemo(() => buildAlerts(summary), [summary]);
-  const insights = useMemo(() => buildInsights(summary), [summary]);
   const generatedAt = summary.generated_at ? new Date(summary.generated_at).toLocaleString() : "-";
 
+  useEffect(() => {
+    if (!successMessage) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setSuccessMessage("");
+    }, 3200);
+
+    return () => window.clearTimeout(timer);
+  }, [successMessage]);
+
+  function handleVentaCreated(venta) {
+    reload();
+    setSuccessMessage(
+      venta?.numero_venta
+        ? `Cobro exitoso. Venta ${venta.numero_venta} registrada.`
+        : "Cobro exitoso.",
+    );
+  }
+
+  function handleReparacionCreated(reparacion) {
+    reload();
+    setSuccessMessage(
+      reparacion?.codigo_reparacion
+        ? `Registro exitoso. Reparacion ${reparacion.codigo_reparacion} creada.`
+        : "Registro exitoso.",
+    );
+  }
+
   return (
-    <section className="products-page dashboard-page container-fluid px-0">
-      <div className="products-page__panel dashboard-command-center">
-        <div className="products-page__header">
-        <div className="row g-3 align-items-stretch w-100">
-          <div className="col-12 col-xl-7">
-              <div className="products-page__header-copy h-100">
-                <div className="d-flex align-items-center gap-2 flex-wrap mb-2">
-                    <span className="badge products-page__badge">Panel operativo</span>
-                    <span className="badge products-page__badge products-page__badge--soft">
-                      TecnoFix
-                    </span>
-                  </div>
-
-                    <h2>Inicio TecnoFix</h2>
-                    <p className="muted-text">
-                      Supervisa ventas, caja, inventario y taller desde una sola vista operativa.
-                    </p>
-                  </div>
-                </div>
-
-          <div className="col-12 col-xl-5">
-              <div className="products-page__header-actions dashboard-command-center__inline-status h-100 d-flex flex-column flex-sm-row gap-2 justify-content-xl-end align-items-stretch align-items-sm-center">
-                  <div className="dashboard-command-center__inline-item">
-                    <span className="dashboard-command-center__icon" aria-hidden="true">
-                      <Pulse size={18} weight="bold" />
-                    </span>
-                    <div>
-                      <span className="muted-text">Estado</span>
-                      <strong>En linea</strong>
-                    </div>
-                  </div>
-
-                  <div className="dashboard-command-center__inline-item">
-                    <span className="dashboard-command-center__icon" aria-hidden="true">
-                      <CalendarBlank size={18} weight="bold" />
-                    </span>
-                    <div>
-                      <span className="muted-text">Actualizado</span>
-                      <strong>{generatedAt}</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
+    <section className="products-page dashboard-page">
+      {/* Encabezado principal y estado operativo del dashboard. */}
+      <div className="products-page__header dashboard-page__header">
+        <div>
+          <p className="section-kicker">Inicio</p>
+          <h2>Dashboard operativo</h2>
+          <p className="muted-text">
+            Supervisa ventas, caja, inventario y taller desde una sola vista operativa.
+          </p>
         </div>
+
+        <div className="dashboard-command-center__inline-status">
+          <div className="dashboard-command-center__inline-item">
+            <span className="dashboard-command-center__icon" aria-hidden="true">
+              <Pulse size={18} weight="bold" />
+            </span>
+            <div>
+              <span className="muted-text">Estado</span>
+              <strong>En linea</strong>
+            </div>
+          </div>
+
+          <div className="dashboard-command-center__inline-item">
+            <span className="dashboard-command-center__icon" aria-hidden="true">
+              <CalendarBlank size={18} weight="bold" />
+            </span>
+            <div>
+              <span className="muted-text">Actualizado</span>
+              <strong>{generatedAt}</strong>
+            </div>
+          </div>
         </div>
       </div>
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
 
+      {successMessage ? (
+        <div className="dashboard-sale-success" role="status" aria-live="polite">
+          <CheckCircle
+            size={22}
+            weight="fill"
+            className="dashboard-sale-success__icon"
+            aria-hidden="true"
+          />
+          <span>{successMessage}</span>
+        </div>
+      ) : null}
+
+      {/* Mientras carga la API, se muestra el skeleton. */}
       {loading ? (
         <DashboardLoadingSkeleton />
       ) : (
         <>
+          {/* Accesos directos a las acciones mas usadas. */}
           <div className="dashboard-actions-shell">
             <div className="row g-3">
               <div className="col-12 col-sm-6 col-xl-3">
                 <QuickAction
-                  title="Nueva venta"
-                  description="Abre el flujo de caja y registra una venta nueva."
-                  to="/ventas"
+                  title="Ventas"
+                  description="Registrar nueva venta de productos"
                   tone="primary"
-                  icon={<Receipt size={22} weight="bold" />}
+                  icon={<ShoppingCartSimple size={24} weight="duotone" />}
+                  onClick={() => setIsCreateSaleModalOpen(true)}
                 />
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
                 <QuickAction
-                  title="Nueva reparacion"
-                  description="Ingresa un equipo, su diagnostico y condiciones iniciales."
-                  to="/reparaciones/nueva"
-                  icon={<Screwdriver size={22} weight="bold" />}
+                  title="Reparacion"
+                  description="Registrar nuevo dispositivo movil"
+                  tone="repair"
+                  icon={<DeviceMobileCamera size={24} weight="duotone" />}
+                  onClick={() => setIsCreateRepairModalOpen(true)}
                 />
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
                 <QuickAction
-                  title="Registrar caja"
-                  description="Agrega entradas o salidas y controla el balance operativo."
+                  title="Movimientos de caja"
+                  description="Registrar entradas y salidas de caja"
                   to="/caja/nuevo"
-                  icon={<Vault size={22} weight="bold" />}
+                  tone="cash"
+                  icon={<CashRegister size={24} weight="duotone" />}
                 />
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
                 <QuickAction
-                  title="Nuevo producto"
-                  description="Incorpora articulos al catalogo y define sus precios."
+                  title="Productos"
+                  description="Registrar nuevo producto"
                   to="/productos/nuevo"
-                  icon={<Barcode size={22} weight="bold" />}
+                  tone="product"
+                  icon={<Package size={24} weight="duotone" />}
                 />
               </div>
             </div>
           </div>
 
+          {/* Metricas principales del dia. */}
           <div className="dashboard-subheading d-flex align-items-center">
-            <h3>Detalles de la tienda</h3>
+            <h3>Resumen del dia</h3>
           </div>
 
           <DashboardMetricCards today={summary.today} />
 
+          {/* Alertas calculadas desde buildAlerts. */}
           <div className="row g-3 mb-3">
             {alerts.map((alert) => (
               <div key={alert.id} className="col-12 col-lg-6">
@@ -369,33 +362,7 @@ function Dashboard() {
             ))}
           </div>
 
-          <div className="row g-3 mb-3">
-            {insights.map((insight) => (
-              <div key={insight.id} className="col-12 col-md-6 col-xl-4">
-                <InsightCard insight={insight} />
-              </div>
-            ))}
-          </div>
-
-          <div className="row g-3 mb-3">
-            <div className="col-12 col-sm-6 col-xl-3">
-              <ComparisonCard title="Ventas vs ayer" comparison={summary.comparativo_vs_ayer.ventas} />
-            </div>
-            <div className="col-12 col-sm-6 col-xl-3">
-              <ComparisonCard title="Entradas vs ayer" comparison={summary.comparativo_vs_ayer.entradas} />
-            </div>
-            <div className="col-12 col-sm-6 col-xl-3">
-              <ComparisonCard title="Salidas vs ayer" comparison={summary.comparativo_vs_ayer.salidas} />
-            </div>
-            <div className="col-12 col-sm-6 col-xl-3">
-              <ComparisonCard
-                title="Reparaciones vs ayer"
-                comparison={summary.comparativo_vs_ayer.reparaciones_pendientes}
-                format="count"
-              />
-            </div>
-          </div>
-
+          {/* Tabla con ventas agrupadas por modulo. */}
           <div className="row g-3">
             <div className="col-12">
               <DashboardModulesTable rows={summary.ventas_por_modulo} />
@@ -403,6 +370,20 @@ function Dashboard() {
           </div>
         </>
       )}
+
+      {isCreateSaleModalOpen ? (
+        <CrearVentaModal
+          onClose={() => setIsCreateSaleModalOpen(false)}
+          onCreated={handleVentaCreated}
+        />
+      ) : null}
+
+      {isCreateRepairModalOpen ? (
+        <CrearReparacionModal
+          onClose={() => setIsCreateRepairModalOpen(false)}
+          onCreated={handleReparacionCreated}
+        />
+      ) : null}
     </section>
   );
 }

@@ -19,17 +19,6 @@ function metodoLabel(value) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function formatDateTime(value) {
-  if (!value) {
-    return "-";
-  }
-
-  return new Intl.DateTimeFormat("es-SV", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
 function VentaForm({
   values,
   modulos,
@@ -61,7 +50,6 @@ function VentaForm({
   loadingCategorias,
   savingTransferAccount,
   transferAccountsError,
-  ventasSuspendidas,
   onChange,
   onDiscountBlur,
   onSearchChange,
@@ -81,9 +69,6 @@ function VentaForm({
   onAddTransferAccount,
   onSaveTransferAccount,
   onDeleteTransferAccount,
-  onSuspendSale,
-  onResumeSuspendedSale,
-  onRemoveSuspendedSale,
   onSubmit,
   onCancel,
 }) {
@@ -93,7 +78,6 @@ function VentaForm({
   const scannerBufferRef = useRef("");
   const scannerTimeoutRef = useRef(null);
   const quickAmounts = [10, 20, 50, 100];
-  const moduloPorId = new Map(modulos.map((modulo) => [String(modulo.id), modulo.nombre]));
   const montoRecibidoInsuficiente = values.metodo_pago === "efectivo" && total > 0 && faltante > 0;
   const montoTransferenciaInsuficiente = values.metodo_pago === "transferencia" && total > 0 && faltante > 0;
   const pagoMixtoInsuficiente = values.metodo_pago === "mixto" && total > 0 && faltante > 0;
@@ -456,52 +440,6 @@ function VentaForm({
             </div>
           </div>
 
-          {ventasSuspendidas.length > 0 ? (
-            <div className="venta-pos-suspended">
-              <div className="venta-pos-suggestions__header">
-                <div>
-                  <p className="section-kicker">Pendientes</p>
-                  <h3>Ventas suspendidas</h3>
-                </div>
-              </div>
-
-              <div className="venta-pos-suspended__list">
-                {ventasSuspendidas.map((ventaSuspendida) => (
-                  <article key={ventaSuspendida.id} className="venta-pos-suspended__item">
-                    <div>
-                      <strong>
-                        {ventaSuspendida.values?.modulo_id
-                          ? moduloPorId.get(String(ventaSuspendida.values.modulo_id))
-                            ?? `Modulo #${ventaSuspendida.values.modulo_id}`
-                          : "Sin modulo"}
-                      </strong>
-                      <small>{formatDateTime(ventaSuspendida.created_at)}</small>
-                      <span>
-                        {ventaSuspendida.items_count} unidades · {metodoLabel(ventaSuspendida.metodo_pago)}
-                      </span>
-                    </div>
-                    <div className="venta-pos-suspended__actions">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-primary"
-                        onClick={() => onResumeSuspendedSale(ventaSuspendida.id)}
-                      >
-                        Reanudar
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-light"
-                        onClick={() => onRemoveSuspendedSale(ventaSuspendida.id)}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
           <div className="venta-form__items">
             <div className="section-heading">
               <div>
@@ -854,14 +792,7 @@ function VentaForm({
               className="btn btn-lg venta-pos-sidebar__submit"
               disabled={saving || montoRecibidoInsuficiente || montoTransferenciaInsuficiente || pagoMixtoInsuficiente}
             >
-              {saving ? "Registrando..." : "Cobrar y generar ticket"}
-            </button>
-            <button
-              type="button"
-              className="btn venta-pos-sidebar__suspend"
-              onClick={onSuspendSale}
-            >
-              Suspender venta
+              {saving ? "Registrando..." : "Registrar venta"}
             </button>
             <button type="button" className="btn btn-light" onClick={onCancel}>
               Cancelar

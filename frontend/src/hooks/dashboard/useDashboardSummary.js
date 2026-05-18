@@ -29,6 +29,7 @@ export function useDashboardSummary() {
   const [summary, setSummary] = useState(initialSummary);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let ignore = false;
@@ -59,11 +60,16 @@ export function useDashboardSummary() {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [reloadToken]);
+
+  function reload() {
+    setReloadToken((current) => current + 1);
+  }
 
   return {
     summary,
     loading,
     error,
+    reload,
   };
 }

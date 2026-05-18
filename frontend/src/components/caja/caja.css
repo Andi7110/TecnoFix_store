@@ -215,3 +215,180 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   Caja - estilo minimalista
+   Organiza la vista de movimientos con el mismo estilo aplicado en Productos,
+   Inventario, Ventas y Reportes.
+   ========================================================================== */
+
+/* Acciones del encabezado de Caja. */
+.cash-page.products-page--minimal .cash-page__header-actions {
+  flex: 0 1 13.5rem;
+}
+
+.cash-page.products-page--minimal .cash-page__create-btn {
+  width: 100%;
+}
+
+/* Resumen de caja con cards planas y separacion limpia. */
+.cash-page.products-page--minimal .cash-summary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cash-page.products-page--minimal .cash-summary-card.surface-card {
+  padding: 1rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.95rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cash-page.products-page--minimal .cash-summary-card.surface-card::before {
+  display: none;
+}
+
+.cash-page.products-page--minimal .cash-summary-card h3 {
+  margin-bottom: 0.15rem;
+  color: var(--app-ink);
+  font-size: 1.25rem;
+}
+
+.cash-page.products-page--minimal .cash-summary-card .section-kicker {
+  color: #15803d;
+  letter-spacing: 0.12em;
+}
+
+/* Filtros de caja en una card compacta. */
+.cash-page.products-page--minimal .cash-filters.surface-card {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.95rem;
+  background: transparent;
+}
+
+.cash-page.products-page--minimal .cash-filters .section-heading {
+  margin-bottom: 0.85rem;
+}
+
+.cash-page.products-page--minimal .cash-filters .section-kicker {
+  color: #15803d;
+  letter-spacing: 0.12em;
+}
+
+.cash-page.products-page--minimal .cash-filters h2 {
+  color: var(--app-ink);
+  font-size: 1rem;
+}
+
+.cash-page.products-page--minimal .cash-filters .repairs-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 0;
+}
+
+.cash-page.products-page--minimal .cash-filters .form-label {
+  color: var(--app-muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+}
+
+.cash-page.products-page--minimal .cash-filters .form-control,
+.cash-page.products-page--minimal .cash-filters .form-select {
+  min-height: 2.45rem;
+  border-radius: 0.72rem;
+  background: var(--app-field-bg);
+  border-color: var(--app-surface-border);
+  color: var(--app-ink);
+}
+
+/* Botones Aplicar y Limpiar alineados y compactos. */
+.cash-page.products-page--minimal .cash-filters .products-filter-actions {
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.85rem;
+}
+
+.cash-page.products-page--minimal .cash-filters .products-filter-actions .btn {
+  min-height: 2.2rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 0.7rem;
+  font-size: 0.82rem;
+}
+
+/* Tabla de caja con encabezado verde degradado. */
+.cash-page.products-page--minimal .cash-table-card {
+  margin-top: 0;
+}
+
+.cash-page.products-page--minimal .cash-table th {
+  background:
+    linear-gradient(180deg, rgba(30, 168, 82, 0.12), rgba(30, 168, 82, 0.045));
+  color: #14532d;
+}
+
+/* Modo oscuro de la vista minimalista de caja. */
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-summary-card.surface-card,
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-filters.surface-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: transparent;
+}
+
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-summary-card h3,
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-filters h2 {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-summary-card .section-kicker,
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-filters .section-kicker {
+  color: #39ff7a !important;
+  text-shadow: none;
+}
+
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-filters .form-label {
+  color: #aabdb5;
+}
+
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-filters .form-control,
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-filters .form-select {
+  background: rgba(13, 17, 23, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .cash-page.products-page--minimal .cash-table th {
+  background:
+    linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.06));
+  color: #bbf7d0 !important;
+}
+
+@media (max-width: 1100px) {
+  .cash-page.products-page--minimal .cash-filters .repairs-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .cash-page.products-page--minimal .cash-page__header-actions {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .cash-page.products-page--minimal .cash-summary-grid,
+  .cash-page.products-page--minimal .cash-filters .repairs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cash-page.products-page--minimal .cash-filters .products-filter-actions {
+    justify-content: stretch;
+  }
+
+  .cash-page.products-page--minimal .cash-filters .products-filter-actions .btn {
+    flex: 1 1 0;
+  }
+}

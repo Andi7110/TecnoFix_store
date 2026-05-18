@@ -6,10 +6,11 @@ const initialFilters = {
   telefono: "",
   marca: "",
   modelo: "",
+  saldo: "",
   fecha_desde: "",
   fecha_hasta: "",
   page: 1,
-  per_page: 3,
+  per_page: 5,
 };
 
 export function useReparacionesFilters() {
@@ -45,6 +46,19 @@ export function useReparacionesFilters() {
     }));
   }
 
+  function changePerPage(perPage) {
+    setDraftFilters((current) => ({
+      ...current,
+      per_page: perPage,
+      page: 1,
+    }));
+    setFilters((current) => ({
+      ...current,
+      per_page: perPage,
+      page: 1,
+    }));
+  }
+
   return {
     filters,
     draftFilters,
@@ -52,5 +66,6 @@ export function useReparacionesFilters() {
     applyFilters,
     clearFilters,
     changePage,
+    changePerPage,
   };
 }

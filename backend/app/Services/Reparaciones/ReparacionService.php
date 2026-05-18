@@ -3,12 +3,15 @@
 namespace App\Services\Reparaciones;
 
 use App\Actions\Reparaciones\CambiarEstadoReparacionAction;
+use App\Actions\Reparaciones\EntregarReparacionAction;
+use App\Actions\Reparaciones\RegistrarAbonoReparacionAction;
 use App\Actions\Reparaciones\UpsertClienteAction;
 use App\Models\Cliente;
 use App\Models\Reparacion;
 use App\Support\Filters\Reparaciones\ReparacionFilter;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ReparacionService
 {
@@ -16,6 +19,8 @@ class ReparacionService
         private readonly ReparacionFilter $filter,
         private readonly UpsertClienteAction $upsertCliente,
         private readonly CambiarEstadoReparacionAction $cambiarEstadoReparacion,
+        private readonly EntregarReparacionAction $entregarReparacion,
+        private readonly RegistrarAbonoReparacionAction $registrarAbonoReparacion,
     ) {
     }
 
@@ -86,6 +91,12 @@ class ReparacionService
     public function changeStatus(Reparacion $reparacion, array $data): Reparacion
     {
         return DB::transaction(function () use ($reparacion, $data): Reparacion {
+            if ($data['estado_reparacion'] === 'entregado') {
+                throw ValidationException::withMessages([
+                    'estado_reparacion' => ['Usa el flujo de entregar y cobrar para marcar una reparacion como entregada.'],
+                ]);
+            }
+
             $updated = $this->cambiarEstadoReparacion->execute(
                 $reparacion,
                 $data['estado_reparacion'],
@@ -97,11 +108,30 @@ class ReparacionService
         });
     }
 
+    public function deliverAndCharge(Reparacion $reparacion, array $data): Reparacion
+    {
+        return DB::transaction(function () use ($reparacion, $data): Reparacion {
+            return $this->loadRelations(
+                $this->entregarReparacion->execute($reparacion, $data)
+            );
+        });
+    }
+
+    public function registerPayment(Reparacion $reparacion, array $data): Reparacion
+    {
+        return DB::transaction(function () use ($reparacion, $data): Reparacion {
+            return $this->loadRelations(
+                $this->registrarAbonoReparacion->execute($reparacion, $data)
+            );
+        });
+    }
+
     public function loadRelations(Reparacion $reparacion): Reparacion
     {
         return $reparacion->load([
             'cliente',
             'modulo:id,nombre,estado',
+            'costos' => fn ($query) => $query->orderByDesc('fecha_costo')->orderByDesc('id'),
             'historiales' => fn ($query) => $query->orderByDesc('fecha_cambio')->orderByDesc('id'),
         ])->loadCount('historiales');
     }

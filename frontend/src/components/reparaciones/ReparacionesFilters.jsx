@@ -62,6 +62,19 @@ function ReparacionesFilters({ values, onChange, onSubmit, onClear }) {
         </div>
 
         <div>
+          <label className="form-label">Saldo</label>
+          <select
+            className="form-select"
+            value={values.saldo}
+            onChange={(event) => onChange("saldo", event.target.value)}
+          >
+            <option value="">Todos</option>
+            <option value="pendiente">Con saldo pendiente</option>
+            <option value="sin_pendiente">Sin saldo pendiente</option>
+          </select>
+        </div>
+
+        <div>
           <label className="form-label">Fecha desde</label>
           <input
             className="form-control"

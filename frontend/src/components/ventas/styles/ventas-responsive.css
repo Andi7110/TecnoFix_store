@@ -107,7 +107,6 @@
   }
 
   .venta-form__product-card,
-  .venta-pos-suspended__item,
   .venta-detail-modal__header,
   .venta-detail-modal__actions {
     flex-direction: column;

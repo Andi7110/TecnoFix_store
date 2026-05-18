@@ -1,5 +1,9 @@
-/* Estilos compartidos entre vistas de productos. */
+/* ==========================================================================
+   Productos shared - estilos compartidos
+   Este archivo contiene clases reutilizadas por listado, inventario y formularios.
+   ========================================================================== */
 
+/* Alerta superior para avisos como stock critico. */
 .products-alert {
   display: flex;
   align-items: center;
@@ -23,6 +27,7 @@
   opacity: 1;
 }
 
+/* Texto secundario del codigo del producto. */
 .product-code {
   color: var(--app-muted);
   font-size: 0.85rem;
@@ -30,11 +35,13 @@
   text-transform: uppercase;
 }
 
+/* Nombre del producto en tablas y listados. */
 .product-name {
   font-weight: 600;
   color: var(--app-ink);
 }
 
+/* Pildoras de estado Activo/Inactivo. */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -54,6 +61,7 @@
   color: #8b2e2e;
 }
 
+/* Paginacion reutilizada por tablas de productos e inventario. */
 .products-pagination {
   display: flex;
   justify-content: flex-end;
@@ -88,11 +96,13 @@
   font-weight: 700;
 }
 
+/* Estado vacio reutilizado cuando no hay registros. */
 .empty-state {
   margin: 0;
   color: var(--app-muted);
 }
 
+/* Modal compartido para previsualizar fotografia de producto. */
 .product-photo-modal {
   position: fixed;
   inset: 0;
@@ -140,6 +150,7 @@
   padding: 1rem;
 }
 
+/* Modo oscuro compartido para modal de foto y estados. */
 :root[data-theme="dark"] .product-photo-modal__content {
   background: #151b19;
   border-color: rgba(255, 255, 255, 0.1);
