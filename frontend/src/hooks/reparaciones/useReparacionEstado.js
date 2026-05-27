@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { updateEstadoReparacion } from "../../api/reparaciones";
+import { entregarReparacion, updateEstadoReparacion } from "../../api/reparaciones";
 
 export function useReparacionEstado({ onSuccess } = {}) {
   const [saving, setSaving] = useState(false);
@@ -19,9 +19,27 @@ export function useReparacionEstado({ onSuccess } = {}) {
     }
   }
 
+  async function submitEntrega(reparacionId, payload) {
+    setSaving(true);
+    setError("");
+
+    try {
+      const reparacion = await entregarReparacion(reparacionId, payload);
+      onSuccess?.(reparacion);
+    } catch (error) {
+      const message = error.response?.data?.message
+        ?? Object.values(error.response?.data?.errors ?? {})?.[0]?.[0]
+        ?? "No se pudo entregar y cobrar la reparacion.";
+      setError(message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return {
     saving,
     error,
     submitEstado,
+    submitEntrega,
   };
 }

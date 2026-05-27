@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { exportReportToPdf } from "../../utils/reportPrint";
 
-const MONTH_LABELS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-SV", { style: "currency", currency: "USD" }).format(Number(value ?? 0));
 }
@@ -11,14 +9,19 @@ function formatPercent(value) {
   return `${Number(value ?? 0).toFixed(2)}%`;
 }
 
+function normalizeDateTime(value) {
+  if (!value || typeof value !== "string") return value;
+  return value.includes("T") ? value : value.replace(" ", "T");
+}
+
 function formatDateTime(value) {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("es-SV", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+  return new Intl.DateTimeFormat("es-SV", { dateStyle: "medium", timeStyle: "short" }).format(new Date(normalizeDateTime(value)));
 }
 
 function formatDate(value) {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("es-SV", { dateStyle: "medium" }).format(new Date(value));
+  return new Intl.DateTimeFormat("es-SV", { dateStyle: "medium" }).format(new Date(normalizeDateTime(value)));
 }
 
 function formatLabel(value) {
@@ -27,7 +30,7 @@ function formatLabel(value) {
 
 function Tabs({ value, onChange, options }) {
   return (
-    <div className="ventas-report-tabs">
+    <div className="ventas-report-tabs ventas-report-tabs--simple">
       {options.map((option) => (
         <button
           key={option.value}
@@ -42,437 +45,257 @@ function Tabs({ value, onChange, options }) {
   );
 }
 
-function Metric({ label, value, tone = "default" }) {
+function EmptyRow({ colSpan, children }) {
   return (
-    <article className={`ventas-report-kpi ventas-report-kpi--${tone}`}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </article>
+    <tr>
+      <td colSpan={colSpan} className="muted-text text-center">
+        {children}
+      </td>
+    </tr>
   );
 }
 
-function Insight({ title, body, tone = "default" }) {
+function ReportLoading() {
   return (
-    <article className={`ventas-report-insight ventas-report-insight--${tone}`}>
-      <strong>{title}</strong>
-      <p>{body}</p>
-    </article>
-  );
-}
-
-function Banner({ kicker, title, description, generatedAt, moduleName }) {
-  return (
-    <div className="ventas-report-banner">
-      <div>
-        <p className="section-kicker">{kicker}</p>
-        <h3>{title}</h3>
-        <p className="muted-text">{description}</p>
-      </div>
-      <div className="ventas-report-banner__meta">
-        <div>
-          <span className="muted-text">Modulo</span>
-          <strong>{moduleName ?? "Todos"}</strong>
-        </div>
-        <div>
-          <span className="muted-text">Generado</span>
-          <strong>{formatDateTime(generatedAt)}</strong>
-        </div>
-      </div>
+    <div className="ventas-report-simple__loading" aria-live="polite">
+      Cargando reporte...
     </div>
   );
 }
 
-function ReportTableSkeleton({ columns = 4, rows = 4 }) {
+function HorizontalBarChart({ title, rows, labelKey, valueKey, valueFormatter = formatCurrency, emptyMessage }) {
+  const maxValue = useMemo(
+    () => Math.max(...rows.map((row) => Number(row[valueKey] ?? 0)), 0),
+    [rows, valueKey],
+  );
+
   return (
-    <div className="ventas-report-table-shell ventas-report-table-shell--loading">
+    <section className="ventas-report-chart">
+      <h4>{title}</h4>
+      {rows.length > 0 ? (
+        <div className="ventas-report-chart__body">
+          {rows.map((row, index) => {
+            const value = Number(row[valueKey] ?? 0);
+            const width = maxValue > 0 ? Math.max((value / maxValue) * 100, 6) : 0;
+            const label = typeof labelKey === "function" ? labelKey(row) : row[labelKey];
+
+            return (
+              <div className="ventas-report-chart__row" key={`${label}-${index}`}>
+                <span className="ventas-report-chart__label">{formatLabel(label)}</span>
+                <span className="ventas-report-chart__track" aria-hidden="true">
+                  <span className="ventas-report-chart__bar" style={{ width: `${width}%` }} />
+                </span>
+                <strong>{valueFormatter(value)}</strong>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="empty-state">{emptyMessage}</p>
+      )}
+    </section>
+  );
+}
+
+function SummaryTable({ report }) {
+  const resumen = report.resumen ?? {};
+  const rows = [
+    ["Ventas netas", formatCurrency(resumen.ventas_netas)],
+    ["Costo de ventas", formatCurrency(resumen.costo_ventas)],
+    ["Utilidad bruta", formatCurrency(resumen.utilidad_bruta)],
+    ["Margen bruto", formatPercent(resumen.margen_bruto_porcentaje)],
+    ["Ventas registradas", Number(resumen.ventas_count ?? 0)],
+    ["Items vendidos", Number(resumen.items_vendidos ?? 0)],
+    ["Ticket promedio", formatCurrency(resumen.ticket_promedio)],
+  ];
+
+  return (
+    <section className="ventas-report-table-shell ventas-report-table-shell--simple">
+      <div className="ventas-report-table-title">
+        <h4>Informe de ventas</h4>
+        <span>{report.modulo?.nombre ?? "Todos los modulos"}</span>
+      </div>
       <div className="table-responsive">
-        <table className="table align-middle ventas-report-table">
+        <table className="table align-middle ventas-report-table ventas-report-simple__table">
           <thead>
             <tr>
-              {Array.from({ length: columns }).map((_, index) => (
-                <th key={`head-${index}`}>
-                  <span className="ventas-report-loading-cell ventas-report-loading-cell--header" />
-                </th>
-              ))}
+              <th>Metrica</th>
+              <th>Resultado</th>
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: rows }).map((_, rowIndex) => (
-              <tr key={`row-${rowIndex}`}>
-                {Array.from({ length: columns }).map((_, colIndex) => (
-                  <td key={`cell-${rowIndex}-${colIndex}`}>
-                    <span className="ventas-report-loading-cell ventas-report-loading-cell--medium" />
-                    {colIndex === 0 ? <span className="ventas-report-loading-cell ventas-report-loading-cell--small" /> : null}
-                  </td>
-                ))}
+            {rows.map(([label, value]) => (
+              <tr key={label}>
+                <td>{label}</td>
+                <td>{value}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>
-  );
-}
-
-function WorkspaceSkeleton({ title, description, mode = "daily" }) {
-  const isMonthly = mode === "monthly";
-  const tableColumns = isMonthly ? 3 : 4;
-
-  return (
-    <div className="ventas-report-workspace ventas-report-workspace--loading" aria-hidden="true">
-      <div className="ventas-report-banner ventas-report-banner--loading">
-        <div className="ventas-report-loading-block ventas-report-loading-block--title" />
-        <div className="ventas-report-loading-block ventas-report-loading-block--text" />
-        <div className="ventas-report-loading-block ventas-report-loading-block--text ventas-report-loading-block--short" />
-      </div>
-
-      <div className="ventas-report-kpis">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <div key={`kpi-${index}`} className="ventas-report-kpi ventas-report-kpi--loading">
-            <span className="ventas-report-loading-cell ventas-report-loading-cell--small" />
-            <span className="ventas-report-loading-cell ventas-report-loading-cell--medium" />
-          </div>
-        ))}
-      </div>
-
-      <div className="ventas-report-insights">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <div key={`insight-${index}`} className="ventas-report-insight ventas-report-insight--loading">
-            <span className="ventas-report-loading-cell ventas-report-loading-cell--medium" />
-            <span className="ventas-report-loading-cell ventas-report-loading-cell--wide" />
-            <span className="ventas-report-loading-cell ventas-report-loading-cell--wide ventas-report-loading-cell--shorter" />
-          </div>
-        ))}
-      </div>
-
-      <div className="ventas-report-panel ventas-report-panel--loading-copy">
-        <div className="ventas-report-panel__header">
-          <div>
-            <h4>{title}</h4>
-            <p className="muted-text mb-0">{description}</p>
-          </div>
-        </div>
-        <ReportTableSkeleton columns={tableColumns} rows={4} />
-      </div>
-    </div>
-  );
-}
-
-function SummaryList({ title, items, emptyMessage }) {
-  return (
-    <section className="ventas-report-panel">
-      <div className="ventas-report-panel__header"><h4>{title}</h4></div>
-      {items.length > 0 ? (
-        <div className="ventas-report-summary-list">
-          {items.map((item) => (
-            <article key={item.id} className="ventas-report-summary-list__item">
-              <div>
-                <strong>{item.title}</strong>
-                <span>{item.subtitle}</span>
-              </div>
-              <div className="ventas-report-summary-list__meta">
-                <strong>{item.value}</strong>
-                {item.secondary ? <span>{item.secondary}</span> : null}
-              </div>
-            </article>
-          ))}
-        </div>
-      ) : <p className="empty-state">{emptyMessage}</p>}
     </section>
   );
 }
 
-function DailyContent({ report }) {
-  const [tab, setTab] = useState("resumen");
-  const insights = useMemo(() => {
-    const metodo = report.ventas_por_metodo?.[0];
-    const modulo = report.ventas_por_modulo?.[0];
-    const producto = report.top_productos?.[0];
-    return [
-      {
-        id: "m1",
-        title: metodo ? `${formatLabel(metodo.metodo_pago)} lidera el cobro` : "Sin metodo dominante",
-        body: metodo ? `${metodo.ventas_count} ventas por ${formatCurrency(metodo.total)}.` : "No hay ventas registradas para analizar metodos.",
-        tone: "accent",
-      },
-      {
-        id: "m2",
-        title: modulo ? `${modulo.modulo_nombre} lidera el dia` : "Sin modulo lider",
-        body: modulo ? `${formatCurrency(modulo.ventas_netas)} en ventas y ${formatCurrency(modulo.utilidad_bruta)} en utilidad.` : "No hay datos por modulo para el dia.",
-        tone: "success",
-      },
-      {
-        id: "m3",
-        title: producto ? `${producto.producto_nombre} fue el producto estrella` : "Sin producto destacado",
-        body: producto ? `${producto.cantidad} unidades por ${formatCurrency(producto.total)}.` : "No hay productos vendidos para destacar.",
-      },
-    ];
-  }, [report]);
-  const topItems = useMemo(() => (
-    (report.top_productos ?? []).slice(0, 5).map((row) => ({
-      id: `${row.producto_id ?? row.producto_nombre}-${row.cantidad}`,
-      title: row.producto_nombre,
-      subtitle: row.producto_codigo ?? "Sin codigo",
-      value: formatCurrency(row.total),
-      secondary: `${row.cantidad} unidades`,
-    }))
-  ), [report]);
+function ProductsTable({ rows }) {
+  return (
+    <section className="ventas-report-table-shell ventas-report-table-shell--simple">
+      <div className="ventas-report-table-title">
+        <h4>Detalle por producto</h4>
+      </div>
+      <div className="table-responsive">
+        <table className="table align-middle ventas-report-table ventas-report-simple__table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Codigo</th>
+              <th>Cant.</th>
+              <th>Total</th>
+              <th>Utilidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length > 0 ? rows.map((row) => (
+              <tr key={`${row.producto_id ?? row.producto_nombre}-${row.producto_codigo ?? "sin-codigo"}`}>
+                <td>{row.producto_nombre}</td>
+                <td>{row.producto_codigo ?? "-"}</td>
+                <td>{row.cantidad}</td>
+                <td>{formatCurrency(row.total)}</td>
+                <td>{formatCurrency(row.utilidad_bruta)}</td>
+              </tr>
+            )) : <EmptyRow colSpan={5}>No hay productos vendidos en la fecha seleccionada.</EmptyRow>}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function MethodsTable({ rows }) {
+  return (
+    <section className="ventas-report-table-shell ventas-report-table-shell--simple">
+      <div className="ventas-report-table-title">
+        <h4>Metodos de pago</h4>
+      </div>
+      <div className="table-responsive">
+        <table className="table align-middle ventas-report-table ventas-report-simple__table">
+          <thead>
+            <tr>
+              <th>Metodo</th>
+              <th>Ventas</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length > 0 ? rows.map((row) => (
+              <tr key={row.metodo_pago}>
+                <td>{formatLabel(row.metodo_pago)}</td>
+                <td>{row.ventas_count}</td>
+                <td>{formatCurrency(row.total)}</td>
+              </tr>
+            )) : <EmptyRow colSpan={3}>Sin ventas registradas.</EmptyRow>}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function ModulesTable({ rows }) {
+  return (
+    <section className="ventas-report-table-shell ventas-report-table-shell--simple">
+      <div className="ventas-report-table-title">
+        <h4>Ventas por modulo</h4>
+      </div>
+      <div className="table-responsive">
+        <table className="table align-middle ventas-report-table ventas-report-simple__table">
+          <thead>
+            <tr>
+              <th>Modulo</th>
+              <th>Ventas</th>
+              <th>Total</th>
+              <th>Utilidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length > 0 ? rows.map((row) => (
+              <tr key={`${row.modulo_id ?? "na"}-${row.modulo_nombre}`}>
+                <td>{row.modulo_nombre}</td>
+                <td>{row.ventas_count}</td>
+                <td>{formatCurrency(row.ventas_netas)}</td>
+                <td>{formatCurrency(row.utilidad_bruta)}</td>
+              </tr>
+            )) : <EmptyRow colSpan={4}>Sin ventas por modulo.</EmptyRow>}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function DailyReport({ report }) {
+  const productRows = report.top_productos ?? [];
+  const methodRows = report.ventas_por_metodo ?? [];
+  const moduleRows = report.ventas_por_modulo ?? [];
 
   return (
-    <div className="ventas-report-workspace">
-      <Banner
-        kicker="Comercial diario"
-        title="Resumen del dia"
-        description="Unifica ventas, caja, utilidad y comportamiento de productos en una sola capa de lectura."
-        generatedAt={report.generated_at}
-        moduleName={report.modulo?.nombre}
-      />
-
-      <div className="ventas-report-kpis">
-        <Metric label="Ventas netas" value={formatCurrency(report.resumen.ventas_netas)} tone="accent" />
-        <Metric label="Utilidad bruta" value={formatCurrency(report.resumen.utilidad_bruta)} tone="success" />
-        <Metric label="Margen bruto" value={formatPercent(report.resumen.margen_bruto_porcentaje)} />
-        <Metric label="Ticket promedio" value={formatCurrency(report.resumen.ticket_promedio)} />
-        <Metric label="Items vendidos" value={report.resumen.items_vendidos} />
-        <Metric label="Caja neta" value={formatCurrency(report.caja.neto)} />
+    <div className="ventas-report-simple__workspace">
+      <div className="ventas-report-simple__meta">
+        <span>Fecha: <strong>{formatDate(report.fecha)}</strong></span>
+        <span>Generado: <strong>{formatDateTime(report.generated_at)}</strong></span>
+        <span>Modulo: <strong>{report.modulo?.nombre ?? "Todos"}</strong></span>
       </div>
 
-      <div className="ventas-report-insights">
-        {insights.map((item) => <Insight key={item.id} title={item.title} body={item.body} tone={item.tone} />)}
+      <SummaryTable report={report} />
+
+      <div className="ventas-report-chart-grid">
+        <HorizontalBarChart
+          title="Ventas por metodo"
+          rows={methodRows}
+          labelKey="metodo_pago"
+          valueKey="total"
+          emptyMessage="No hay pagos para graficar."
+        />
+        <HorizontalBarChart
+          title="Top productos"
+          rows={productRows.slice(0, 6)}
+          labelKey="producto_nombre"
+          valueKey="total"
+          emptyMessage="No hay productos para graficar."
+        />
       </div>
 
-      <Tabs
-        value={tab}
-        onChange={setTab}
-        options={[
-          { value: "resumen", label: "Resumen" },
-          { value: "productos", label: "Productos" },
-          { value: "metodos", label: "Metodos" },
-          { value: "modulos", label: "Modulos" },
-        ]}
-      />
-
-      {tab === "resumen" ? (
-        <div className="ventas-report-grid ventas-report-grid--balanced">
-          <section className="ventas-report-panel">
-            <div className="ventas-report-panel__header"><h4>Salud comercial</h4></div>
-            <div className="ventas-report-health">
-              <div className="ventas-report-health__item"><span className="muted-text">Costo de ventas</span><strong>{formatCurrency(report.resumen.costo_ventas)}</strong></div>
-              <div className="ventas-report-health__item"><span className="muted-text">Ventas del dia</span><strong>{report.resumen.ventas_count}</strong></div>
-              <div className="ventas-report-health__item"><span className="muted-text">Ticket promedio</span><strong>{formatCurrency(report.resumen.ticket_promedio)}</strong></div>
-              <div className="ventas-report-health__item"><span className="muted-text">Caja neta</span><strong>{formatCurrency(report.caja.neto)}</strong></div>
-            </div>
-          </section>
-          <SummaryList title="Top productos del dia" items={topItems} emptyMessage="No hay productos vendidos en la fecha seleccionada." />
-        </div>
-      ) : null}
-
-      {tab === "productos" ? (
-        <section className="ventas-report-panel">
-          <div className="ventas-report-panel__header"><h4>Productos destacados del dia</h4></div>
-          <div className="table-responsive">
-            <table className="table align-middle ventas-report-table">
-              <thead><tr><th>Producto</th><th>Cantidad</th><th>Total</th><th>Utilidad</th></tr></thead>
-              <tbody>
-                {report.top_productos.length > 0 ? report.top_productos.map((row) => (
-                  <tr key={`${row.producto_id ?? row.producto_nombre}-${row.cantidad}`}>
-                    <td><div className="product-name">{row.producto_nombre}</div><div className="product-code">{row.producto_codigo ?? "Sin codigo"}</div></td>
-                    <td>{row.cantidad}</td>
-                    <td>{formatCurrency(row.total)}</td>
-                    <td>{formatCurrency(row.utilidad_bruta)}</td>
-                  </tr>
-                )) : <tr><td colSpan={4} className="muted-text text-center">No hay productos vendidos en la fecha seleccionada.</td></tr>}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ) : null}
-
-      {tab === "metodos" ? (
-        <section className="ventas-report-panel">
-          <div className="ventas-report-panel__header"><h4>Ventas por metodo de pago</h4></div>
-          <div className="table-responsive">
-            <table className="table align-middle ventas-report-table">
-              <thead><tr><th>Metodo</th><th>Ventas</th><th>Total</th></tr></thead>
-              <tbody>
-                {report.ventas_por_metodo.length > 0 ? report.ventas_por_metodo.map((row) => (
-                  <tr key={row.metodo_pago}><td>{formatLabel(row.metodo_pago)}</td><td>{row.ventas_count}</td><td>{formatCurrency(row.total)}</td></tr>
-                )) : <tr><td colSpan={3} className="muted-text text-center">Sin ventas registradas.</td></tr>}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ) : null}
-
-      {tab === "modulos" ? (
-        <section className="ventas-report-panel">
-          <div className="ventas-report-panel__header"><h4>Ventas por modulo</h4></div>
-          <div className="table-responsive">
-            <table className="table align-middle ventas-report-table">
-              <thead><tr><th>Modulo</th><th>Ventas</th><th>Utilidad</th></tr></thead>
-              <tbody>
-                {report.ventas_por_modulo.length > 0 ? report.ventas_por_modulo.map((row) => (
-                  <tr key={`${row.modulo_id ?? "na"}-${row.modulo_nombre}`}><td>{row.modulo_nombre}</td><td>{formatCurrency(row.ventas_netas)}</td><td>{formatCurrency(row.utilidad_bruta)}</td></tr>
-                )) : <tr><td colSpan={3} className="muted-text text-center">Sin ventas por modulo.</td></tr>}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ) : null}
+      <ProductsTable rows={productRows} />
+      <div className="ventas-report-simple__two-columns">
+        <MethodsTable rows={methodRows} />
+        <ModulesTable rows={moduleRows} />
+      </div>
     </div>
   );
 }
 
-function MonthlyContent({ report }) {
-  const [tab, setTab] = useState("resumen");
-  const insights = useMemo(() => {
-    const gasto = report.detalle_gastos_operativos?.[0];
-    const excluido = report.movimientos_excluidos?.[0];
-    return [
-      {
-        id: "i1",
-        title: "La utilidad operativa marca el cierre",
-        body: `${formatCurrency(report.estado_resultados.utilidad_operativa)} con margen de ${formatPercent(report.estado_resultados.margen_operativo_porcentaje)}.`,
-        tone: "success",
-      },
-      {
-        id: "i2",
-        title: gasto ? `${formatLabel(gasto.categoria_movimiento)} lidera los gastos` : "Sin gastos dominantes",
-        body: gasto ? `${gasto.movimientos_count} movimientos por ${formatCurrency(gasto.total)}.` : "No hay gastos operativos registrados en el periodo.",
-        tone: "accent",
-      },
-      {
-        id: "i3",
-        title: excluido ? `${formatLabel(excluido.categoria_movimiento)} fue el principal excluido` : "Sin movimientos excluidos relevantes",
-        body: excluido ? `${formatCurrency(excluido.total)} bajo ${formatLabel(excluido.tipo_movimiento)}.` : "No hay movimientos excluidos para destacar.",
-      },
-    ];
-  }, [report]);
-  const expenses = useMemo(() => (
-    (report.detalle_gastos_operativos ?? []).slice(0, 5).map((row) => ({
-      id: row.categoria_movimiento,
-      title: formatLabel(row.categoria_movimiento),
-      subtitle: `${row.movimientos_count} movimientos`,
-      value: formatCurrency(row.total),
-    }))
-  ), [report]);
-
+function DailyWorkspace({
+  modulos,
+  dailyValues,
+  onDailyChange,
+  onDailySubmit,
+  onDailySave,
+  dailyReport,
+  dailyLoading,
+  dailyError,
+  dailySaving,
+}) {
   return (
-    <div className="ventas-report-workspace">
-      <Banner
-        kicker="Contabilidad mensual"
-        title="Estado financiero del periodo"
-        description="Organiza ingresos, costos, gastos y exclusiones para leer el resultado real del negocio."
-        generatedAt={report.generated_at}
-        moduleName={report.modulo?.nombre}
-      />
-
-      <div className="ventas-report-kpis">
-        <Metric label="Ventas netas" value={formatCurrency(report.estado_resultados.ventas_netas)} tone="accent" />
-        <Metric label="Ingresos operativos" value={formatCurrency(report.estado_resultados.ingresos_operativos)} />
-        <Metric label="Utilidad bruta" value={formatCurrency(report.estado_resultados.utilidad_bruta)} tone="success" />
-        <Metric label="Gastos operativos" value={formatCurrency(report.estado_resultados.gastos_operativos)} />
-        <Metric label="Utilidad operativa" value={formatCurrency(report.estado_resultados.utilidad_operativa)} tone="success" />
-        <Metric label="Margen operativo" value={formatPercent(report.estado_resultados.margen_operativo_porcentaje)} />
-      </div>
-
-      <div className="ventas-report-insights">
-        {insights.map((item) => <Insight key={item.id} title={item.title} body={item.body} tone={item.tone} />)}
-      </div>
-
-      <Tabs
-        value={tab}
-        onChange={setTab}
-        options={[
-          { value: "resumen", label: "Resumen" },
-          { value: "gastos", label: "Gastos" },
-          { value: "contabilidad", label: "Contabilidad" },
-          { value: "notas", label: "Notas" },
-        ]}
-      />
-
-      {tab === "resumen" ? (
-        <div className="ventas-report-grid ventas-report-grid--balanced">
-          <section className="ventas-report-panel">
-            <div className="ventas-report-panel__header"><h4>Lectura contable</h4></div>
-            <div className="ventas-report-health">
-              <div className="ventas-report-health__item"><span className="muted-text">Otros ingresos</span><strong>{formatCurrency(report.estado_resultados.otros_ingresos)}</strong></div>
-              <div className="ventas-report-health__item"><span className="muted-text">Costo de ventas</span><strong>{formatCurrency(report.estado_resultados.costo_ventas)}</strong></div>
-              <div className="ventas-report-health__item"><span className="muted-text">Gastos operativos</span><strong>{formatCurrency(report.estado_resultados.gastos_operativos)}</strong></div>
-              <div className="ventas-report-health__item"><span className="muted-text">Utilidad operativa</span><strong>{formatCurrency(report.estado_resultados.utilidad_operativa)}</strong></div>
-            </div>
-          </section>
-          <SummaryList title="Rubros de gasto mas relevantes" items={expenses} emptyMessage="No hay gastos operativos registrados." />
-        </div>
-      ) : null}
-
-      {tab === "gastos" ? (
-        <section className="ventas-report-panel">
-          <div className="ventas-report-panel__header"><h4>Gastos operativos</h4></div>
-          <div className="table-responsive">
-            <table className="table align-middle ventas-report-table">
-              <thead><tr><th>Categoria</th><th>Mov.</th><th>Total</th></tr></thead>
-              <tbody>
-                {report.detalle_gastos_operativos.length > 0 ? report.detalle_gastos_operativos.map((row) => (
-                  <tr key={row.categoria_movimiento}><td>{formatLabel(row.categoria_movimiento)}</td><td>{row.movimientos_count}</td><td>{formatCurrency(row.total)}</td></tr>
-                )) : <tr><td colSpan={3} className="muted-text text-center">No hay gastos operativos registrados.</td></tr>}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ) : null}
-
-      {tab === "contabilidad" ? (
-        <div className="ventas-report-grid ventas-report-grid--balanced">
-          <section className="ventas-report-panel">
-            <div className="ventas-report-panel__header"><h4>Estado contable resumido</h4></div>
-            <div className="ventas-report-ledger">
-              <div className="ventas-report-ledger__row"><span>Ventas netas</span><strong>{formatCurrency(report.estado_resultados.ventas_netas)}</strong></div>
-              <div className="ventas-report-ledger__row"><span>Otros ingresos</span><strong>{formatCurrency(report.estado_resultados.otros_ingresos)}</strong></div>
-              <div className="ventas-report-ledger__row"><span>Ingresos operativos</span><strong>{formatCurrency(report.estado_resultados.ingresos_operativos)}</strong></div>
-              <div className="ventas-report-ledger__row"><span>Costo de ventas</span><strong>{formatCurrency(report.estado_resultados.costo_ventas)}</strong></div>
-              <div className="ventas-report-ledger__row"><span>Utilidad bruta</span><strong>{formatCurrency(report.estado_resultados.utilidad_bruta)}</strong></div>
-              <div className="ventas-report-ledger__row"><span>Gastos operativos</span><strong>{formatCurrency(report.estado_resultados.gastos_operativos)}</strong></div>
-              <div className="ventas-report-ledger__row ventas-report-ledger__row--accent"><span>Utilidad operativa</span><strong>{formatCurrency(report.estado_resultados.utilidad_operativa)}</strong></div>
-            </div>
-          </section>
-          <section className="ventas-report-panel">
-            <div className="ventas-report-panel__header"><h4>Movimientos excluidos</h4></div>
-            <div className="table-responsive">
-              <table className="table align-middle ventas-report-table">
-                <thead><tr><th>Tipo</th><th>Categoria</th><th>Total</th></tr></thead>
-                <tbody>
-                  {report.movimientos_excluidos.length > 0 ? report.movimientos_excluidos.map((row) => (
-                    <tr key={`${row.tipo_movimiento}-${row.categoria_movimiento}`}><td>{formatLabel(row.tipo_movimiento)}</td><td>{formatLabel(row.categoria_movimiento)}</td><td>{formatCurrency(row.total)}</td></tr>
-                  )) : <tr><td colSpan={3} className="muted-text text-center">No hay movimientos excluidos en el periodo.</td></tr>}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-      ) : null}
-
-      {tab === "notas" ? (
-        <section className="ventas-report-panel">
-          <div className="ventas-report-panel__header"><h4>Notas del calculo</h4></div>
-          <ul className="ventas-report-notes">{report.notas.map((note) => <li key={note}>{note}</li>)}</ul>
-        </section>
-      ) : null}
-    </div>
-  );
-}
-
-function DailyWorkspace({ modulos, dailyValues, onDailyChange, onDailySubmit, onDailySave, dailyReport, dailyLoading, dailyError, dailySaving }) {
-  return (
-    <article className="surface-card ventas-report-shell">
-      <div className="ventas-report-shell__header">
+    <article className="ventas-report-simple">
+      <div className="ventas-report-simple__header">
         <div>
-          <p className="section-kicker">Comercial</p>
-          <h3>Reporte diario de ventas</h3>
-          <p className="muted-text">Visualiza cierres diarios, comportamiento comercial, caja y productos del dia sin perder trazabilidad.</p>
+          <p className="section-kicker">Ventas</p>
+          <h3>Reporte diario</h3>
+          <p className="muted-text">Consulta ventas por fecha, productos, metodos de pago y modulos.</p>
         </div>
       </div>
-      <form className="ventas-report-controlbar" onSubmit={(event) => { event.preventDefault(); onDailySubmit(); }}>
+
+      <form className="ventas-report-simple__filters" onSubmit={(event) => { event.preventDefault(); onDailySubmit(); }}>
         <div>
           <label className="form-label">Fecha</label>
           <input type="date" className="form-control" value={dailyValues.fecha} onChange={(event) => onDailyChange("fecha", event.target.value)} />
@@ -484,92 +307,47 @@ function DailyWorkspace({ modulos, dailyValues, onDailyChange, onDailySubmit, on
             {modulos.map((modulo) => <option key={modulo.id} value={modulo.id}>{modulo.nombre}</option>)}
           </select>
         </div>
-        <div className="ventas-report-controlbar__actions">
-          <button type="submit" className="btn btn-primary">Generar reporte</button>
+        <div className="ventas-report-simple__actions">
+          <button type="submit" className="btn btn-primary">Generar</button>
           <button type="button" className="btn btn-success" onClick={() => exportReportToPdf("daily", dailyReport)} disabled={!dailyReport || dailyLoading}>Exportar PDF</button>
-          <button type="button" className="btn btn-outline-dark" onClick={onDailySave} disabled={!dailyReport || dailyLoading || dailySaving}>{dailySaving ? "Guardando..." : "Guardar cierre"}</button>
+          <button type="button" className="btn btn-outline-dark" onClick={onDailySave} disabled={!dailyReport || dailyLoading || dailySaving}>
+            {dailySaving ? "Guardando..." : "Guardar"}
+          </button>
         </div>
       </form>
-      {dailyError ? <div className="alert alert-danger mb-0">{dailyError}</div> : null}
-      {dailyLoading ? (
-        <WorkspaceSkeleton
-          title="Generando reporte diario"
-          description="Estamos consolidando ventas, caja y productos para mostrar el cierre del dia."
-          mode="daily"
-        />
-      ) : null}
-      {!dailyLoading && dailyReport ? <DailyContent report={dailyReport} /> : null}
-    </article>
-  );
-}
 
-function MonthlyWorkspace({ modulos, monthlyValues, onMonthlyChange, onMonthlySubmit, onMonthlySave, monthlyReport, monthlyLoading, monthlyError, monthlySaving }) {
-  const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 6 }, (_, index) => String(currentYear - index));
-  return (
-    <article className="surface-card ventas-report-shell">
-      <div className="ventas-report-shell__header">
-        <div>
-          <p className="section-kicker">Contabilidad</p>
-          <h3>Estado de resultados mensual</h3>
-          <p className="muted-text">Separa ingresos, costos, gastos y exclusiones para un cierre contable mucho mas claro.</p>
-        </div>
-      </div>
-      <form className="ventas-report-controlbar ventas-report-controlbar--three" onSubmit={(event) => { event.preventDefault(); onMonthlySubmit(); }}>
-        <div>
-          <label className="form-label">Mes</label>
-          <select className="form-select" value={monthlyValues.mes} onChange={(event) => onMonthlyChange("mes", event.target.value)}>
-            {MONTH_LABELS.map((label, index) => <option key={label} value={String(index + 1)}>{label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="form-label">Anio</label>
-          <select className="form-select" value={monthlyValues.anio} onChange={(event) => onMonthlyChange("anio", event.target.value)}>
-            {yearOptions.map((year) => <option key={year} value={year}>{year}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="form-label">Modulo</label>
-          <select className="form-select" value={monthlyValues.modulo_id} onChange={(event) => onMonthlyChange("modulo_id", event.target.value)}>
-            <option value="">Todos</option>
-            {modulos.map((modulo) => <option key={modulo.id} value={modulo.id}>{modulo.nombre}</option>)}
-          </select>
-        </div>
-        <div className="ventas-report-controlbar__actions">
-          <button type="submit" className="btn btn-primary">Generar estado</button>
-          <button type="button" className="btn btn-success" onClick={() => exportReportToPdf("monthly", monthlyReport)} disabled={!monthlyReport || monthlyLoading}>Exportar PDF</button>
-          <button type="button" className="btn btn-outline-dark" onClick={onMonthlySave} disabled={!monthlyReport || monthlyLoading || monthlySaving}>{monthlySaving ? "Guardando..." : "Guardar estado"}</button>
-        </div>
-      </form>
-      {monthlyError ? <div className="alert alert-danger mb-0">{monthlyError}</div> : null}
-      {monthlyLoading ? (
-        <WorkspaceSkeleton
-          title="Generando estado mensual"
-          description="Estamos ordenando ingresos, costos y gastos para calcular el resultado del periodo."
-          mode="monthly"
-        />
-      ) : null}
-      {!monthlyLoading && monthlyReport ? <MonthlyContent report={monthlyReport} /> : null}
+      {dailyError ? <div className="alert alert-danger mb-0">{dailyError}</div> : null}
+      {dailyLoading ? <ReportLoading /> : null}
+      {!dailyLoading && dailyReport ? <DailyReport report={dailyReport} /> : null}
     </article>
   );
 }
 
 function HistoryWorkspace({ history, historyLoading, historyError }) {
   return (
-    <article className="surface-card ventas-report-shell">
-      <div className="ventas-report-shell__header">
+    <article className="ventas-report-simple">
+      <div className="ventas-report-simple__header">
         <div>
           <p className="section-kicker">Historial</p>
           <h3>Reportes guardados</h3>
-          <p className="muted-text">Consulta cierres diarios y estados mensuales almacenados en el sistema.</p>
+          <p className="muted-text">Consulta los reportes de ventas almacenados en el sistema.</p>
         </div>
       </div>
+
       {historyError ? <div className="alert alert-danger mb-0">{historyError}</div> : null}
-      {historyLoading ? <ReportTableSkeleton columns={5} rows={4} /> : (
-        <div className="ventas-report-table-shell">
+      {historyLoading ? <ReportLoading /> : (
+        <section className="ventas-report-table-shell ventas-report-table-shell--simple">
           <div className="table-responsive">
-            <table className="table align-middle ventas-report-table">
-              <thead><tr><th>Reporte</th><th>Periodo</th><th>Modulo</th><th>Generado por</th><th>Creado</th></tr></thead>
+            <table className="table align-middle ventas-report-table ventas-report-simple__table">
+              <thead>
+                <tr>
+                  <th>Reporte</th>
+                  <th>Periodo</th>
+                  <th>Modulo</th>
+                  <th>Generado por</th>
+                  <th>Creado</th>
+                </tr>
+              </thead>
               <tbody>
                 {history.length > 0 ? history.map((item) => (
                   <tr key={item.id}>
@@ -579,11 +357,11 @@ function HistoryWorkspace({ history, historyLoading, historyError }) {
                     <td>{item.generado_por_usuario?.name ?? "Sistema"}</td>
                     <td>{formatDateTime(item.created_at)}</td>
                   </tr>
-                )) : <tr><td colSpan={5} className="muted-text text-center">Todavia no has guardado cierres.</td></tr>}
+                )) : <EmptyRow colSpan={5}>Todavia no has guardado reportes.</EmptyRow>}
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       )}
     </article>
   );
@@ -591,26 +369,21 @@ function HistoryWorkspace({ history, historyLoading, historyError }) {
 
 function VentasReportsPanel(props) {
   const [section, setSection] = useState("daily");
+
   return (
-    <section className="ventas-report-center">
-      <article className="surface-card ventas-report-center__hero">
-        <div>
-          <p className="section-kicker">Centro financiero</p>
-          <h3>Analisis comercial y contable</h3>
-          <p className="muted-text">Cambia entre lectura ejecutiva, detalle analitico y trazabilidad historica sin saturar la vista.</p>
-        </div>
+    <section className="ventas-report-center ventas-report-center--simple">
+      <div className="ventas-report-simple__tabs-row">
         <Tabs
           value={section}
           onChange={setSection}
           options={[
-            { value: "daily", label: "Resumen diario" },
-            { value: "monthly", label: "Estado mensual" },
+            { value: "daily", label: "Reporte diario" },
             { value: "history", label: "Historial" },
           ]}
         />
-      </article>
+      </div>
+
       {section === "daily" ? <DailyWorkspace {...props} /> : null}
-      {section === "monthly" ? <MonthlyWorkspace {...props} /> : null}
       {section === "history" ? <HistoryWorkspace history={props.history} historyLoading={props.historyLoading} historyError={props.historyError} /> : null}
     </section>
   );

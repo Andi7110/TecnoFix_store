@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { GlobalLoadingOverlay } from "../interactions/GlobalInteractions";
 import { useAuth } from "../../hooks/auth/useAuth";
 
 function ProtectedRoute() {
@@ -6,15 +7,7 @@ function ProtectedRoute() {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="auth-screen auth-screen--loading">
-        <div className="surface-card auth-loading-card">
-          <p className="section-kicker">TecnoFix</p>
-          <h1>Cargando sesión</h1>
-          <p className="muted-text">Validando acceso al sistema.</p>
-        </div>
-      </div>
-    );
+    return <GlobalLoadingOverlay active message="Cargando..." />;
   }
 
   if (!isAuthenticated) {

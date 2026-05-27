@@ -11,6 +11,7 @@ use App\Http\Resources\Inventario\ProductoResource;
 use App\Models\Producto;
 use App\Services\Inventario\ProductoService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -57,6 +58,15 @@ class ProductoController extends Controller
         return new ProductoResource(
             $this->productoService->changeStatus($producto, $request->boolean('estado'))
         );
+    }
+
+    public function destroy(Producto $producto): JsonResponse
+    {
+        $this->productoService->delete($producto);
+
+        return response()->json([
+            'message' => 'Producto eliminado correctamente.',
+        ]);
     }
 
     public function foto(string $path): StreamedResponse

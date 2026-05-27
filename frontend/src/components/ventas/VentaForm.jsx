@@ -19,17 +19,6 @@ function metodoLabel(value) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function formatDateTime(value) {
-  if (!value) {
-    return "-";
-  }
-
-  return new Intl.DateTimeFormat("es-SV", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
 function VentaForm({
   values,
   modulos,
@@ -61,7 +50,6 @@ function VentaForm({
   loadingCategorias,
   savingTransferAccount,
   transferAccountsError,
-  ventasSuspendidas,
   onChange,
   onDiscountBlur,
   onSearchChange,
@@ -81,19 +69,16 @@ function VentaForm({
   onAddTransferAccount,
   onSaveTransferAccount,
   onDeleteTransferAccount,
-  onSuspendSale,
-  onResumeSuspendedSale,
-  onRemoveSuspendedSale,
   onSubmit,
   onCancel,
 }) {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [selectedProductPhoto, setSelectedProductPhoto] = useState(null);
   const [transferActionMessage, setTransferActionMessage] = useState("");
   const searchInputRef = useRef(null);
   const scannerBufferRef = useRef("");
   const scannerTimeoutRef = useRef(null);
   const quickAmounts = [10, 20, 50, 100];
-  const moduloPorId = new Map(modulos.map((modulo) => [String(modulo.id), modulo.nombre]));
   const montoRecibidoInsuficiente = values.metodo_pago === "efectivo" && total > 0 && faltante > 0;
   const montoTransferenciaInsuficiente = values.metodo_pago === "transferencia" && total > 0 && faltante > 0;
   const pagoMixtoInsuficiente = values.metodo_pago === "mixto" && total > 0 && faltante > 0;
@@ -128,6 +113,30 @@ function VentaForm({
     focusSearchInput();
   }
 
+  function openProductPhoto(producto) {
+    if (!producto?.foto_url) {
+      return;
+    }
+
+    setSelectedProductPhoto({
+      url: producto.foto_url,
+      name: producto.nombre || "Producto",
+    });
+  }
+
+  function closeProductPhoto() {
+    setSelectedProductPhoto(null);
+  }
+
+  function handleProductCardKeyDown(event, producto) {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    onAddProducto(producto);
+  }
+
   useEffect(() => {
     if (!values.modulo_id) {
       return;
@@ -135,6 +144,21 @@ function VentaForm({
 
     focusSearchInput();
   }, [values.modulo_id]);
+
+  useEffect(() => {
+    if (!selectedProductPhoto) {
+      return undefined;
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        closeProductPhoto();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedProductPhoto]);
 
   useEffect(() => {
     if (!values.modulo_id) {
@@ -419,20 +443,34 @@ function VentaForm({
               ) : null}
 
               {productos.map((producto) => (
-                <button
+                <article
                   key={producto.id}
-                  type="button"
                   className="venta-form__product-card"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => onAddProducto(producto)}
+                  onKeyDown={(event) => handleProductCardKeyDown(event, producto)}
                 >
                   <div className="venta-form__product-main">
                     <div className="venta-form__product-photo">
                       {producto.foto_url ? (
-                        <img
-                          src={producto.foto_url}
-                          alt={producto.nombre}
-                          className="venta-form__product-photo-image"
-                        />
+                        <button
+                          type="button"
+                          className="venta-form__product-photo-button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openProductPhoto(producto);
+                          }}
+                          onKeyDown={(event) => event.stopPropagation()}
+                          aria-label={`Ver imagen de ${producto.nombre}`}
+                          title="Ver imagen"
+                        >
+                          <img
+                            src={producto.foto_url}
+                            alt={producto.nombre}
+                            className="venta-form__product-photo-image"
+                          />
+                        </button>
                       ) : (
                         <span>Sin foto</span>
                       )}
@@ -451,56 +489,10 @@ function VentaForm({
                     </span>
                     <strong>{formatCurrency(producto.precio_venta)}</strong>
                   </div>
-                </button>
+                </article>
               ))}
             </div>
           </div>
-
-          {ventasSuspendidas.length > 0 ? (
-            <div className="venta-pos-suspended">
-              <div className="venta-pos-suggestions__header">
-                <div>
-                  <p className="section-kicker">Pendientes</p>
-                  <h3>Ventas suspendidas</h3>
-                </div>
-              </div>
-
-              <div className="venta-pos-suspended__list">
-                {ventasSuspendidas.map((ventaSuspendida) => (
-                  <article key={ventaSuspendida.id} className="venta-pos-suspended__item">
-                    <div>
-                      <strong>
-                        {ventaSuspendida.values?.modulo_id
-                          ? moduloPorId.get(String(ventaSuspendida.values.modulo_id))
-                            ?? `Modulo #${ventaSuspendida.values.modulo_id}`
-                          : "Sin modulo"}
-                      </strong>
-                      <small>{formatDateTime(ventaSuspendida.created_at)}</small>
-                      <span>
-                        {ventaSuspendida.items_count} unidades · {metodoLabel(ventaSuspendida.metodo_pago)}
-                      </span>
-                    </div>
-                    <div className="venta-pos-suspended__actions">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-primary"
-                        onClick={() => onResumeSuspendedSale(ventaSuspendida.id)}
-                      >
-                        Reanudar
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-light"
-                        onClick={() => onRemoveSuspendedSale(ventaSuspendida.id)}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          ) : null}
 
           <div className="venta-form__items">
             <div className="section-heading">
@@ -851,24 +843,55 @@ function VentaForm({
           <div className="venta-pos-sidebar__actions">
             <button
               type="submit"
-              className="btn btn-lg venta-pos-sidebar__submit"
+              className="btn products-filter-actions__apply venta-pos-sidebar__submit"
               disabled={saving || montoRecibidoInsuficiente || montoTransferenciaInsuficiente || pagoMixtoInsuficiente}
             >
-              {saving ? "Registrando..." : "Cobrar y generar ticket"}
+              {saving ? "Registrando..." : "Registrar venta"}
             </button>
-            <button
-              type="button"
-              className="btn venta-pos-sidebar__suspend"
-              onClick={onSuspendSale}
-            >
-              Suspender venta
-            </button>
-            <button type="button" className="btn btn-light" onClick={onCancel}>
+            <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
               Cancelar
             </button>
           </div>
         </aside>
       </div>
+
+      {selectedProductPhoto && typeof document !== "undefined" ? createPortal((
+        <div
+          className="venta-product-photo-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Imagen del producto"
+          onClick={closeProductPhoto}
+        >
+          <div
+            className="venta-product-photo-modal__card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="venta-product-photo-modal__header">
+              <div>
+                <p className="section-kicker">Producto</p>
+                <h3>{selectedProductPhoto.name}</h3>
+              </div>
+              <button
+                type="button"
+                className="btn venta-product-photo-modal__close"
+                onClick={closeProductPhoto}
+                aria-label="Cerrar imagen del producto"
+              >
+                <X size={18} weight="bold" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="venta-product-photo-modal__image-wrap">
+              <img
+                src={selectedProductPhoto.url}
+                alt={selectedProductPhoto.name}
+                className="venta-product-photo-modal__image"
+              />
+            </div>
+          </div>
+        </div>
+      ), document.body) : null}
 
       {isTransferModalOpen && typeof document !== "undefined" ? createPortal((
         <div

@@ -1,102 +1,55 @@
-.dashboard-command-center {
-  margin-bottom: 1.25rem;
-}
-
-.dashboard-command-center::after {
-  display: block;
-}
+/* ==========================================================================
+   Dashboard - estructura general
+   Se aplica al contenedor principal en pages/Dashboard.jsx.
+   ========================================================================== */
 
 .dashboard-page {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  font-family:
-    Inter,
-    "Segoe UI Variable",
-    "Segoe UI",
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  font-weight: 400;
+  gap: 0;
 }
 
-.dashboard-login-success {
-  position: fixed;
-  top: 1.05rem;
-  right: 1.25rem;
-  z-index: 80;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid #2ea043;
-  background: #2ea043;
-  color: #f0fff4;
-  font-size: 0.82rem;
-  font-weight: 700;
-  box-shadow:
-    0 10px 24px rgba(1, 4, 9, 0.24),
-    0 0 0 1px rgba(46, 160, 67, 0.12);
-  animation: dashboard-login-success-in 260ms ease-out;
+.dashboard-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
 }
 
-.dashboard-login-success__dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: #f0fff4;
-  box-shadow:
-    0 0 0 0.18rem rgba(240, 255, 244, 0.18),
-    0 0 10px rgba(240, 255, 244, 0.2);
+
+/* ==========================================================================
+   Encabezado operativo
+   Se aplica al titulo "Dashboard operativo" y a las cards Estado/Actualizado.
+   ========================================================================== */
+
+.dashboard-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.05rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.95rem;
+  background: transparent;
+  box-shadow: none;
 }
 
-@keyframes dashboard-login-success-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.dashboard-command-center {
+  margin-bottom: 1.25rem;
 }
 
-.dashboard-command-center h2,
-.dashboard-card h3,
-.dashboard-day-summary strong,
-.dashboard-metric-card h3 {
-  color: var(--app-ink) !important;
-}
-
-.dashboard-command-center__icon {
-  align-self: center;
-  width: 2rem;
-  height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  border: 0;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #f8fff9;
-  box-shadow:
-    0 0 0 1px rgba(57, 255, 122, 0.18),
-    0 10px 22px rgba(22, 163, 74, 0.18);
-}
-
-.dashboard-command-center__icon svg {
-  display: block;
-  fill: currentColor;
+.dashboard-command-center::after {
+  display: none;
 }
 
 .dashboard-command-center__inline-status {
-  width: 100%;
+  width: auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex: 0 1 32rem;
 }
 
 .dashboard-command-center__inline-item {
@@ -106,14 +59,15 @@
   align-items: center;
   min-width: 0;
   flex: 1 1 0;
-  min-height: 4rem;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(21, 128, 61, 0.16);
-  background: rgba(255, 255, 255, 0.72);
-  padding: 0.78rem 0.9rem;
+  min-height: 3.6rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: transparent;
+  padding: 0.72rem 0.85rem;
+  box-shadow: none;
 }
 
-.dashboard-command-center__inline-item > div {
+.dashboard-command-center__inline-item>div {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -128,6 +82,213 @@
   overflow-wrap: anywhere;
 }
 
+.dashboard-command-center__icon {
+  align-self: center;
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.72rem;
+  background: rgba(30, 168, 82, 0.08);
+  border: 1px solid rgba(30, 168, 82, 0.16);
+  color: #166534;
+  box-shadow: none;
+}
+
+.dashboard-command-center__icon svg {
+  display: block;
+  fill: currentColor;
+}
+
+
+/* ==========================================================================
+   Acciones rapidas
+   Se aplica a los botones Ventas, Reparacion, Movimientos de caja y Productos.
+   ========================================================================== */
+
+.dashboard-actions-shell {
+  margin: 1.75rem 0 1.5rem;
+  padding-top: 0;
+  border-top: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.dashboard-sale-success {
+  width: fit-content;
+  max-width: 100%;
+  margin: 1rem 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(30, 168, 82, 0.28);
+  background: rgba(30, 168, 82, 0.1);
+  color: #14532d;
+  font-weight: 700;
+  line-height: 1.35;
+  animation: dashboard-sale-success-in 220ms ease-out;
+}
+
+.dashboard-sale-success__icon {
+  flex: 0 0 auto;
+  color: #1ea852;
+}
+
+@keyframes dashboard-sale-success-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-actions-grid {
+  display: grid;
+  gap: 1.15rem;
+  margin-bottom: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.dashboard-actions-shell .section-heading {
+  margin-bottom: 0.85rem;
+}
+
+.dashboard-quick-action {
+  --quick-action-accent: #16a34a;
+  --quick-action-accent-soft: rgba(34, 197, 94, 0.12);
+  appearance: none;
+  position: relative;
+  overflow: hidden;
+  min-height: 6.6rem;
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: 0.9rem;
+  row-gap: 0.65rem;
+  padding: 0.95rem;
+  border-radius: 0.95rem;
+  border: 2px solid rgba(233, 241, 235, 0.94);
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.dashboard-quick-action::after {
+  display: none;
+}
+
+.dashboard-quick-action:hover,
+.dashboard-quick-action:focus {
+  transform: translateY(-3px);
+  border-color: #1ea852;
+  background: rgba(30, 168, 82, 0.045);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.dashboard-quick-action__symbol {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex: 0 0 2.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.8rem;
+  background: rgba(30, 168, 82, 0.08);
+  border: 1px solid rgba(30, 168, 82, 0.16);
+  color: #166534;
+  line-height: 1;
+  box-shadow: none;
+  transition:
+    transform 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}
+
+.dashboard-quick-action:hover .dashboard-quick-action__symbol,
+.dashboard-quick-action:focus .dashboard-quick-action__symbol {
+  transform: translateY(-1px);
+  background: rgba(30, 168, 82, 0.14);
+  border-color: rgba(30, 168, 82, 0.24);
+  color: #14532d;
+}
+
+.dashboard-quick-action__symbol svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;
+}
+
+.dashboard-quick-action__copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  padding-top: 0.1rem;
+}
+
+.dashboard-quick-action__label {
+  display: block;
+  color: var(--app-ink);
+  font-size: 0.96rem;
+  font-weight: 750;
+  line-height: 1.1;
+}
+
+.dashboard-quick-action__description {
+  color: var(--app-muted);
+  font-size: 0.86rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+/* ==========================================================================
+   Subtitulo de seccion
+   Se aplica a "Resumen del dia".
+   ========================================================================== */
+
+.dashboard-subheading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+.dashboard-subheading::before {
+  display: none;
+}
+
+.dashboard-subheading h3 {
+  margin: 0;
+  color: #08502e;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+
+/* ==========================================================================
+   Cards de metricas
+   Se aplica a DashboardMetricCards.jsx: ventas, entradas, salidas, stock bajo.
+   ========================================================================== */
+
 .dashboard-metrics-grid:not(.row) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -139,7 +300,7 @@
 }
 
 .dashboard-metric-card {
-  min-height: 7.2rem;
+  min-height: 6.8rem;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -147,38 +308,41 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-radius: 1.05rem;
-  padding: 1rem 1.1rem 1rem 1.2rem;
-  border-color: rgba(21, 128, 61, 0.14);
-  background: rgba(255, 255, 255, 0.82);
+  padding: 1rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: transparent;
   box-shadow: none;
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  transition: border-color 220ms ease;
 }
 
-.dashboard-metric-card.surface-card::before {
-  display: block;
-  width: 0.24rem;
-  height: 100%;
-  background: linear-gradient(180deg, #15803d, rgba(34, 197, 94, 0.2));
-  opacity: 1;
-}
-
+.dashboard-metric-card.surface-card::before,
 .dashboard-metric-card::after {
   display: none;
 }
 
 .dashboard-metric-card.surface-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(21, 128, 61, 0.32);
+  transform: none;
+  border-color: var(--app-surface-border);
   box-shadow: none;
+}
+
+.dashboard-metric-card .section-kicker {
+  color: var(--app-ink);
+  letter-spacing: 0.08em;
 }
 
 .dashboard-metric-card h3 {
   margin: 0;
+  color: var(--app-ink) !important;
   font-size: clamp(1.35rem, 1.9vw, 1.85rem);
   letter-spacing: 0;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
+}
+
+.dashboard-metric-card--warning h3 {
+  color: #b02a37 !important;
 }
 
 .dashboard-metric-card .muted-text {
@@ -187,136 +351,50 @@
   text-align: right;
 }
 
-.dashboard-metric-card .section-kicker,
-.dashboard-section-card .section-kicker {
-  color: #15803d;
-  letter-spacing: 0.13em;
-}
 
-.dashboard-metric-card--accent.surface-card::before {
-  background: linear-gradient(180deg, #16a34a, rgba(34, 197, 94, 0.2));
-}
+/* ==========================================================================
+   Alertas operativas
+   Se aplica a las cards creadas por buildAlerts en Dashboard.jsx.
+   ========================================================================== */
 
-.dashboard-metric-card--accent::after {
-  display: none;
-}
-
-.dashboard-metric-card--warning.surface-card::before {
-  background: linear-gradient(180deg, #d97706, rgba(217, 119, 6, 0.16));
-}
-
-.dashboard-metric-card--warning::after {
-  display: none;
-}
-
-.dashboard-alerts-grid,
-.dashboard-actions-grid,
-.dashboard-insights-grid,
-.dashboard-comparison-grid {
+.dashboard-alerts-grid {
   display: grid;
   gap: 1.15rem;
   margin-bottom: 1rem;
-}
-
-.dashboard-actions-shell {
-  margin: clamp(1.35rem, 2.2vw, 2rem) 0 1.8rem;
-  width: 100%;
-  max-width: 100%;
-}
-
-.dashboard-subheading {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin: 0.1rem 0 1rem;
-}
-
-.dashboard-subheading::before {
-  content: "";
-  width: 0.62rem;
-  height: 0.62rem;
-  border-radius: 50%;
-  background: #15803d;
-  box-shadow: none;
-}
-
-.dashboard-subheading h3 {
-  margin: 0;
-  color: var(--app-ink);
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.dashboard-actions-shell .section-heading {
-  margin-bottom: 0.85rem;
-}
-
-.dashboard-alerts-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.dashboard-actions-grid,
-.dashboard-insights-grid,
-.dashboard-comparison-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.dashboard-alert-card,
-.dashboard-insight-card {
+.dashboard-alert-card {
   position: relative;
   overflow: hidden;
-  border-radius: 1.05rem;
-  border: 1px solid rgba(21, 128, 61, 0.14);
-  background: rgba(255, 255, 255, 0.78);
-  padding: 1.05rem 1.1rem;
+  min-height: 9rem;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  box-shadow: none;
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
-}
-
-.dashboard-alert-card:hover,
-.dashboard-insight-card:hover,
-.dashboard-comparison-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(21, 128, 61, 0.28);
-  box-shadow: none;
-}
-
-.dashboard-alert-card {
   justify-content: space-between;
-  min-height: 9rem;
-  padding-left: 1.25rem;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: transparent;
+  box-shadow: none;
+}
+
+.dashboard-alert-card:hover {
+  transform: none;
+  border-color: var(--app-surface-border);
+  background: transparent;
+  box-shadow: none;
 }
 
 .dashboard-alert-card__marker {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 0.28rem;
-  background: #15803d;
+  display: none;
 }
 
-.dashboard-alert-card--warning .dashboard-alert-card__marker {
-  background: #d97706;
-}
-
-.dashboard-alert-card--accent .dashboard-alert-card__marker,
-.dashboard-alert-card--success .dashboard-alert-card__marker {
-  background: #22c55e;
-}
-
-.dashboard-alert-card--neutral .dashboard-alert-card__marker {
-  background: #15803d;
-}
-
-.dashboard-alert-card strong,
-.dashboard-insight-card strong {
+.dashboard-alert-card strong {
   color: var(--app-ink);
 }
 
-.dashboard-alert-card p,
-.dashboard-insight-card p {
+.dashboard-alert-card p {
   margin: 0;
   color: var(--app-muted);
 }
@@ -324,216 +402,133 @@
 .dashboard-alert-card .btn {
   width: fit-content;
   border-radius: 999px;
-  background: #15803d !important;
-  border-color: #15803d !important;
-  color: #ffffff !important;
+  background: transparent !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+  color: var(--app-ink) !important;
   box-shadow: none;
   font-weight: 600;
 }
 
 .dashboard-alert-card .btn:hover,
 .dashboard-alert-card .btn:focus {
-  background: #166534 !important;
-  border-color: #166534 !important;
-  color: #ffffff !important;
+  background: rgba(15, 23, 42, 0.04) !important;
+  border-color: rgba(15, 23, 42, 0.14) !important;
+  color: var(--app-ink) !important;
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .dashboard-alert-card .btn {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #eff8f3 !important;
-}
 
-:root[data-theme="dark"] .dashboard-alert-card .btn:hover,
-:root[data-theme="dark"] .dashboard-alert-card .btn:focus {
-  background: rgba(46, 160, 67, 0.14) !important;
-  border-color: rgba(46, 160, 67, 0.26) !important;
-  color: #eff8f3 !important;
-  box-shadow: none;
-}
+/* ==========================================================================
+   Tabla de ventas por modulo
+   Se aplica a DashboardModulesTable.jsx.
+   ========================================================================== */
 
-.dashboard-quick-action {
-  position: relative;
+.dashboard-section-card.surface-card {
+  padding: 0;
   overflow: hidden;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(21, 128, 61, 0.14);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 253, 244, 0.78));
-  color: inherit;
-  text-decoration: none;
-  padding: 0.95rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.9rem;
-  min-height: 6.35rem;
-  width: 100%;
-  min-width: 0;
-  box-shadow: none;
-  transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
-}
-
-.dashboard-quick-action:hover,
-.dashboard-quick-action:focus {
-  transform: translateY(-2px);
-  border-color: #15803d;
-  background:
-    linear-gradient(135deg, #ffffff 0%, #dcfce7 100%);
+  border-radius: 0.95rem;
+  border: 1px solid var(--app-surface-border);
+  background: transparent;
   box-shadow: none;
 }
 
-.dashboard-quick-action__label {
-  display: block;
+.dashboard-section-card.surface-card::before {
+  display: none;
+}
+
+.dashboard-section-card.surface-card:hover {
+  transform: none;
+  border-color: var(--app-surface-border);
+  box-shadow: none;
+}
+
+.dashboard-section-card .section-heading {
+  padding: 1rem 1rem 0;
+}
+
+.dashboard-section-card .section-kicker {
   color: var(--app-ink);
-  font-size: 0.94rem;
-  font-weight: 600;
-  line-height: 1.1;
+  letter-spacing: 0.08em;
 }
 
-.dashboard-quick-action__copy {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+.dashboard-section-card h2 {
+  color: var(--app-ink);
 }
 
-.dashboard-quick-action__description {
+.dashboard-section-card .repairs-table th,
+.dashboard-section-card .repairs-table td {
+  color: var(--app-ink);
+}
+
+.dashboard-section-card .table {
+  margin-bottom: 0;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--app-ink);
+  --bs-table-border-color: var(--app-surface-border);
+  --bs-table-hover-bg: var(--app-table-row-hover);
+}
+
+.dashboard-section-card .table th {
   color: var(--app-muted);
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.dashboard-quick-action__symbol {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #f8fff9;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  border-radius: 0.82rem;
-  width: 2.6rem;
-  height: 2.6rem;
-  flex: 0 0 2.6rem;
-  line-height: 1;
-  box-shadow:
-    0 0 0 1px rgba(57, 255, 122, 0.18),
-    0 10px 22px rgba(22, 163, 74, 0.18);
-}
-
-.dashboard-quick-action__symbol svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  fill: currentColor;
-}
-
-.dashboard-insight-card span {
-  color: #15803d;
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.dashboard-insight-card strong {
-  font-size: 1.35rem;
-  letter-spacing: 0;
-  font-weight: 600;
+.dashboard-section-card .table th,
+.dashboard-section-card .table td {
+  background: transparent;
+  border-color: var(--app-surface-border);
+  padding: 0.85rem 1rem;
 }
 
-.dashboard-insight-card::before {
-  content: "";
-  width: 2.8rem;
-  height: 0.24rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #15803d, #86efac);
+.dashboard-section-card .table tbody td:first-child {
+  font-weight: 500;
 }
 
-.dashboard-comparison-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1.05rem;
-  border: 1px solid rgba(21, 128, 61, 0.14);
-  background: rgba(255, 255, 255, 0.76);
-  padding: 1rem 1.05rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  box-shadow: none;
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+.dashboard-section-card .table tbody tr {
+  transition: background 180ms ease;
 }
 
-.dashboard-comparison-card strong {
-  color: var(--app-ink);
-  font-size: 1.22rem;
-  letter-spacing: 0;
-  font-weight: 600;
+.dashboard-section-card .table tbody tr:hover {
+  background: var(--app-table-row-hover);
 }
 
-.dashboard-comparison-card p,
-.dashboard-comparison-card small {
-  margin: 0;
-  color: var(--app-muted);
-}
 
-.dashboard-activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+/* ==========================================================================
+   Resumen diario opcional
+   Se aplica a DashboardDaySummary.jsx si el componente vuelve a usarse.
+   ========================================================================== */
+
+.dashboard-day-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
   margin-top: 1rem;
+  padding: 0 1rem 1rem;
 }
 
-.dashboard-activity-item {
+.dashboard-day-summary div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.9rem 1rem;
   border-radius: 1rem;
+  background: transparent;
   border: 1px solid var(--app-surface-border);
-  background: var(--app-surface);
-  padding: 1rem 1.1rem;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 1rem;
-  align-items: start;
 }
 
-.dashboard-activity-item__badge {
-  border-radius: 999px;
-  background: rgba(46, 160, 67, 0.1);
-  color: var(--app-primary);
-  padding: 0.4rem 0.7rem;
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.dashboard-activity-item__content strong {
+.dashboard-day-summary strong {
   color: var(--app-ink);
+  font-size: 1.02rem;
 }
 
-.dashboard-activity-item__content span,
-.dashboard-activity-item__content p,
-.dashboard-activity-item__meta span {
-  display: block;
-  color: var(--app-muted);
-}
 
-.dashboard-activity-item__content p {
-  margin: 0.2rem 0 0;
-}
-
-.dashboard-activity-item__meta {
-  text-align: right;
-}
-
-.dashboard-activity-item__meta strong {
-  color: var(--app-ink);
-}
-
-.dashboard-bottom-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
-}
+/* ==========================================================================
+   Estado de carga
+   Se aplica a DashboardLoadingSkeleton dentro de Dashboard.jsx.
+   ========================================================================== */
 
 .dashboard-loading {
   pointer-events: none;
@@ -553,7 +548,7 @@
   animation: dashboard-loading-pulse 1s ease-in-out infinite;
 }
 
-.dashboard-loading-line + .dashboard-loading-line {
+.dashboard-loading-line+.dashboard-loading-line {
   margin-top: 0.45rem;
 }
 
@@ -600,16 +595,14 @@
 }
 
 .dashboard-loading-card--action {
-  position: relative;
-  overflow: hidden;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(100, 116, 139, 0.14);
-  background: transparent;
-  padding: 0.75rem 0.9rem;
+  min-height: 3rem;
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(100, 116, 139, 0.14);
+  background: transparent;
 }
 
 .dashboard-loading-table {
@@ -643,316 +636,271 @@
   animation: dashboard-loading-sweep 900ms ease-in-out infinite;
 }
 
-.dashboard-section-card .repairs-table th,
-.dashboard-section-card .repairs-table td {
-  color: var(--app-ink);
-}
-
-.dashboard-section-card.surface-card {
-  border-radius: 1.15rem;
-  border-color: rgba(21, 128, 61, 0.14);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: none;
-  padding: 1.2rem;
-}
-
-.dashboard-section-card.surface-card::before {
-  display: block;
-  height: 0.24rem;
-  background: linear-gradient(90deg, #15803d, #22c55e, #86efac);
-  opacity: 1;
-}
-
-.dashboard-section-card.surface-card:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.dashboard-section-card .table {
-  margin-bottom: 0;
-  --bs-table-bg: transparent;
-  --bs-table-color: var(--app-ink);
-  --bs-table-border-color: var(--app-surface-border);
-  --bs-table-hover-bg: var(--app-table-row-hover);
-}
-
-.dashboard-section-card .table th {
-  color: #15803d;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.dashboard-section-card .table th,
-.dashboard-section-card .table td {
-  background: transparent;
-  padding: 0.85rem 1rem;
-}
-
-.dashboard-section-card .table tbody td:first-child {
-  font-weight: 500;
-}
-
-.dashboard-section-card .table tbody tr {
-  transition: background 180ms ease;
-}
-
-.dashboard-section-card .table tbody tr:hover {
-  background: var(--app-table-row-hover);
-}
-
-.dashboard-day-summary {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.dashboard-day-summary div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.9rem 1rem;
-  border-radius: 1rem;
-  background: var(--app-surface);
-  border: 1px solid var(--app-surface-border);
-}
-
-.dashboard-day-summary strong {
-  font-size: 1.02rem;
-}
-
 @keyframes dashboard-loading-sweep {
   0% {
     transform: translateX(-120%);
   }
+
   100% {
     transform: translateX(320%);
   }
 }
 
 @keyframes dashboard-loading-pulse {
+
   0%,
   100% {
     opacity: 0.28;
     transform: translateY(0);
   }
+
   50% {
     opacity: 0.68;
     transform: translateY(-1px);
   }
 }
 
-:root[data-theme="dark"] .dashboard-command-center h2,
-:root[data-theme="dark"] .dashboard-command-center strong,
+
+/* ==========================================================================
+   Notificacion de login
+   Se conserva para el aviso flotante de acceso exitoso, si se muestra.
+   ========================================================================== */
+
+.dashboard-login-success {
+  position: fixed;
+  top: 1.05rem;
+  right: 1.25rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid #2ea043;
+  background: #2ea043;
+  color: #f0fff4;
+  font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow:
+    0 10px 24px rgba(1, 4, 9, 0.24),
+    0 0 0 1px rgba(46, 160, 67, 0.12);
+  animation: dashboard-login-success-in 260ms ease-out;
+}
+
+.dashboard-login-success__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #f0fff4;
+  box-shadow:
+    0 0 0 0.18rem rgba(240, 255, 244, 0.18),
+    0 0 10px rgba(240, 255, 244, 0.2);
+}
+
+@keyframes dashboard-login-success-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* ==========================================================================
+   Modo oscuro
+   Ajusta contraste de encabezado, botones, metricas, alertas y tabla.
+   ========================================================================== */
+
+/* Textos principales: titulos, valores de metricas y celdas importantes. */
+:root[data-theme="dark"] .dashboard-page__header h2,
+:root[data-theme="dark"] .dashboard-command-center__inline-item strong,
+:root[data-theme="dark"] .dashboard-quick-action__label,
 :root[data-theme="dark"] .dashboard-metric-card h3,
 :root[data-theme="dark"] .dashboard-alert-card strong,
-:root[data-theme="dark"] .dashboard-insight-card strong,
-:root[data-theme="dark"] .dashboard-quick-action strong,
 :root[data-theme="dark"] .dashboard-section-card h2,
-:root[data-theme="dark"] .dashboard-day-summary strong,
-:root[data-theme="dark"] .dashboard-section-card .repairs-table td {
-  color: #f0f6fc !important;
+:root[data-theme="dark"] .dashboard-section-card .repairs-table td,
+:root[data-theme="dark"] .dashboard-day-summary strong {
+  color: #eff8f3 !important;
 }
 
-:root[data-theme="dark"] .dashboard-command-center .muted-text,
-:root[data-theme="dark"] .dashboard-command-center__meta .muted-text,
+/* Textos secundarios: descripciones, ayudas, encabezados suaves y muted text. */
+:root[data-theme="dark"] .dashboard-page__header .muted-text,
+:root[data-theme="dark"] .dashboard-command-center__inline-item .muted-text,
+:root[data-theme="dark"] .dashboard-quick-action__description,
 :root[data-theme="dark"] .dashboard-metric-card .muted-text,
 :root[data-theme="dark"] .dashboard-alert-card p,
-:root[data-theme="dark"] .dashboard-insight-card p,
-:root[data-theme="dark"] .dashboard-insight-card span,
-:root[data-theme="dark"] .dashboard-quick-action span,
 :root[data-theme="dark"] .dashboard-section-card .muted-text,
+:root[data-theme="dark"] .dashboard-section-card .table th,
 :root[data-theme="dark"] .dashboard-day-summary .muted-text {
-  color: #9fb0c0 !important;
+  color: #aabdab !important;
+  text-shadow: none;
 }
 
-:root[data-theme="dark"] .dashboard-section-card .repairs-table th {
-  color: #f0f6fc !important;
+/* Subtitulo de la seccion "Resumen de la tienda". */
+:root[data-theme="dark"] .dashboard-subheading h3 {
+  color: hsl(133, 100%, 56%) !important;
 }
 
-:root[data-theme="dark"] .dashboard-command-center {
-  border-color: rgba(34, 197, 94, 0.22);
-  background:
-    radial-gradient(circle at 88% 14%, rgba(34, 197, 94, 0.12), transparent 26%),
-    linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+/* Valor numerico de la metrica Stock bajo. */
+:root[data-theme="dark"] .dashboard-metric-card--warning h3 {
+  color: #ff2626 !important;
 }
 
+/* Superficies de cards: mantiene fondo limpio y bordes visibles en oscuro. */
+:root[data-theme="dark"] .dashboard-command-center__inline-item,
+:root[data-theme="dark"] .dashboard-page__header,
 :root[data-theme="dark"] .dashboard-alert-card,
-:root[data-theme="dark"] .dashboard-insight-card,
-:root[data-theme="dark"] .dashboard-day-summary div,
-:root[data-theme="dark"] .dashboard-comparison-card,
-:root[data-theme="dark"] .dashboard-activity-item {
-  background: rgba(13, 17, 23, 0.72);
-  border-color: rgba(34, 197, 94, 0.18);
-  box-shadow: none;
-}
-
-:root[data-theme="dark"] .dashboard-command-center__inline-item {
-  background: rgba(13, 17, 23, 0.72);
-  border-color: rgba(57, 255, 122, 0.18);
-}
-
-:root[data-theme="dark"] .dashboard-command-center__inline-item strong {
-  color: #f8fafc !important;
-}
-
 :root[data-theme="dark"] .dashboard-metric-card,
-:root[data-theme="dark"] .dashboard-section-card.surface-card {
-  background:
-    linear-gradient(145deg, rgba(22, 27, 34, 0.94), rgba(13, 17, 23, 0.84));
-  border-color: rgba(34, 197, 94, 0.18);
+:root[data-theme="dark"] .dashboard-section-card.surface-card,
+:root[data-theme="dark"] .dashboard-day-summary div {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .dashboard-command-center::after,
-:root[data-theme="dark"] .dashboard-section-card.surface-card::before {
-  background: linear-gradient(90deg, #39ff7a, #22c55e, #b6ffcf);
-  box-shadow:
-    0 0 14px rgba(57, 255, 122, 0.46),
-    0 0 28px rgba(57, 255, 122, 0.22);
-}
-
-:root[data-theme="dark"] .dashboard-metric-card::after,
-:root[data-theme="dark"] .dashboard-comparison-card::after {
-  opacity: 0.72;
-}
-
-:root[data-theme="dark"] .dashboard-metric-card .section-kicker,
-:root[data-theme="dark"] .dashboard-section-card .section-kicker,
-:root[data-theme="dark"] .dashboard-insight-card span,
-:root[data-theme="dark"] .dashboard-section-card .table th {
-  color: #39ff7a !important;
-  text-shadow: 0 0 12px rgba(57, 255, 122, 0.28);
-}
-
-:root[data-theme="dark"] .dashboard-alert-card .btn {
-  background: #22c55e !important;
-  border-color: #39ff7a !important;
-  color: #f8fafc !important;
-  box-shadow: 0 0 18px rgba(57, 255, 122, 0.22) !important;
-}
-
+/* Iconos del bloque Estado/Actualizado. */
 :root[data-theme="dark"] .dashboard-command-center__icon {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #f8fff9;
-  box-shadow:
-    0 0 0 1px rgba(57, 255, 122, 0.18),
-    0 10px 22px rgba(22, 163, 74, 0.18);
+  background: rgb(240, 241, 240);
+  border-color: rgba(149, 148, 148, 0.18);
+  color: #06541e;
+  box-shadow: none;
 }
 
+/* Botones de acciones rapidas: borde verde y fondo transparente. */
 :root[data-theme="dark"] .dashboard-quick-action {
-  border-color: rgba(34, 197, 94, 0.18);
-  background:
-    linear-gradient(145deg, rgba(11, 18, 24, 0.88), rgba(7, 16, 13, 0.78));
-  background-size: auto;
-  background-position: center;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  transition: all 0.3s ease;
+  background: transparent;
+  border-color: rgba(243, 245, 243, 0.18);
+  box-shadow: none;
 }
 
+:root[data-theme="dark"] .dashboard-sale-success {
+  border-color: rgba(46, 160, 67, 0.36);
+  background: var(--app-wash);
+  color: var(--app-ink);
+}
+
+:root[data-theme="dark"] .dashboard-sale-success__icon {
+  color: var(--app-primary);
+}
+
+/* Hover/focus de acciones rapidas. */
 :root[data-theme="dark"] .dashboard-quick-action:hover,
 :root[data-theme="dark"] .dashboard-quick-action:focus {
-  border-color: rgba(57, 255, 122, 0.36);
-  background:
-    linear-gradient(145deg, rgba(15, 27, 32, 0.94), rgba(7, 26, 17, 0.86));
+  background: rgba(34, 197, 94, 0.08);
+  border-color: #22c55e;
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .dashboard-quick-action__label,
-:root[data-theme="dark"] .dashboard-quick-action__symbol {
-  color: #f0f6fc;
+/* Contenedor de iconos dentro de las acciones rapidas. */
+:root[data-theme="dark"] .dashboard-quick-action__symbol,
+:root[data-theme="dark"] .dashboard-quick-action:hover .dashboard-quick-action__symbol,
+:root[data-theme="dark"] .dashboard-quick-action:focus .dashboard-quick-action__symbol {
+  transition: all 0.8s ease;
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.18);
+  color: #fafcfb;
+  box-shadow: none;
 }
 
-:root[data-theme="dark"] .dashboard-quick-action__symbol {
-  color: #ffffff;
-  background: #22c55e;
-  box-shadow:
-    0 0 16px rgba(57, 255, 122, 0.3),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-}
-
+/* Fuerza que los SVG hereden el color verde del contenedor del icono. */
 :root[data-theme="dark"] .dashboard-quick-action__symbol svg {
-  color: #ffffff !important;
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
 }
 
-:root[data-theme="dark"] .dashboard-metric-card.surface-card::before,
-:root[data-theme="dark"] .dashboard-alert-card__marker,
-:root[data-theme="dark"] .dashboard-insight-card::before {
-  background: linear-gradient(180deg, #39ff7a, #22c55e);
-  box-shadow: 0 0 16px rgba(57, 255, 122, 0.34);
+/* Botones dentro de alertas operativas. */
+:root[data-theme="dark"] .dashboard-alert-card .btn {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #eff8f3 !important;
+  box-shadow: none !important;
 }
 
-:root[data-theme="dark"] .dashboard-comparison-card strong,
-:root[data-theme="dark"] .dashboard-activity-item__content strong,
-:root[data-theme="dark"] .dashboard-activity-item__meta strong {
-  color: #f0f6fc;
+/* Hover/focus de botones dentro de alertas operativas. */
+:root[data-theme="dark"] .dashboard-alert-card .btn:hover,
+:root[data-theme="dark"] .dashboard-alert-card .btn:focus {
+  background: rgba(46, 160, 67, 0.14) !important;
+  border-color: rgba(46, 160, 67, 0.26) !important;
+  color: #eff8f3 !important;
 }
 
-:root[data-theme="dark"] .dashboard-comparison-card p,
-:root[data-theme="dark"] .dashboard-comparison-card small,
-:root[data-theme="dark"] .dashboard-activity-item__content span,
-:root[data-theme="dark"] .dashboard-activity-item__content p,
-:root[data-theme="dark"] .dashboard-activity-item__meta span {
-  color: #9fb0c0;
+/* Variables de Bootstrap usadas por la tabla de ventas por modulo. */
+:root[data-theme="dark"] .dashboard-section-card .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #eff8f3;
+  --bs-table-border-color: rgba(255, 255, 255, 0.08);
 }
 
-:root[data-theme="dark"] .dashboard-activity-item__badge {
-  background: rgba(148, 163, 184, 0.12);
-  color: #cbd5e1;
-}
-
+/* Lineas skeleton de carga. */
 :root[data-theme="dark"] .dashboard-loading-line {
   background: rgba(255, 255, 255, 0.09);
 }
 
+/* Skeleton de acciones rapidas. */
 :root[data-theme="dark"] .dashboard-loading-card--action {
   border-color: rgba(148, 163, 184, 0.16);
   background: transparent;
 }
 
+/* Barra base del skeleton de tabla. */
 :root[data-theme="dark"] .dashboard-loading-table::before {
   background: rgba(148, 163, 184, 0.16);
 }
 
+/* Barrido animado del skeleton de tabla. */
 :root[data-theme="dark"] .dashboard-loading-table::after {
   background: linear-gradient(90deg, transparent, #94a3b8, transparent);
 }
 
-@media (max-width: 1200px) {
-  .dashboard-actions-grid,
-  .dashboard-insights-grid,
-  .dashboard-comparison-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 
-  .dashboard-actions-shell {
-    width: 100%;
+/* ==========================================================================
+   Responsive
+   Ajusta columnas y acomodo en tablet y movil.
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .dashboard-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 992px) {
-  .dashboard-bottom-grid {
-    grid-template-columns: 1fr;
+  .dashboard-page__header {
+    flex-direction: column;
   }
 
-  .dashboard-alerts-grid {
+  .dashboard-command-center__inline-status {
+    width: 100%;
+    flex: 1 1 auto;
+    justify-content: stretch;
+  }
+
+  .dashboard-alerts-grid,
+  .dashboard-bottom-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
+  .dashboard-command-center__inline-status {
+    flex-direction: column;
+  }
+
   .dashboard-metrics-grid,
-  .dashboard-actions-grid,
-  .dashboard-insights-grid,
-  .dashboard-comparison-grid {
+  .dashboard-actions-grid {
     grid-template-columns: 1fr;
   }
 
   .dashboard-metric-card {
     min-height: 7.5rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .dashboard-metric-card h3 {
@@ -961,14 +909,6 @@
 
   .dashboard-metric-card .muted-text {
     max-width: none;
-    text-align: left;
-  }
-
-  .dashboard-activity-item {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-activity-item__meta {
     text-align: left;
   }
 }

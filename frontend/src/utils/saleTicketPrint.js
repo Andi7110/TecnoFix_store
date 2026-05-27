@@ -10,10 +10,19 @@ function formatDate(value) {
     return "-";
   }
 
+  const normalizedValue = String(value).includes("T")
+    ? value
+    : String(value).replace(" ", "T");
+
   return new Intl.DateTimeFormat("es-SV", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+    dateStyle: "short",
+  }).format(new Date(normalizedValue));
+}
+
+function formatMetodo(value) {
+  return String(value ?? "-")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function escapeHtml(value) {
@@ -28,12 +37,11 @@ function escapeHtml(value) {
 function buildItemsRows(detalles = []) {
   return detalles.map((detalle) => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px dashed #d4d4d8;">
-        <div style="font-weight:700;">${escapeHtml(detalle.producto?.nombre ?? detalle.descripcion_item ?? "Articulo")}</div>
-        <div style="font-size:12px;color:#71717a;">${escapeHtml(detalle.producto?.codigo ?? "")}</div>
+      <td style="padding:4px 0;border-bottom:1px solid #222;">
+        ${escapeHtml(detalle.producto?.nombre ?? detalle.descripcion_item ?? "Articulo")}
       </td>
-      <td style="padding:8px 0;border-bottom:1px dashed #d4d4d8;text-align:center;">${escapeHtml(detalle.cantidad)}</td>
-      <td style="padding:8px 0;border-bottom:1px dashed #d4d4d8;text-align:right;">${escapeHtml(formatCurrency(detalle.subtotal))}</td>
+      <td style="padding:4px 0;border-bottom:1px solid #222;text-align:center;">${escapeHtml(detalle.cantidad)}</td>
+      <td style="padding:4px 0;border-bottom:1px solid #222;text-align:right;">${escapeHtml(formatCurrency(detalle.subtotal))}</td>
     </tr>
   `).join("");
 }
@@ -68,7 +76,7 @@ export function printSaleTicket(venta, overrideConfig = null) {
     businessName: "TecnoFix",
     businessPhone: "",
     businessAddress: "",
-    footerNote: "Gracias por tu compra",
+    footerNote: "Gracias por su compra en Tecnofix",
     ...loadTicketConfig(),
     ...overrideConfig,
   };
@@ -78,36 +86,28 @@ export function printSaleTicket(venta, overrideConfig = null) {
     <html lang="es">
       <head>
         <meta charset="utf-8" />
-        <title>${escapeHtml(venta.numero_venta ?? "Ticket de venta")}</title>
+        <title>${escapeHtml(ticketConfig.businessName)}</title>
       </head>
-      <body style="margin:0;padding:18px;background:#f4f4f5;font-family:Arial,sans-serif;">
-        <main style="max-width:320px;margin:0 auto;background:#fff;border:1px solid #e4e4e7;border-radius:18px;padding:18px;color:#18181b;">
-          <header style="text-align:center;border-bottom:1px dashed #d4d4d8;padding-bottom:14px;">
-            <div style="font-size:17px;font-weight:800;">${escapeHtml(ticketConfig.businessName)}</div>
-            ${ticketConfig.businessPhone ? `<div style="font-size:12px;color:#52525b;margin-top:4px;">Tel: ${escapeHtml(ticketConfig.businessPhone)}</div>` : ""}
-            ${ticketConfig.businessAddress ? `<div style="font-size:12px;color:#52525b;margin-top:2px;">${escapeHtml(ticketConfig.businessAddress)}</div>` : ""}
-            <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#71717a;">Ticket de venta</div>
-            <h1 style="margin:8px 0 4px;font-size:20px;">${escapeHtml(venta.numero_venta ?? "Venta")}</h1>
-            <p style="margin:0;font-size:12px;color:#52525b;">${escapeHtml(formatDate(venta.fecha_venta))}</p>
+      <body style="margin:0;padding:16px;background:#f3f3f3;font-family:Arial,Helvetica,sans-serif;color:#111;">
+        <main style="width:226px;min-height:560px;margin:0 auto;background:#fff;border-radius:16px;padding:22px 18px;box-shadow:0 14px 34px rgba(0,0,0,.18);">
+          <header style="text-align:center;">
+            <div style="font-family:Georgia,serif;font-size:38px;font-weight:800;letter-spacing:.04em;line-height:1;">${escapeHtml(ticketConfig.businessName)}</div>
+            ${ticketConfig.businessAddress ? `<div style="font-size:11px;margin-top:12px;line-height:1.25;">${escapeHtml(ticketConfig.businessAddress)}</div>` : ""}
+            ${ticketConfig.businessPhone ? `<div style="font-size:11px;margin-top:3px;">Tel: ${escapeHtml(ticketConfig.businessPhone)}</div>` : ""}
           </header>
 
-          <section style="display:grid;gap:10px;margin-top:14px;">
-            <div style="display:flex;justify-content:space-between;gap:12px;font-size:13px;">
-              <span style="color:#71717a;">Modulo</span>
-              <strong style="text-align:right;">${escapeHtml(venta.modulo?.nombre ?? "General")}</strong>
-            </div>
-            <div style="display:flex;justify-content:space-between;gap:12px;font-size:13px;">
-              <span style="color:#71717a;">Metodo</span>
-              <strong style="text-align:right;">${escapeHtml(venta.metodo_pago ?? "-")}</strong>
+          <section style="margin-top:22px;border-top:1px dashed #111;border-bottom:1px dashed #111;padding:9px 0;font-size:11px;">
+            <div style="display:flex;justify-content:space-between;">
+              <span>Fecha: ${escapeHtml(formatDate(venta.fecha_venta))}</span>
             </div>
           </section>
 
-          <table style="width:100%;border-collapse:collapse;margin-top:14px;font-size:13px;">
+          <table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:11px;">
             <thead>
               <tr>
-                <th style="text-align:left;padding-bottom:8px;color:#71717a;font-size:11px;text-transform:uppercase;">Articulo</th>
-                <th style="text-align:center;padding-bottom:8px;color:#71717a;font-size:11px;text-transform:uppercase;">Cant.</th>
-                <th style="text-align:right;padding-bottom:8px;color:#71717a;font-size:11px;text-transform:uppercase;">Total</th>
+                <th style="text-align:left;padding-bottom:4px;border-bottom:1px solid #111;font-weight:400;">Descripción</th>
+                <th style="text-align:center;padding-bottom:4px;border-bottom:1px solid #111;font-weight:400;">Cant.</th>
+                <th style="text-align:right;padding-bottom:4px;border-bottom:1px solid #111;font-weight:400;">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -115,29 +115,31 @@ export function printSaleTicket(venta, overrideConfig = null) {
             </tbody>
           </table>
 
-          <section style="margin-top:14px;border-top:1px dashed #d4d4d8;padding-top:14px;">
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
-              <span style="color:#71717a;">Subtotal</span>
-              <strong>${escapeHtml(formatCurrency(venta.subtotal))}</strong>
+          <section style="margin-top:16px;font-size:11px;">
+            <div style="display:flex;justify-content:flex-end;gap:22px;margin-bottom:4px;">
+              <span>Subtotal:</span>
+              <span>${escapeHtml(formatCurrency(venta.subtotal))}</span>
             </div>
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
-              <span style="color:#71717a;">Descuento</span>
-              <strong>${escapeHtml(formatCurrency(venta.descuento))}</strong>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:16px;margin-top:10px;">
-              <span>Total</span>
-              <strong>${escapeHtml(formatCurrency(venta.total))}</strong>
+            ${Number(venta.descuento ?? 0) > 0 ? `
+              <div style="display:flex;justify-content:flex-end;gap:22px;margin-bottom:4px;">
+                <span>Descuento:</span>
+                <span>${escapeHtml(formatCurrency(venta.descuento))}</span>
+              </div>
+            ` : ""}
+            <div style="display:flex;justify-content:flex-end;gap:22px;font-weight:700;border-top:1px solid #111;padding-top:5px;">
+              <span>Total:</span>
+              <span>${escapeHtml(formatCurrency(venta.total))}</span>
             </div>
           </section>
 
-          ${venta.observacion ? `
-            <section style="margin-top:14px;padding-top:14px;border-top:1px dashed #d4d4d8;">
-              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:#71717a;">Observacion</div>
-              <p style="margin:8px 0 0;font-size:13px;line-height:1.45;">${escapeHtml(venta.observacion)}</p>
-            </section>
-          ` : ""}
+          <section style="margin-top:18px;border-top:1px solid #111;padding-top:9px;font-size:11px;">
+            <div style="display:flex;justify-content:space-between;gap:12px;">
+              <span>Forma de pago:</span>
+              <span>${escapeHtml(formatMetodo(venta.metodo_pago))}</span>
+            </div>
+          </section>
 
-          <footer style="margin-top:18px;text-align:center;font-size:11px;color:#71717a;">
+          <footer style="margin-top:34px;text-align:center;font-size:12px;font-weight:700;line-height:1.3;">
             ${escapeHtml(ticketConfig.footerNote)}
           </footer>
         </main>

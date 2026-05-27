@@ -1,6 +1,10 @@
 import ReparacionEstadoBadge from "./ReparacionEstadoBadge";
 
 function ReparacionHistorial({ historiales = [] }) {
+  const historialReciente = [...historiales]
+    .sort((a, b) => new Date(b.fecha_cambio) - new Date(a.fecha_cambio))
+    .slice(0, 1);
+
   return (
     <div className="surface-card repairs-history">
       <div className="section-heading">
@@ -10,11 +14,11 @@ function ReparacionHistorial({ historiales = [] }) {
         </div>
       </div>
 
-      {historiales.length === 0 ? (
+      {historialReciente.length === 0 ? (
         <p className="empty-state">No hay cambios de estado registrados.</p>
       ) : (
         <div className="repair-history-list">
-          {historiales.map((item) => (
+          {historialReciente.map((item) => (
             <div key={item.id} className="repair-history-item">
               <div className="repair-history-item__header">
                 <ReparacionEstadoBadge estado={item.estado_nuevo} />

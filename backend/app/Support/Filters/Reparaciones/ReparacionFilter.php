@@ -17,6 +17,7 @@ class ReparacionFilter extends QueryFilter
             'telefono',
             'marca',
             'modelo',
+            'saldo',
             'fecha_desde',
             'fecha_hasta',
         ];
@@ -50,6 +51,17 @@ class ReparacionFilter extends QueryFilter
     public function modelo(Builder $query, string $value): void
     {
         $query->buscarModelo($value);
+    }
+
+    public function saldo(Builder $query, string $value): void
+    {
+        if ($value === 'pendiente') {
+            $query->where('saldo_pendiente', '>', 0);
+        }
+
+        if ($value === 'sin_pendiente') {
+            $query->where('saldo_pendiente', '<=', 0);
+        }
     }
 
     public function fecha_desde(Builder $query, string $value): void

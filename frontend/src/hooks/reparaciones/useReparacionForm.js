@@ -31,6 +31,9 @@ const initialValues = {
   observacion: "",
   estado_reparacion: "registrado",
   historiales: [],
+  costos: [],
+  costos_total: 0,
+  utilidad_estimada: 0,
 };
 
 function mapReparacionToForm(reparacion) {
@@ -57,11 +60,14 @@ function mapReparacionToForm(reparacion) {
     observacion: reparacion.observacion ?? "",
     estado_reparacion: reparacion.estado_reparacion ?? "registrado",
     historiales: reparacion.historiales ?? [],
+    costos: reparacion.costos ?? [],
+    costos_total: reparacion.costos_total ?? 0,
+    utilidad_estimada: reparacion.utilidad_estimada ?? 0,
   };
 }
 
 function buildPayload(values) {
-  return {
+  const payload = {
     modulo_id: values.modulo_id ? Number(values.modulo_id) : null,
     cliente: {
       nombre: values.cliente.nombre.trim(),
@@ -81,6 +87,22 @@ function buildPayload(values) {
     fecha_estimada_entrega: values.fecha_estimada_entrega || null,
     observacion: values.observacion.trim() || null,
   };
+
+  if (Array.isArray(values.costos) && values.costos.length > 0) {
+    payload.costos = values.costos
+      .filter((costo) => !costo.id)
+      .map((costo) => ({
+        tipo_costo: costo.tipo_costo,
+        descripcion: String(costo.descripcion ?? "").trim(),
+        monto: Number(costo.monto || 0),
+        fecha_costo: costo.fecha_costo || null,
+        proveedor: String(costo.proveedor ?? "").trim() || null,
+        referencia: String(costo.referencia ?? "").trim() || null,
+        observacion: String(costo.observacion ?? "").trim() || null,
+      }));
+  }
+
+  return payload;
 }
 
 function createError(message) {
@@ -220,6 +242,7 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let ignore = false;
@@ -281,7 +304,7 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
     return () => {
       ignore = true;
     };
-  }, [isEdit, reparacionId]);
+  }, [isEdit, reparacionId, reloadToken]);
 
   function updateField(name, value) {
     const normalizedValue = name === "costo_reparacion" || name === "anticipo"
@@ -309,6 +332,26 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
         ...current.cliente,
         [name]: normalizedValue,
       },
+    }));
+  }
+
+  function addCosto(costo) {
+    setValues((current) => ({
+      ...current,
+      costos: [
+        ...(current.costos ?? []),
+        {
+          ...costo,
+          local_id: `cost-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        },
+      ],
+    }));
+  }
+
+  function removeCosto(localId) {
+    setValues((current) => ({
+      ...current,
+      costos: (current.costos ?? []).filter((costo) => costo.local_id !== localId),
     }));
   }
 
@@ -359,6 +402,9 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
     onSubmit: submit,
     updateField,
     updateClienteField,
+    reload: () => setReloadToken((current) => current + 1),
+    addCosto,
+    removeCosto,
     formatMoneyField: (name) => {
       setValues((current) => ({
         ...current,

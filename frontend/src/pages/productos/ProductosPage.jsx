@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Plus, Printer } from "../../icons/phosphor";
+import CrearProductoModal from "../../components/productos/CrearProductoModal";
+import EditarProductoModal from "../../components/productos/EditarProductoModal";
 import ProductBarcodeModal from "../../components/productos/ProductBarcodeModal";
 import ProductosTable from "../../components/productos/ProductosTable";
 import { useProductosFilters } from "../../hooks/productos/useProductosFilters";
 import { useProductosList } from "../../hooks/productos/useProductosList";
 
+const STOCK_ALERT_STORAGE_KEY = "tecnofix.products.stockAlertSeen";
+
 function ProductosPage() {
-  const navigate = useNavigate();
   const { filters } = useProductosFilters();
   const listFilters = useMemo(
     () => ({
@@ -22,6 +25,7 @@ function ProductosPage() {
     productos,
     loading,
     error,
+    reload,
   } = useProductosList(listFilters);
   const productosDisponibles = useMemo(
     () => productos.filter((producto) => Number(producto.stock ?? 0) > 0).slice(0, 3),
@@ -35,96 +39,77 @@ function ProductosPage() {
     () => productos.filter((producto) => Number(producto.stock ?? 0) === 2),
     [productos],
   );
-  const [isOpeningCreate, setIsOpeningCreate] = useState(false);
-  const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(false);
+  const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(
+    () => window.localStorage.getItem(STOCK_ALERT_STORAGE_KEY) === "true",
+  );
   const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
+  const [detailProductId, setDetailProductId] = useState(null);
 
   useEffect(() => {
-    setIsProductsAlertDismissed(false);
-  }, [productosCriticos]);
-
-  useEffect(() => {
-    if (!isOpeningCreate) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      navigate("/productos/nuevo");
-    }, 450);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [isOpeningCreate, navigate]);
-
-  function handleOpenCreate() {
-    if (isOpeningCreate) {
+    if (productosCriticos.length === 0 || isProductsAlertDismissed) {
       return;
     }
 
-    setIsOpeningCreate(true);
+    window.localStorage.setItem(STOCK_ALERT_STORAGE_KEY, "true");
+  }, [isProductsAlertDismissed, productosCriticos.length]);
+
+  useEffect(() => {
+    if (!successMessage) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => setSuccessMessage(""), 3200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [successMessage]);
+
+  function handleProductoCreated() {
+    reload();
+    setSuccessMessage("Producto registrado correctamente.");
+  }
+
+  function handleProductoUpdated() {
+    reload();
+    setSuccessMessage("Producto actualizado correctamente.");
   }
 
   return (
-    <section className="products-page container-fluid px-0">
-      <div className="products-page__panel">
-        <div className="products-page__header">
-          <div className="row g-3 align-items-stretch w-100">
-            <div className="col-12 col-xl-7">
-              <div className="products-page__header-copy h-100">
-                <div className="d-flex align-items-center gap-2 flex-wrap mb-2">
-                  <span className="badge products-page__badge">Inventario</span>
-                  <span className="badge products-page__badge products-page__badge--soft">
-                    Catalogo activo
-                  </span>
-                </div>
-                <h2>Gestion de productos</h2>
-                <p className="muted-text">
-                  Consulta, filtra y revisa tu catalogo segun disponibilidad de stock.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-12 col-xl-5">
-              <div className="products-page__header-actions h-100 d-flex flex-column flex-sm-row gap-2 justify-content-xl-end align-items-stretch align-items-sm-center">
-                <button
-                  type="button"
-                  className="btn products-page__barcode-btn"
-                  onClick={() => setIsBarcodeModalOpen(true)}
-                  disabled={productos.length === 0}
-                >
-                  <Printer size={18} weight="bold" aria-hidden="true" />
-                  <span>Imprimir codigos</span>
-                </button>
-                <Link to="/productos/inventario" className="btn products-page__inventory-btn">
-                  Inventario
-                </Link>
-                <button
-                  type="button"
-                  className="btn products-page__create-btn"
-                  onClick={handleOpenCreate}
-                  disabled={isOpeningCreate}
-                >
-                  <span className="products-page__create-btn-content">
-                    {isOpeningCreate ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm products-page__create-btn-spinner"
-                          aria-hidden="true"
-                        />
-                        <span>Cargando...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Plus size={18} weight="bold" aria-hidden="true" />
-                        <span>Nuevo producto</span>
-                      </>
-                    )}
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
+    <section className="products-page products-page--minimal">
+      <div className="products-page__header products-page__header--minimal">
+        <div>
+          <p className="section-kicker">Productos</p>
+          <h2>Gestion de productos</h2>
+          <p className="muted-text">
+            Consulta, agrega y revisa tus productos.
+          </p>
         </div>
 
+        <div className="products-page__header-actions">
+          <button
+            type="button"
+            className="btn products-page__barcode-btn"
+            onClick={() => setIsBarcodeModalOpen(true)}
+            disabled={productos.length === 0}
+          >
+            <Printer size={18} weight="bold" aria-hidden="true" />
+            <span>Imprimir codigos</span>
+          </button>
+          <Link to="/productos/inventario" className="btn products-page__inventory-btn">
+            Inventario
+          </Link>
+          <button
+            type="button"
+            className="btn products-page__create-btn"
+            onClick={() => setIsCreateProductModalOpen(true)}
+          >
+            <span className="products-page__create-btn-content">
+              <Plus size={18} weight="bold" aria-hidden="true" />
+              <span>Agregar producto</span>
+            </span>
+          </button>
+        </div>
       </div>
 
       {productosCriticos.length > 0 && !isProductsAlertDismissed ? (
@@ -136,7 +121,10 @@ function ProductosPage() {
             type="button"
             className="products-alert__close"
             aria-label="Cerrar alerta"
-            onClick={() => setIsProductsAlertDismissed(true)}
+            onClick={() => {
+              window.localStorage.setItem(STOCK_ALERT_STORAGE_KEY, "true");
+              setIsProductsAlertDismissed(true);
+            }}
           >
             ×
           </button>
@@ -144,16 +132,20 @@ function ProductosPage() {
       ) : null}
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
+      {successMessage ? (
+        <div className="cash-create-success" role="status" aria-live="polite">
+          {successMessage}
+        </div>
+      ) : null}
 
       <div className="row g-3">
         <div className="col-12">
           <div className="inventory-section">
             <div className="section-heading">
               <div>
-                <p className="section-kicker">Catalogo</p>
-                <h2>Productos disponibles</h2>
+                <p className="section-kicker">Productos recientes</p>
+                <h2></h2>
                 <p className="muted-text">
-                  Aqui se muestran los productos con stock disponible para venta e inventario.
                 </p>
               </div>
             </div>
@@ -161,6 +153,7 @@ function ProductosPage() {
             <ProductosTable
               productos={productosDisponibles}
               loading={loading}
+              onDetalleClick={(producto) => setDetailProductId(producto.id)}
             />
           </div>
         </div>
@@ -183,6 +176,7 @@ function ProductosPage() {
             <ProductosTable
               productos={productosAgotados}
               loading={loading}
+              onDetalleClick={(producto) => setDetailProductId(producto.id)}
             />
           </div>
         </div>
@@ -193,6 +187,21 @@ function ProductosPage() {
         productos={productos}
         onClose={() => setIsBarcodeModalOpen(false)}
       />
+
+      {isCreateProductModalOpen ? (
+        <CrearProductoModal
+          onClose={() => setIsCreateProductModalOpen(false)}
+          onCreated={handleProductoCreated}
+        />
+      ) : null}
+
+      {detailProductId ? (
+        <EditarProductoModal
+          productoId={detailProductId}
+          onClose={() => setDetailProductId(null)}
+          onUpdated={handleProductoUpdated}
+        />
+      ) : null}
     </section>
   );
 }

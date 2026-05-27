@@ -1,5 +1,10 @@
-/* Ajustes responsive compartidos por productos. */
+/* ==========================================================================
+   Productos responsive - ajustes tablet y movil
+   Reordena filtros, encabezados, modales, tablas y paginacion en pantallas
+   medianas y pequenas.
+   ========================================================================== */
 
+/* Tablet: filtros en dos columnas y acciones de inventario ocupando la fila. */
 @media (max-width: 992px) {
   .products-filter-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -13,11 +18,16 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .inventory-section__filter-title-wrap {
+    grid-column: 1 / -1;
+  }
+
   .inventory-section__filters-action {
     grid-column: span 2;
   }
 }
 
+/* Movil: todo pasa a una columna y los botones ocupan ancho completo. */
 @media (max-width: 768px) {
   .products-page__header {
     flex-direction: column;
@@ -64,5 +74,9 @@
 
   .inventory-section__filters-action {
     grid-column: auto;
+  }
+
+  .inventory-section__filters-action .btn {
+    max-width: none;
   }
 }

@@ -13,7 +13,7 @@ class VentaResource extends JsonResource
             'id' => $this->id,
             'modulo_id' => $this->modulo_id,
             'numero_venta' => $this->numero_venta,
-            'fecha_venta' => $this->fecha_venta,
+            'fecha_venta' => $this->fecha_venta?->format('Y-m-d H:i:s'),
             'subtotal' => $this->subtotal,
             'descuento' => $this->descuento,
             'total' => $this->total,

@@ -7,10 +7,9 @@ function LoginPage() {
   const location = useLocation();
   const { isAuthenticated, loading } = useAuth();
   const redirectTo = location.state?.from?.pathname ?? "/";
-  const { values, errors, message, successMessage, submitting, updateValue, submit, acceptSuccess } =
-    useLoginForm(redirectTo);
+  const { values, errors, message, submitting, updateValue, submit } = useLoginForm(redirectTo);
 
-  if (!loading && isAuthenticated && !successMessage) {
+  if (!loading && isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
   }
 
@@ -21,11 +20,9 @@ function LoginPage() {
           values={values}
           errors={errors}
           message={message}
-          successMessage={successMessage}
           submitting={submitting}
           onChange={updateValue}
           onSubmit={submit}
-          onAcceptSuccess={acceptSuccess}
         />
       </div>
     </div>

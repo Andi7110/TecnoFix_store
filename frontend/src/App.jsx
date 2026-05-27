@@ -6,13 +6,16 @@ import "./components/dashboard/dashboard.css";
 import "./components/productos/productos.css";
 import "./components/reparaciones/reparaciones.css";
 import "./components/ventas/ventas.css";
+import GlobalInteractions from "./components/interactions/GlobalInteractions";
 import AuthProvider from "./context/AuthProvider";
 import AppRouter from "./routes/AppRouter";
 
 function App() {
   return (
     <AuthProvider>
-      <AppRouter />
+      <GlobalInteractions>
+        <AppRouter />
+      </GlobalInteractions>
     </AuthProvider>
   );
 }

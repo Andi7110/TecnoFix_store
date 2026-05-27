@@ -14,7 +14,6 @@ export function useLoginForm(redirectTo = "/") {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   function updateValue(name, value) {
@@ -29,11 +28,10 @@ export function useLoginForm(redirectTo = "/") {
     setSubmitting(true);
     setErrors({});
     setMessage("");
-    setSuccessMessage("");
 
     try {
       await login(values);
-      setSuccessMessage("Registro exitoso");
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       if (error?.response?.status === 422) {
         setErrors(error.response.data.errors ?? {});
@@ -46,18 +44,12 @@ export function useLoginForm(redirectTo = "/") {
     }
   }
 
-  function acceptSuccess() {
-    navigate(redirectTo, { replace: true });
-  }
-
   return {
     values,
     errors,
     message,
-    successMessage,
     submitting,
     updateValue,
     submit,
-    acceptSuccess,
   };
 }

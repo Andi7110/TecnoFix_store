@@ -4,9 +4,18 @@ namespace App\Actions\Reparaciones;
 
 use App\Models\HistorialReparacion;
 use App\Models\Reparacion;
+use Illuminate\Validation\ValidationException;
 
 class CambiarEstadoReparacionAction
 {
+    private const ALLOWED_TRANSITIONS = [
+        'registrado' => ['registrado', 'en_proceso', 'terminado'],
+        'en_proceso' => ['en_proceso', 'terminado', 'entregado'],
+        'terminado' => ['terminado', 'entregado'],
+        'entregado' => ['entregado'],
+        'cancelado' => ['cancelado'],
+    ];
+
     public function execute(
         Reparacion $reparacion,
         string $estadoNuevo,
@@ -14,6 +23,12 @@ class CambiarEstadoReparacionAction
         mixed $fechaEntrega = null,
     ): Reparacion {
         $estadoAnterior = $reparacion->estado_reparacion;
+
+        if (! in_array($estadoNuevo, self::ALLOWED_TRANSITIONS[$estadoAnterior] ?? [], true)) {
+            throw ValidationException::withMessages([
+                'estado_reparacion' => ['No se puede cambiar de '.$estadoAnterior.' a '.$estadoNuevo.'.'],
+            ]);
+        }
 
         $payload = [
             'estado_reparacion' => $estadoNuevo,

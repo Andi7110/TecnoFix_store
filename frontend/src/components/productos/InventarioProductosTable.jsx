@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
+import { Trash } from "../../icons/phosphor";
 import ProductosPagination from "./ProductosPagination";
 
 function formatCurrency(value) {
@@ -41,6 +41,10 @@ function InventarioProductosTable({
   onAccesoriosFilterChange,
   onAccesoriosFiltersApply,
   onAccesoriosFiltersClear,
+  onProductoDelete,
+  onDetalleClick,
+  deletingProductoId,
+  canDeleteProducts = false,
   libreriaRegistros,
   libreriaLoading,
   libreriaMeta,
@@ -101,7 +105,6 @@ function InventarioProductosTable({
             <span className="products-loading-cell products-loading-cell--small" />
           </td>
           <td><span className="products-loading-cell products-loading-cell--badge" /></td>
-          <td><span className="products-loading-cell products-loading-cell--badge" /></td>
           <td>
             <span className="products-loading-cell products-loading-cell--medium" />
             <span className="products-loading-cell products-loading-cell--small" />
@@ -114,7 +117,7 @@ function InventarioProductosTable({
     if (items.length === 0) {
       return (
         <tr>
-          <td colSpan={9} className="text-center muted-text py-4">
+          <td colSpan={8} className="text-center muted-text py-4">
             {emptyMessage}
           </td>
         </tr>
@@ -159,11 +162,6 @@ function InventarioProductosTable({
           </span>
         </td>
         <td>
-          <span className={`status-pill ${registro.estado ? "is-active" : "is-inactive"}`}>
-            {registro.estado ? "Activo" : "Inactivo"}
-          </span>
-        </td>
-        <td>
           <div>{formatDate(registro.fecha_registro)}</div>
           <small className="muted-text">
             {registro.registrado_por_usuario?.name
@@ -173,12 +171,25 @@ function InventarioProductosTable({
         </td>
         <td>
           <div className="products-table__actions">
-            <Link
+            <button
+              type="button"
               className="btn btn-success btn-sm"
-              to={`/productos/${registro.producto_id}/editar`}
+              onClick={() => onDetalleClick?.(registro)}
             >
               Detalle
-            </Link>
+            </button>
+            {canDeleteProducts ? (
+              <button
+                type="button"
+                className="btn btn-sm inventory-product-delete-btn"
+                onClick={() => onProductoDelete?.(registro)}
+                disabled={!registro.estado || Number(deletingProductoId) === Number(registro.producto_id ?? registro.id)}
+                title={registro.estado ? "Eliminar producto" : "Producto inactivo"}
+                aria-label={`Eliminar ${registro.nombre}`}
+              >
+                <Trash size={15} weight="bold" aria-hidden="true" />
+              </button>
+            ) : null}
           </div>
         </td>
       </tr>
@@ -212,18 +223,18 @@ function InventarioProductosTable({
           </div>
         ) : null}
         <form
-          className="inventory-section__filters row g-2 align-items-end"
+          className="inventory-section__filters"
           onSubmit={(event) => {
             event.preventDefault();
             onFiltersApply();
           }}
         >
-          <div className="col-12">
+          <div className="inventory-section__filter-title-wrap">
             <span className="inventory-section__filter-title">
               Filtro {title}
             </span>
           </div>
-          <div className="col-12 col-md-6 col-xl-3">
+          <div>
             <label className="form-label">Nombre</label>
             <input
               className="form-control"
@@ -232,7 +243,7 @@ function InventarioProductosTable({
               onChange={(event) => onFilterChange("nombre", event.target.value)}
             />
           </div>
-          <div className="col-12 col-md-6 col-xl-2">
+          <div>
             <label className="form-label">Codigo</label>
             <input
               className="form-control"
@@ -241,7 +252,7 @@ function InventarioProductosTable({
               onChange={(event) => onFilterChange("codigo", event.target.value)}
             />
           </div>
-          <div className="col-12 col-md-6 col-xl-3">
+          <div>
             <label className="form-label">Categoria</label>
             <select
               className="form-select"
@@ -256,19 +267,7 @@ function InventarioProductosTable({
               ))}
             </select>
           </div>
-          <div className="col-12 col-md-6 col-xl-2">
-            <label className="form-label">Estado</label>
-            <select
-              className="form-select"
-              value={filters.estado}
-              onChange={(event) => onFilterChange("estado", event.target.value)}
-            >
-              <option value="">Todos</option>
-              <option value="1">Activo</option>
-              <option value="0">Inactivo</option>
-            </select>
-          </div>
-          <div className="inventory-section__filters-action col-12 col-xl-2">
+          <div className="inventory-section__filters-action">
             <button type="submit" className="btn products-filter-actions__apply">
               Aplicar
             </button>
@@ -292,7 +291,6 @@ function InventarioProductosTable({
                   <th>Categoria</th>
                   <th>Precios</th>
                   <th>Stock</th>
-                  <th>Estado</th>
                   <th>Registrado</th>
                   <th>Acciones</th>
                 </tr>

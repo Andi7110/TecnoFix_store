@@ -128,6 +128,7 @@ class SalesReportService
                 'modulo:id,nombre,estado',
                 'generadoPor:id,name,username,email',
             ])
+            ->whereIn('tipo_reporte', ['diario_ventas', 'estado_resultados_mensual'])
             ->when(filled($filters['tipo_reporte'] ?? null), function ($query) use ($filters): void {
                 $query->where('tipo_reporte', $filters['tipo_reporte']);
             })

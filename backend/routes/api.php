@@ -8,7 +8,9 @@ use App\Http\Controllers\Api\Inventario\MovimientoInventarioController;
 use App\Http\Controllers\Api\Inventario\ProductoController;
 use App\Http\Controllers\Api\Caja\MovimientoCajaController;
 use App\Http\Controllers\Api\Dashboard\DashboardSummaryController;
+use App\Http\Controllers\Api\Reparaciones\RepairReportController;
 use App\Http\Controllers\Api\Reparaciones\ReparacionController;
+use App\Http\Controllers\Api\Reparaciones\ReparacionCostoController;
 use App\Http\Controllers\Api\Ventas\CuentaTransferenciaController;
 use App\Http\Controllers\Api\Ventas\SalesReportController;
 use App\Http\Controllers\Api\Ventas\VentaController;
@@ -31,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
             ->where('path', '.*')
             ->name('productos.foto');
         Route::patch('productos/{producto}/estado', [ProductoController::class, 'updateEstado'])->name('productos.update-estado');
-        Route::apiResource('productos', ProductoController::class)->only(['index', 'store', 'show', 'update']);
+        Route::apiResource('productos', ProductoController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
         Route::apiResource('movimientos', MovimientoInventarioController::class)->only(['index', 'store', 'show']);
     });
 
@@ -50,7 +52,18 @@ Route::middleware('auth:sanctum')->group(function (): void {
     });
 
     Route::apiResource('ventas', VentaController::class)->only(['index', 'store', 'show']);
+    Route::prefix('reparaciones/reportes')->group(function (): void {
+        Route::get('diario', [RepairReportController::class, 'daily'])->name('reparaciones.reportes.diario');
+        Route::post('diario', [RepairReportController::class, 'storeDaily'])->name('reparaciones.reportes.diario.store');
+        Route::get('mensual', [RepairReportController::class, 'monthly'])->name('reparaciones.reportes.mensual');
+        Route::post('mensual', [RepairReportController::class, 'storeMonthly'])->name('reparaciones.reportes.mensual.store');
+        Route::get('historial', [RepairReportController::class, 'history'])->name('reparaciones.reportes.historial');
+    });
     Route::patch('reparaciones/{reparacione}/estado', [ReparacionController::class, 'updateEstado'])->name('reparaciones.update-estado');
+    Route::post('reparaciones/{reparacione}/entregar', [ReparacionController::class, 'entregar'])->name('reparaciones.entregar');
+    Route::post('reparaciones/{reparacione}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
+    Route::post('reparaciones/{reparacione}/costos', [ReparacionCostoController::class, 'store'])->name('reparaciones.costos.store');
+    Route::put('reparaciones/{reparacione}/costos/{costo}', [ReparacionCostoController::class, 'update'])->name('reparaciones.costos.update');
     Route::apiResource('reparaciones', ReparacionController::class)->only(['index', 'store', 'show', 'update']);
     Route::prefix('caja')->group(function (): void {
         Route::apiResource('movimientos', MovimientoCajaController::class)->only(['index', 'store', 'show']);

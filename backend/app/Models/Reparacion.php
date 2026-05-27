@@ -92,4 +92,9 @@ class Reparacion extends Model
     {
         return $this->hasMany(HistorialReparacion::class);
     }
+
+    public function costos(): HasMany
+    {
+        return $this->hasMany(CostoReparacion::class);
+    }
 }
