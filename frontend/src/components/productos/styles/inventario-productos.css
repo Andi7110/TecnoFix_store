@@ -65,16 +65,24 @@
 .inventory-section__filters {
   margin: 0 0 0.9rem;
   padding: 0.9rem;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 0.65fr) minmax(220px, 1fr) minmax(260px, 0.9fr);
+  align-items: end;
+  gap: 0.6rem 0.55rem;
   border: 1px solid rgba(21, 128, 61, 0.14);
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.62);
+}
+
+.inventory-section__filter-title-wrap {
+  grid-column: 1 / -1;
 }
 
 /* Botonera Aplicar/Limpiar dentro de filtros. */
 .inventory-section__filters-action {
   display: flex;
   align-items: flex-end;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 0.5rem;
   width: 100%;
 }
@@ -82,6 +90,7 @@
 .inventory-section__filters-action .btn {
   min-height: 2.45rem;
   flex: 1 1 0;
+  max-width: 10rem;
   border-radius: 0.75rem;
   padding-inline: 0.8rem;
 }
@@ -102,22 +111,37 @@
 
 /* Acciones del encabezado de la vista inventario. */
 .inventory-products-page__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
   width: 100%;
 }
 
 .inventory-products-page__action-btn {
-  min-height: 2.55rem;
+  min-height: 2.75rem;
   flex: 0 0 auto !important;
-  width: auto !important;
-  min-width: 10.25rem;
-  padding-inline: 0.95rem;
+  width: 11.5rem !important;
+  min-width: 11.5rem;
+  padding: 0.55rem 1rem !important;
+  line-height: 1;
 }
 
-.inventory-products-page__action-btn--primary {
-  min-width: 10.75rem;
+.inventory-products-page__action-btn .products-page__create-btn-content,
+.inventory-products-page__action-btn.products-page__barcode-btn {
+  align-items: center;
+  justify-content: center;
+}
+
+.inventory-products-page__action-btn .products-page__create-btn-content {
+  width: 100%;
 }
 
 @media (max-width: 575.98px) {
+  .inventory-products-page__actions {
+    align-items: stretch;
+  }
+
   .inventory-products-page__action-btn {
     width: 100% !important;
     min-width: 0;
@@ -194,6 +218,32 @@
 
 .inventory-photo-button--static {
   cursor: default;
+}
+
+.inventory-product-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0 !important;
+}
+
+.products-page--minimal .products-table__actions .inventory-product-delete-btn {
+  border-color: rgba(220, 53, 69, 0.28) !important;
+  color: #b4232f !important;
+}
+
+.products-page--minimal .products-table__actions .inventory-product-delete-btn:hover,
+.products-page--minimal .products-table__actions .inventory-product-delete-btn:focus {
+  background: rgba(220, 53, 69, 0.08) !important;
+  border-color: rgba(220, 53, 69, 0.42) !important;
+  color: #9f1d28 !important;
+}
+
+.products-page--minimal .products-table__actions .inventory-product-delete-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
 }
 
 /* Badge numerico de stock. */
@@ -350,6 +400,18 @@
   background: rgba(139, 148, 158, 0.08);
 }
 
+:root[data-theme="dark"] .products-page--minimal .products-table__actions .inventory-product-delete-btn {
+  border-color: rgba(248, 81, 73, 0.32) !important;
+  color: #ffb4ad !important;
+}
+
+:root[data-theme="dark"] .products-page--minimal .products-table__actions .inventory-product-delete-btn:hover,
+:root[data-theme="dark"] .products-page--minimal .products-table__actions .inventory-product-delete-btn:focus {
+  background: rgba(248, 81, 73, 0.12) !important;
+  border-color: rgba(248, 81, 73, 0.5) !important;
+  color: #ffd1cc !important;
+}
+
 /* ==========================================================================
    Inventario - estilo minimalista
    Complementa products-page--minimal para filtros, tablas y modales de foto.
@@ -359,6 +421,9 @@
 .products-page--minimal .inventory-section__filters {
   margin: 0 0 0.9rem;
   padding: 1.05rem 0 0;
+  grid-template-columns: minmax(240px, 1fr) minmax(180px, 0.65fr) minmax(240px, 1fr) minmax(260px, 0.9fr);
+  align-items: end;
+  gap: 0.6rem 0.55rem;
   border: 0;
   border-top: 1px solid var(--app-surface-border);
   border-radius: 0;
@@ -407,21 +472,21 @@
 /* Botonera compacta alineada con campos de filtro. */
 .products-page--minimal .inventory-section__filters-action {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  align-items: end;
+  justify-content: flex-start;
   gap: 0.5rem;
-  width: auto;
-  align-self: flex-end;
+  width: 100%;
+  align-self: end;
 }
 
 .products-page--minimal .inventory-section__filters-action .btn {
-  min-height: 2.25rem;
-  flex: 0 0 auto;
-  width: auto;
-  min-width: 5.4rem;
-  padding: 0.35rem 0.7rem;
-  border-radius: 0.65rem;
-  font-size: 0.82rem;
+  min-height: 2.55rem;
+  flex: 1 1 0;
+  max-width: 9.5rem;
+  min-width: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.75rem;
+  font-size: 0.88rem;
 }
 
 /* Stock y modal de foto bajo el diseño minimalista. */

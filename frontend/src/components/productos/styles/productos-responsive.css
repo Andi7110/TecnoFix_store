@@ -18,6 +18,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .inventory-section__filter-title-wrap {
+    grid-column: 1 / -1;
+  }
+
   .inventory-section__filters-action {
     grid-column: span 2;
   }
@@ -70,5 +74,9 @@
 
   .inventory-section__filters-action {
     grid-column: auto;
+  }
+
+  .inventory-section__filters-action .btn {
+    max-width: none;
   }
 }

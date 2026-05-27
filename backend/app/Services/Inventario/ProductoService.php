@@ -125,6 +125,18 @@ class ProductoService
         return $this->loadRelations($producto);
     }
 
+    public function delete(Producto $producto): void
+    {
+        $fotoPath = $producto->foto_path;
+
+        DB::transaction(function () use ($producto): void {
+            $producto->movimientosInventario()->delete();
+            $producto->delete();
+        });
+
+        $this->deleteFoto($fotoPath);
+    }
+
     public function loadRelations(Producto $producto): Producto
     {
         return $producto->load([

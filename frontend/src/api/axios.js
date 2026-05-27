@@ -1,4 +1,8 @@
 import axios from "axios";
+import {
+  startGlobalLoading,
+  stopGlobalLoading,
+} from "../components/interactions/globalLoadingEvents";
 
 const loopbackHosts = new Set(["127.0.0.1", "localhost"]);
 
@@ -45,9 +49,29 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use((config) => {
+  const method = config.method?.toLowerCase() ?? "get";
+
+  if (["post", "put", "patch", "delete"].includes(method)) {
+    config.__globalLoadingToken = startGlobalLoading("Cargando...");
+  }
+
+  return config;
+});
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.config?.__globalLoadingToken) {
+      stopGlobalLoading();
+    }
+
+    return response;
+  },
   (error) => {
+    if (error.config?.__globalLoadingToken) {
+      stopGlobalLoading();
+    }
+
     if (
       error?.response?.status === 401
       && typeof window !== "undefined"

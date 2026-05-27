@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Plus, Printer } from "../../icons/phosphor";
+import CrearProductoModal from "../../components/productos/CrearProductoModal";
+import EditarProductoModal from "../../components/productos/EditarProductoModal";
 import ProductBarcodeModal from "../../components/productos/ProductBarcodeModal";
 import ProductosTable from "../../components/productos/ProductosTable";
 import { useProductosFilters } from "../../hooks/productos/useProductosFilters";
@@ -9,7 +11,6 @@ import { useProductosList } from "../../hooks/productos/useProductosList";
 const STOCK_ALERT_STORAGE_KEY = "tecnofix.products.stockAlertSeen";
 
 function ProductosPage() {
-  const navigate = useNavigate();
   const { filters } = useProductosFilters();
   const listFilters = useMemo(
     () => ({
@@ -24,6 +25,7 @@ function ProductosPage() {
     productos,
     loading,
     error,
+    reload,
   } = useProductosList(listFilters);
   const productosDisponibles = useMemo(
     () => productos.filter((producto) => Number(producto.stock ?? 0) > 0).slice(0, 3),
@@ -37,11 +39,13 @@ function ProductosPage() {
     () => productos.filter((producto) => Number(producto.stock ?? 0) === 2),
     [productos],
   );
-  const [isOpeningCreate, setIsOpeningCreate] = useState(false);
+  const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(
     () => window.localStorage.getItem(STOCK_ALERT_STORAGE_KEY) === "true",
   );
   const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
+  const [detailProductId, setDetailProductId] = useState(null);
 
   useEffect(() => {
     if (productosCriticos.length === 0 || isProductsAlertDismissed) {
@@ -52,23 +56,23 @@ function ProductosPage() {
   }, [isProductsAlertDismissed, productosCriticos.length]);
 
   useEffect(() => {
-    if (!isOpeningCreate) {
+    if (!successMessage) {
       return undefined;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      navigate("/productos/nuevo");
-    }, 450);
+    const timeoutId = window.setTimeout(() => setSuccessMessage(""), 3200);
 
     return () => window.clearTimeout(timeoutId);
-  }, [isOpeningCreate, navigate]);
+  }, [successMessage]);
 
-  function handleOpenCreate() {
-    if (isOpeningCreate) {
-      return;
-    }
+  function handleProductoCreated() {
+    reload();
+    setSuccessMessage("Producto registrado correctamente.");
+  }
 
-    setIsOpeningCreate(true);
+  function handleProductoUpdated() {
+    reload();
+    setSuccessMessage("Producto actualizado correctamente.");
   }
 
   return (
@@ -98,24 +102,11 @@ function ProductosPage() {
           <button
             type="button"
             className="btn products-page__create-btn"
-            onClick={handleOpenCreate}
-            disabled={isOpeningCreate}
+            onClick={() => setIsCreateProductModalOpen(true)}
           >
             <span className="products-page__create-btn-content">
-              {isOpeningCreate ? (
-                <>
-                  <span
-                    className="spinner-border spinner-border-sm products-page__create-btn-spinner"
-                    aria-hidden="true"
-                  />
-                  <span>Cargando...</span>
-                </>
-              ) : (
-                <>
-                  <Plus size={18} weight="bold" aria-hidden="true" />
-                  <span>Agregar producto</span>
-                </>
-              )}
+              <Plus size={18} weight="bold" aria-hidden="true" />
+              <span>Agregar producto</span>
             </span>
           </button>
         </div>
@@ -141,6 +132,11 @@ function ProductosPage() {
       ) : null}
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
+      {successMessage ? (
+        <div className="cash-create-success" role="status" aria-live="polite">
+          {successMessage}
+        </div>
+      ) : null}
 
       <div className="row g-3">
         <div className="col-12">
@@ -157,6 +153,7 @@ function ProductosPage() {
             <ProductosTable
               productos={productosDisponibles}
               loading={loading}
+              onDetalleClick={(producto) => setDetailProductId(producto.id)}
             />
           </div>
         </div>
@@ -179,6 +176,7 @@ function ProductosPage() {
             <ProductosTable
               productos={productosAgotados}
               loading={loading}
+              onDetalleClick={(producto) => setDetailProductId(producto.id)}
             />
           </div>
         </div>
@@ -189,6 +187,21 @@ function ProductosPage() {
         productos={productos}
         onClose={() => setIsBarcodeModalOpen(false)}
       />
+
+      {isCreateProductModalOpen ? (
+        <CrearProductoModal
+          onClose={() => setIsCreateProductModalOpen(false)}
+          onCreated={handleProductoCreated}
+        />
+      ) : null}
+
+      {detailProductId ? (
+        <EditarProductoModal
+          productoId={detailProductId}
+          onClose={() => setDetailProductId(null)}
+          onUpdated={handleProductoUpdated}
+        />
+      ) : null}
     </section>
   );
 }

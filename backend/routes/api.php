@@ -33,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
             ->where('path', '.*')
             ->name('productos.foto');
         Route::patch('productos/{producto}/estado', [ProductoController::class, 'updateEstado'])->name('productos.update-estado');
-        Route::apiResource('productos', ProductoController::class)->only(['index', 'store', 'show', 'update']);
+        Route::apiResource('productos', ProductoController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
         Route::apiResource('movimientos', MovimientoInventarioController::class)->only(['index', 'store', 'show']);
     });
 

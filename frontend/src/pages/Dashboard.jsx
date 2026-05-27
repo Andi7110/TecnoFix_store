@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
+import CrearMovimientoCajaModal from "../components/caja/CrearMovimientoCajaModal";
+import CrearProductoModal from "../components/productos/CrearProductoModal";
 import CrearReparacionModal from "../components/reparaciones/CrearReparacionModal";
 import CrearVentaModal from "../components/ventas/CrearVentaModal";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
@@ -212,6 +214,8 @@ function DashboardLoadingSkeleton() {
 function Dashboard() {
   const [isCreateSaleModalOpen, setIsCreateSaleModalOpen] = useState(false);
   const [isCreateRepairModalOpen, setIsCreateRepairModalOpen] = useState(false);
+  const [isCreateCashModalOpen, setIsCreateCashModalOpen] = useState(false);
+  const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   // Hook encargado de traer el resumen consolidado desde la API.
   const { summary, loading, error, reload } = useDashboardSummary();
@@ -248,6 +252,16 @@ function Dashboard() {
         ? `Registro exitoso. Reparacion ${reparacion.codigo_reparacion} creada.`
         : "Registro exitoso.",
     );
+  }
+
+  function handleMovimientoCajaCreated() {
+    reload();
+    setSuccessMessage("Movimiento de caja registrado.");
+  }
+
+  function handleProductoCreated() {
+    reload();
+    setSuccessMessage("Producto registrado correctamente.");
   }
 
   return (
@@ -329,7 +343,7 @@ function Dashboard() {
                 <QuickAction
                   title="Movimientos de caja"
                   description="Registrar entradas y salidas de caja"
-                  to="/caja/nuevo"
+                  onClick={() => setIsCreateCashModalOpen(true)}
                   tone="cash"
                   icon={<CashRegister size={24} weight="duotone" />}
                 />
@@ -338,7 +352,7 @@ function Dashboard() {
                 <QuickAction
                   title="Productos"
                   description="Registrar nuevo producto"
-                  to="/productos/nuevo"
+                  onClick={() => setIsCreateProductModalOpen(true)}
                   tone="product"
                   icon={<Package size={24} weight="duotone" />}
                 />
@@ -382,6 +396,20 @@ function Dashboard() {
         <CrearReparacionModal
           onClose={() => setIsCreateRepairModalOpen(false)}
           onCreated={handleReparacionCreated}
+        />
+      ) : null}
+
+      {isCreateCashModalOpen ? (
+        <CrearMovimientoCajaModal
+          onClose={() => setIsCreateCashModalOpen(false)}
+          onCreated={handleMovimientoCajaCreated}
+        />
+      ) : null}
+
+      {isCreateProductModalOpen ? (
+        <CrearProductoModal
+          onClose={() => setIsCreateProductModalOpen(false)}
+          onCreated={handleProductoCreated}
         />
       ) : null}
     </section>

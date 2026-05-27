@@ -154,6 +154,8 @@
   justify-content: space-between;
   gap: 1rem;
   text-align: left;
+  cursor: pointer;
+  user-select: none;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -187,6 +189,26 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.venta-form__product-photo-button {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.venta-form__product-photo-button:focus-visible {
+  outline: 2px solid rgba(30, 168, 82, 0.72);
+  outline-offset: 2px;
 }
 
 .venta-form__product-card:hover,
@@ -394,6 +416,19 @@
   gap: 0.75rem;
 }
 
+.ventas-create-page .venta-pos-sidebar__actions .btn {
+  min-height: 2.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 0.72rem;
+  box-shadow: none !important;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  line-height: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .venta-pos-sidebar__submit {
   background: #1ea852 !important;
   border: 1px solid #1ea852 !important;
@@ -488,6 +523,92 @@
   padding: 1rem;
   backdrop-filter: blur(5px);
   animation: venta-transfer-backdrop-in 180ms ease-out;
+}
+
+.venta-product-photo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1530;
+  background: rgba(7, 10, 9, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+  animation: venta-transfer-backdrop-in 180ms ease-out;
+}
+
+.venta-product-photo-modal__card {
+  width: min(92vw, 720px);
+  max-height: 90vh;
+  border-radius: 1.25rem;
+  border: 1px solid var(--app-surface-border);
+  background: var(--app-surface);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: venta-transfer-card-in 220ms ease-out;
+}
+
+.venta-product-photo-modal__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  position: relative;
+  padding-right: 3.2rem;
+}
+
+.venta-product-photo-modal__header h3 {
+  margin: 0;
+  color: var(--app-ink);
+  font-weight: 500;
+}
+
+.venta-product-photo-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 2.5rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--app-surface-border) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: var(--app-ink) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.venta-product-photo-modal__close:hover,
+.venta-product-photo-modal__close:focus {
+  background: #111827 !important;
+  border-color: rgba(15, 23, 42, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+.venta-product-photo-modal__image-wrap {
+  width: 100%;
+  max-height: 70vh;
+  border-radius: 1rem;
+  border: 1px solid var(--app-surface-border);
+  background: rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.venta-product-photo-modal__image {
+  display: block;
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
 }
 
 .venta-transfer-modal__card {
@@ -827,7 +948,9 @@
   .venta-create-modal,
   .venta-create-modal__content.ventas-create-page,
   .venta-transfer-modal,
-  .venta-transfer-modal__card {
+  .venta-transfer-modal__card,
+  .venta-product-photo-modal,
+  .venta-product-photo-modal__card {
     animation: none;
   }
 
@@ -985,6 +1108,33 @@
   background: var(--app-surface);
   border-color: var(--app-surface-border);
   box-shadow: 0 24px 60px var(--app-surface-shadow);
+}
+
+:root[data-theme="dark"] .venta-product-photo-modal__card {
+  background: var(--app-surface);
+  border-color: var(--app-surface-border);
+  box-shadow: 0 24px 60px var(--app-surface-shadow);
+}
+
+:root[data-theme="dark"] .venta-product-photo-modal__header h3 {
+  color: var(--app-ink);
+}
+
+:root[data-theme="dark"] .venta-product-photo-modal__close {
+  background: var(--app-field-bg) !important;
+  border-color: var(--app-surface-border) !important;
+  color: var(--app-ink) !important;
+}
+
+:root[data-theme="dark"] .venta-product-photo-modal__close:hover,
+:root[data-theme="dark"] .venta-product-photo-modal__close:focus {
+  background: var(--app-table-row-hover) !important;
+  border-color: var(--app-primary) !important;
+}
+
+:root[data-theme="dark"] .venta-product-photo-modal__image-wrap {
+  background: var(--app-field-bg);
+  border-color: var(--app-surface-border);
 }
 
 :root[data-theme="dark"] .venta-transfer-modal__header h3,
@@ -1421,15 +1571,18 @@
 .ventas-create-page .venta-pos-quickcash .btn:hover,
 .ventas-create-page .venta-pos-quickcash .btn:focus,
 .ventas-create-page .venta-pos-sidebar__actions .btn-light:hover,
-.ventas-create-page .venta-pos-sidebar__actions .btn-light:focus {
+.ventas-create-page .venta-pos-sidebar__actions .btn-light:focus,
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:hover,
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:focus {
   background: rgba(30, 168, 82, 0.045) !important;
   border-color: #1ea852 !important;
   color: var(--app-ink) !important;
 }
 
 .ventas-create-page .venta-pos-sidebar__submit {
-  min-height: 2.7rem;
-  padding: 0.55rem 0.95rem;
+  min-height: 2.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 0.72rem;
   border: 1px solid #1ea852 !important;
   background: #1ea852 !important;
   color: #ffffff !important;
@@ -1462,7 +1615,8 @@
 .ventas-create-page .venta-form__accounts-button,
 .ventas-create-page .venta-pos-quickcash .btn-light,
 .ventas-create-page .venta-pos-quickcash .btn-outline-dark,
-.ventas-create-page .venta-pos-sidebar__actions .btn-light {
+.ventas-create-page .venta-pos-sidebar__actions .btn-light,
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear {
   background: rgba(30, 168, 82, 0.08) !important;
   border-color: rgba(30, 168, 82, 0.26) !important;
   color: #14532d !important;
@@ -1475,7 +1629,9 @@
 .ventas-create-page .venta-pos-quickcash .btn-outline-dark:hover,
 .ventas-create-page .venta-pos-quickcash .btn-outline-dark:focus,
 .ventas-create-page .venta-pos-sidebar__actions .btn-light:hover,
-.ventas-create-page .venta-pos-sidebar__actions .btn-light:focus {
+.ventas-create-page .venta-pos-sidebar__actions .btn-light:focus,
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:hover,
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:focus {
   background: rgba(30, 168, 82, 0.14) !important;
   border-color: #1ea852 !important;
   color: #0f3d24 !important;
@@ -1537,7 +1693,8 @@
 :root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__submit,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn-light,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn-outline-dark,
-:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light {
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear {
   border-color: rgba(34, 197, 94, 0.36) !important;
   background: transparent !important;
   color: #eff8f3 !important;
@@ -1552,7 +1709,9 @@
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn:hover,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn:focus,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light:hover,
-:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light:focus {
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light:focus,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:hover,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:focus {
   background: rgba(34, 197, 94, 0.08) !important;
   border-color: #22c55e !important;
   color: #eff8f3 !important;
@@ -1590,7 +1749,8 @@
 :root[data-theme="dark"] .ventas-create-page .venta-form__accounts-button,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn-light,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn-outline-dark,
-:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light {
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear {
   background: rgba(34, 197, 94, 0.12) !important;
   border-color: rgba(34, 197, 94, 0.32) !important;
   color: #dcfce7 !important;
@@ -1603,7 +1763,9 @@
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn-outline-dark:hover,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-quickcash .btn-outline-dark:focus,
 :root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light:hover,
-:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light:focus {
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .btn-light:focus,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:hover,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:focus {
   background: rgba(57, 255, 122, 0.18) !important;
   border-color: #39ff7a !important;
   color: #eff8f3 !important;
@@ -1620,6 +1782,56 @@
   background: #ef4444 !important;
   border-color: #ef4444 !important;
   color: #ffffff !important;
+}
+
+/* Acciones finales de venta iguales a la modal de reparacion. */
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply {
+  border: 1px solid #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none !important;
+}
+
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply:hover,
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply:focus {
+  border-color: #166534 !important;
+  background: #166534 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply:disabled {
+  border-color: #7abf92 !important;
+  background: #7abf92 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+  opacity: 1;
+}
+
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear {
+  border: 1px solid #c1c7d0 !important;
+  background: #d1d5db !important;
+  color: #111827 !important;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none !important;
+}
+
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:hover,
+.ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:focus {
+  border-color: #b4bbc6 !important;
+  background: #c2c8d1 !important;
+  color: #0f172a !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 1100px) {

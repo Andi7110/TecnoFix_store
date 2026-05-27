@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   getDailySalesReport,
-  getMonthlyIncomeStatement,
   listSalesReports,
   saveDailySalesReport,
-  saveMonthlyIncomeStatement,
 } from "../../api/ventas";
 
 function getTodayDateValue() {
@@ -17,16 +15,9 @@ function getTodayDateValue() {
 }
 
 export function getInitialVentasReportFilters() {
-  const now = new Date();
-
   return {
     daily: {
       fecha: getTodayDateValue(),
-      modulo_id: "",
-    },
-    monthly: {
-      anio: String(now.getFullYear()),
-      mes: String(now.getMonth() + 1),
       modulo_id: "",
     },
   };
@@ -35,19 +26,14 @@ export function getInitialVentasReportFilters() {
 export function useVentasReports() {
   const initialFilters = getInitialVentasReportFilters();
   const [dailyQuery, setDailyQuery] = useState(initialFilters.daily);
-  const [monthlyQuery, setMonthlyQuery] = useState(initialFilters.monthly);
   const [dailyReport, setDailyReport] = useState(null);
-  const [monthlyReport, setMonthlyReport] = useState(null);
   const [dailyLoading, setDailyLoading] = useState(true);
-  const [monthlyLoading, setMonthlyLoading] = useState(true);
   const [dailyError, setDailyError] = useState("");
-  const [monthlyError, setMonthlyError] = useState("");
   const [history, setHistory] = useState([]);
   const [historyMeta, setHistoryMeta] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState("");
   const [dailySaving, setDailySaving] = useState(false);
-  const [monthlySaving, setMonthlySaving] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -82,40 +68,6 @@ export function useVentasReports() {
       ignore = true;
     };
   }, [dailyQuery]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadMonthlyReport() {
-      setMonthlyLoading(true);
-      setMonthlyError("");
-
-      try {
-        const report = await getMonthlyIncomeStatement(monthlyQuery);
-
-        if (!ignore) {
-          setMonthlyReport(report);
-        }
-      } catch (requestError) {
-        if (!ignore) {
-          setMonthlyError(
-            requestError?.response?.data?.message
-              || "No se pudo generar el estado de resultados.",
-          );
-        }
-      } finally {
-        if (!ignore) {
-          setMonthlyLoading(false);
-        }
-      }
-    }
-
-    loadMonthlyReport();
-
-    return () => {
-      ignore = true;
-    };
-  }, [monthlyQuery]);
 
   useEffect(() => {
     let ignore = false;
@@ -156,10 +108,6 @@ export function useVentasReports() {
     setDailyQuery(filters);
   }
 
-  function generateMonthlyReport(filters) {
-    setMonthlyQuery(filters);
-  }
-
   async function refreshHistory() {
     setHistoryLoading(true);
     setHistoryError("");
@@ -191,36 +139,17 @@ export function useVentasReports() {
     }
   }
 
-  async function saveMonthlyReport(filters) {
-    setMonthlySaving(true);
-
-    try {
-      const saved = await saveMonthlyIncomeStatement(filters);
-      await refreshHistory();
-
-      return saved;
-    } finally {
-      setMonthlySaving(false);
-    }
-  }
-
   return {
     dailyReport,
     dailyLoading,
     dailyError,
-    monthlyReport,
-    monthlyLoading,
-    monthlyError,
     generateDailyReport,
-    generateMonthlyReport,
     initialFilters,
     saveDailyReport,
-    saveMonthlyReport,
     history,
     historyMeta,
     historyLoading,
     historyError,
     dailySaving,
-    monthlySaving,
   };
 }

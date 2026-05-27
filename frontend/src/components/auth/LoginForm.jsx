@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { CheckCircle, Eye, EyeSlash, ShieldCheck, Sparkle } from "../../icons/phosphor";
+import { Eye, EyeSlash, ShieldCheck, Sparkle } from "../../icons/phosphor";
 
 function PowerLogo() {
   return (
@@ -31,28 +31,14 @@ function LoginForm({
   values,
   errors,
   message,
-  successMessage,
   submitting,
   onChange,
   onSubmit,
-  onAcceptSuccess,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form className="auth-card" onSubmit={onSubmit}>
-      {successMessage ? (
-        <div className="auth-success-modal" role="dialog" aria-modal="true" aria-labelledby="auth-success-title">
-          <div className="auth-success-modal__card">
-            <CheckCircle className="auth-success-modal__icon" size={70} weight="fill" aria-hidden="true" />
-            <h2 id="auth-success-title">{successMessage}</h2>
-            <p>Se registro correctamente.</p>
-            <button type="button" className="btn auth-success-modal__button" onClick={onAcceptSuccess}>
-              Aceptar
-            </button>
-          </div>
-        </div>
-      ) : null}
       <Box className="auth-card__panel auth-card__panel--brand">
         <Typography className="auth-card__brand" component="p">
           TecnoFix
@@ -178,7 +164,7 @@ function LoginForm({
             className="btn auth-form__submit"
             disabled={submitting}
           >
-            {submitting ? "Ingresando..." : "Login"}
+            {submitting ? "Cargando..." : "Login"}
           </button>
         </Stack>
       </Box>

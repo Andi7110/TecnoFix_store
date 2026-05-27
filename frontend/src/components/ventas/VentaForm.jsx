@@ -73,6 +73,7 @@ function VentaForm({
   onCancel,
 }) {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [selectedProductPhoto, setSelectedProductPhoto] = useState(null);
   const [transferActionMessage, setTransferActionMessage] = useState("");
   const searchInputRef = useRef(null);
   const scannerBufferRef = useRef("");
@@ -112,6 +113,30 @@ function VentaForm({
     focusSearchInput();
   }
 
+  function openProductPhoto(producto) {
+    if (!producto?.foto_url) {
+      return;
+    }
+
+    setSelectedProductPhoto({
+      url: producto.foto_url,
+      name: producto.nombre || "Producto",
+    });
+  }
+
+  function closeProductPhoto() {
+    setSelectedProductPhoto(null);
+  }
+
+  function handleProductCardKeyDown(event, producto) {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    onAddProducto(producto);
+  }
+
   useEffect(() => {
     if (!values.modulo_id) {
       return;
@@ -119,6 +144,21 @@ function VentaForm({
 
     focusSearchInput();
   }, [values.modulo_id]);
+
+  useEffect(() => {
+    if (!selectedProductPhoto) {
+      return undefined;
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        closeProductPhoto();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedProductPhoto]);
 
   useEffect(() => {
     if (!values.modulo_id) {
@@ -403,20 +443,34 @@ function VentaForm({
               ) : null}
 
               {productos.map((producto) => (
-                <button
+                <article
                   key={producto.id}
-                  type="button"
                   className="venta-form__product-card"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => onAddProducto(producto)}
+                  onKeyDown={(event) => handleProductCardKeyDown(event, producto)}
                 >
                   <div className="venta-form__product-main">
                     <div className="venta-form__product-photo">
                       {producto.foto_url ? (
-                        <img
-                          src={producto.foto_url}
-                          alt={producto.nombre}
-                          className="venta-form__product-photo-image"
-                        />
+                        <button
+                          type="button"
+                          className="venta-form__product-photo-button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openProductPhoto(producto);
+                          }}
+                          onKeyDown={(event) => event.stopPropagation()}
+                          aria-label={`Ver imagen de ${producto.nombre}`}
+                          title="Ver imagen"
+                        >
+                          <img
+                            src={producto.foto_url}
+                            alt={producto.nombre}
+                            className="venta-form__product-photo-image"
+                          />
+                        </button>
                       ) : (
                         <span>Sin foto</span>
                       )}
@@ -435,7 +489,7 @@ function VentaForm({
                     </span>
                     <strong>{formatCurrency(producto.precio_venta)}</strong>
                   </div>
-                </button>
+                </article>
               ))}
             </div>
           </div>
@@ -789,17 +843,55 @@ function VentaForm({
           <div className="venta-pos-sidebar__actions">
             <button
               type="submit"
-              className="btn btn-lg venta-pos-sidebar__submit"
+              className="btn products-filter-actions__apply venta-pos-sidebar__submit"
               disabled={saving || montoRecibidoInsuficiente || montoTransferenciaInsuficiente || pagoMixtoInsuficiente}
             >
               {saving ? "Registrando..." : "Registrar venta"}
             </button>
-            <button type="button" className="btn btn-light" onClick={onCancel}>
+            <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
               Cancelar
             </button>
           </div>
         </aside>
       </div>
+
+      {selectedProductPhoto && typeof document !== "undefined" ? createPortal((
+        <div
+          className="venta-product-photo-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Imagen del producto"
+          onClick={closeProductPhoto}
+        >
+          <div
+            className="venta-product-photo-modal__card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="venta-product-photo-modal__header">
+              <div>
+                <p className="section-kicker">Producto</p>
+                <h3>{selectedProductPhoto.name}</h3>
+              </div>
+              <button
+                type="button"
+                className="btn venta-product-photo-modal__close"
+                onClick={closeProductPhoto}
+                aria-label="Cerrar imagen del producto"
+              >
+                <X size={18} weight="bold" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="venta-product-photo-modal__image-wrap">
+              <img
+                src={selectedProductPhoto.url}
+                alt={selectedProductPhoto.name}
+                className="venta-product-photo-modal__image"
+              />
+            </div>
+          </div>
+        </div>
+      ), document.body) : null}
 
       {isTransferModalOpen && typeof document !== "undefined" ? createPortal((
         <div

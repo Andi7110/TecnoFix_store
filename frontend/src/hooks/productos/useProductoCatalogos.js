@@ -4,6 +4,7 @@ import { listCategorias, listModulos } from "../../api/inventarioCatalogos";
 const EXCLUDED_PRODUCT_MODULES = new Set([
   "caja_general",
   "copias_impresiones",
+  "bitacora",
   "inventario",
   "reparaciones",
 ]);

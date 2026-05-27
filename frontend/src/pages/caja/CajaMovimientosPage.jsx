@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Plus } from "../../icons/phosphor";
 import CajaFilters from "../../components/caja/CajaFilters";
+import CrearMovimientoCajaModal from "../../components/caja/CrearMovimientoCajaModal";
 import CajaSummaryCards from "../../components/caja/CajaSummaryCards";
 import CajaTable from "../../components/caja/CajaTable";
 import ProductosPagination from "../../components/productos/ProductosPagination";
@@ -9,6 +10,8 @@ import { useCajaFilters } from "../../hooks/caja/useCajaFilters";
 import { useCajaList } from "../../hooks/caja/useCajaList";
 
 function CajaMovimientosPage() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const {
     filters,
     draftFilters,
@@ -18,7 +21,24 @@ function CajaMovimientosPage() {
     changePage,
   } = useCajaFilters();
   const { modulos } = useProductoCatalogos();
-  const { movimientos, meta, summary, loading, error } = useCajaList(filters);
+  const { movimientos, meta, summary, loading, error, reload } = useCajaList(filters);
+
+  useEffect(() => {
+    if (!successMessage) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setSuccessMessage("");
+    }, 3200);
+
+    return () => window.clearTimeout(timer);
+  }, [successMessage]);
+
+  function handleMovimientoCreated() {
+    reload();
+    setSuccessMessage("Movimiento de caja registrado.");
+  }
 
   return (
     <section className="products-page products-page--minimal cash-page">
@@ -32,12 +52,16 @@ function CajaMovimientosPage() {
         </div>
 
         <div className="products-page__header-actions cash-page__header-actions">
-          <Link to="/caja/nuevo" className="btn products-page__create-btn cash-page__create-btn">
+          <button
+            type="button"
+            className="btn products-page__create-btn cash-page__create-btn"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
             <span className="products-page__create-btn-content">
               <Plus size={18} weight="bold" aria-hidden="true" />
               <span>Nuevo movimiento</span>
             </span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -53,9 +77,22 @@ function CajaMovimientosPage() {
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
 
+      {successMessage ? (
+        <div className="cash-create-success" role="status" aria-live="polite">
+          {successMessage}
+        </div>
+      ) : null}
+
       <CajaTable movimientos={movimientos} loading={loading} />
 
       <ProductosPagination meta={meta} onPageChange={changePage} />
+
+      {isCreateModalOpen ? (
+        <CrearMovimientoCajaModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onCreated={handleMovimientoCreated}
+        />
+      ) : null}
     </section>
   );
 }

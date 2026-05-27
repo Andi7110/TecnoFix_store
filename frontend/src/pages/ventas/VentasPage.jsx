@@ -10,10 +10,12 @@ import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos
 import { useVentaDetail } from "../../hooks/ventas/useVentaDetail";
 import { useVentasFilters } from "../../hooks/ventas/useVentasFilters";
 import { useVentasList } from "../../hooks/ventas/useVentasList";
+import { printSaleTicket } from "../../utils/saleTicketPrint";
 
 function VentasPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [ticketPrompt, setTicketPrompt] = useState(null);
   const {
     filters,
     draftFilters,
@@ -39,13 +41,25 @@ function VentasPage() {
     return () => window.clearTimeout(timer);
   }, [successMessage]);
 
-  function handleVentaCreated(venta) {
+  function handleVentaCreated(venta, ticketConfig) {
     reload();
     setSuccessMessage(
       venta?.numero_venta
         ? `Cobro exitoso. Venta ${venta.numero_venta} registrada.`
         : "Cobro exitoso.",
     );
+    setTicketPrompt({
+      venta,
+      ticketConfig,
+    });
+  }
+
+  function handleGenerateTicket() {
+    if (ticketPrompt?.venta) {
+      printSaleTicket(ticketPrompt.venta, ticketPrompt.ticketConfig);
+    }
+
+    setTicketPrompt(null);
   }
 
   return (
@@ -125,6 +139,50 @@ function VentasPage() {
           onClose={() => setIsCreateModalOpen(false)}
           onCreated={handleVentaCreated}
         />
+      ) : null}
+
+      {ticketPrompt ? (
+        <div
+          className="app-confirm-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Venta registrada"
+          onClick={() => setTicketPrompt(null)}
+        >
+          <div
+            className="app-confirm-modal__card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 className="venta-ticket-prompt__title">
+              <CheckCircle
+                size={34}
+                weight="fill"
+                className="venta-ticket-prompt__icon"
+                aria-hidden="true"
+              />
+              <span>Venta registrada</span>
+            </h3>
+            <p className="muted-text mb-3 venta-ticket-prompt__question">
+              &iquest;Desea generar ticket?
+            </p>
+            <div className="app-confirm-modal__actions">
+              <button
+                type="button"
+                className="btn btn-light"
+                onClick={() => setTicketPrompt(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-success venta-ticket-prompt__generate"
+                onClick={handleGenerateTicket}
+              >
+                <span>Generar</span>
+              </button>
+            </div>
+          </div>
+        </div>
       ) : null}
     </section>
   );

@@ -1,0 +1,509 @@
+:root {
+  --tf-motion-duration: 180ms;
+  --tf-motion-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.tf-global-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(9, 11, 10, 0.42);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.tf-global-loading.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tf-global-loading__card {
+  min-width: min(18rem, calc(100vw - 2rem));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 1rem 1.2rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--app-surface-border);
+  color: var(--app-ink);
+  background: var(--app-surface);
+  box-shadow: 0 22px 55px rgba(15, 18, 20, 0.2);
+  transform: translateY(0.4rem) scale(0.98);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tf-global-loading.is-visible .tf-global-loading__card {
+  transform: translateY(0) scale(1);
+}
+
+.tf-global-loading__spinner {
+  width: 1.65rem;
+  height: 1.65rem;
+  flex: 0 0 1.65rem;
+  border-radius: 50%;
+  border: 3px solid rgba(43, 217, 107, 0.18);
+  border-top-color: var(--app-primary);
+  border-right-color: var(--app-primary-dark);
+  animation: tf-global-spinner 720ms linear infinite;
+}
+
+.tf-global-loading__message {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+button,
+.btn,
+a.app-nav__link,
+a.app-nav__sublink,
+a.app-notifications__item,
+.app-user-menu__item,
+.products-page__barcode-btn {
+  transition:
+    transform var(--tf-motion-duration) var(--tf-motion-ease),
+    background-color var(--tf-motion-duration) ease,
+    border-color var(--tf-motion-duration) ease,
+    color var(--tf-motion-duration) ease,
+    box-shadow var(--tf-motion-duration) ease,
+    opacity var(--tf-motion-duration) ease,
+    filter var(--tf-motion-duration) ease;
+}
+
+button:not(:disabled):not([aria-disabled="true"]):active,
+.btn:not(:disabled):not([aria-disabled="true"]):active,
+a.app-nav__link:active,
+a.app-nav__sublink:active,
+a.app-notifications__item:active,
+.app-user-menu__item:active,
+.products-page__barcode-btn:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+form.tf-form-submitting {
+  animation: tf-form-submit-pulse 540ms ease-out;
+}
+
+form.tf-form-submitting button[type="submit"]:not(:disabled),
+form.tf-form-submitting .btn[type="submit"]:not(:disabled) {
+  filter: brightness(1.02);
+  box-shadow: 0 0 0 0.2rem rgba(43, 217, 107, 0.14);
+}
+
+button:disabled,
+.btn:disabled,
+button[aria-disabled="true"],
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+form button.btn:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button),
+form .btn[type="submit"]:not(.btn-sm),
+form .btn[type="button"]:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button) {
+  min-width: 9.5rem !important;
+  min-height: 2.45rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  padding: 0.55rem 1rem !important;
+  border-radius: 0.72rem !important;
+  font-family: inherit !important;
+  font-size: 0.94rem !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  box-shadow: none !important;
+  white-space: nowrap !important;
+}
+
+form button[type="submit"].btn:not(.btn-sm),
+form .btn.btn-primary:not(.btn-sm),
+form .btn.btn-success:not(.btn-sm),
+form .products-filter-actions__apply:not(.btn-sm),
+form .product-form__submit,
+form .auth-form__submit {
+  border-color: #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+}
+
+form button[type="submit"].btn:not(.btn-sm):hover,
+form .btn.btn-primary:not(.btn-sm):hover,
+form .btn.btn-success:not(.btn-sm):hover,
+form .products-filter-actions__apply:not(.btn-sm):hover,
+form .product-form__submit:hover,
+form .auth-form__submit:hover,
+form button[type="submit"].btn:not(.btn-sm):focus,
+form .btn.btn-primary:not(.btn-sm):focus,
+form .btn.btn-success:not(.btn-sm):focus,
+form .products-filter-actions__apply:not(.btn-sm):focus,
+form .product-form__submit:focus,
+form .auth-form__submit:focus {
+  border-color: #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+form .products-filter-actions__clear:not(.btn-sm),
+form .product-form__cancel,
+form .btn.btn-light:not(.btn-sm),
+form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button) {
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+form .products-filter-actions__clear:not(.btn-sm):hover,
+form .product-form__cancel:hover,
+form .btn.btn-light:not(.btn-sm):hover,
+form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):hover,
+form .products-filter-actions__clear:not(.btn-sm):focus,
+form .product-form__cancel:focus,
+form .btn.btn-light:not(.btn-sm):focus,
+form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):focus {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+
+form button[type="submit"].btn:not(.btn-sm):disabled,
+form .btn.btn-primary:not(.btn-sm):disabled,
+form .btn.btn-success:not(.btn-sm):disabled,
+form .products-filter-actions__apply:not(.btn-sm):disabled,
+form .product-form__submit:disabled,
+form .auth-form__submit:disabled {
+  border-color: #7abf92 !important;
+  background: #7abf92 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+form .products-filter-actions__clear:not(.btn-sm):disabled,
+form .product-form__cancel:disabled,
+form .btn.btn-light:not(.btn-sm):disabled,
+form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):disabled {
+  border-color: #d1d5db !important;
+  background: #e5e7eb !important;
+  color: #6b7280 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.product-create-modal,
+.venta-create-modal,
+.repair-create-modal,
+.cash-create-modal {
+  --modal-form-text: var(--app-ink);
+  --modal-form-muted: var(--app-muted);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.product-create-modal form,
+.venta-create-modal form,
+.repair-create-modal form,
+.cash-create-modal form {
+  font-family: inherit;
+  font-weight: 400;
+}
+
+.product-create-modal h1,
+.product-create-modal h2,
+.product-create-modal h3,
+.venta-create-modal h1,
+.venta-create-modal h2,
+.venta-create-modal h3,
+.repair-create-modal h1,
+.repair-create-modal h2,
+.repair-create-modal h3,
+.cash-create-modal h1,
+.cash-create-modal h2,
+.cash-create-modal h3 {
+  color: var(--modal-form-text) !important;
+  font-family: inherit !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+
+.product-create-modal .section-kicker,
+.venta-create-modal .section-kicker,
+.repair-create-modal .section-kicker,
+.cash-create-modal .section-kicker,
+.product-create-modal .form-label,
+.venta-create-modal .form-label,
+.repair-create-modal .form-label,
+.cash-create-modal .form-label {
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-shadow: none !important;
+}
+
+.product-create-modal .muted-text,
+.venta-create-modal .muted-text,
+.repair-create-modal .muted-text,
+.cash-create-modal .muted-text,
+.product-create-modal small,
+.venta-create-modal small,
+.repair-create-modal small,
+.cash-create-modal small {
+  color: var(--modal-form-muted) !important;
+  font-family: inherit !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+
+.product-create-modal .form-control,
+.product-create-modal .form-select,
+.product-create-modal textarea,
+.venta-create-modal .form-control,
+.venta-create-modal .form-select,
+.venta-create-modal textarea,
+.repair-create-modal .form-control,
+.repair-create-modal .form-select,
+.repair-create-modal textarea,
+.cash-create-modal .form-control,
+.cash-create-modal .form-select,
+.cash-create-modal textarea {
+  font-family: inherit !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+
+.repair-create-modal .repair-form.surface-card,
+.repair-create-modal .repairs-costs-card--create,
+.cash-create-modal .cash-form.surface-card {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-color: var(--app-surface-border) !important;
+  color: var(--app-ink) !important;
+}
+
+.repair-create-modal .repair-form .section-heading,
+.cash-create-modal .cash-form .section-heading {
+  border-bottom-color: var(--app-surface-border) !important;
+}
+
+.repair-create-modal .section-kicker,
+.cash-create-modal .section-kicker {
+  color: #22c55e !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.repair-create-modal h2,
+.repair-create-modal h3,
+.cash-create-modal h2,
+.cash-create-modal h3 {
+  color: var(--app-ink) !important;
+  font-size: clamp(1.55rem, 2.2vw, 2rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.15 !important;
+}
+
+.repair-create-modal .form-label,
+.cash-create-modal .form-label {
+  color: #2f3633 !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.repair-create-modal .muted-text,
+.repair-create-modal small,
+.cash-create-modal .muted-text,
+.cash-create-modal small {
+  color: #5a6a63 !important;
+  font-weight: 400 !important;
+}
+
+.repair-create-modal .form-control,
+.repair-create-modal .form-select,
+.repair-create-modal textarea,
+.cash-create-modal .form-control,
+.cash-create-modal .form-select,
+.cash-create-modal textarea {
+  background: #ffffff !important;
+  border-color: #d4d9dd !important;
+  color: #202426 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: none !important;
+}
+
+.repair-create-modal .form-control:focus,
+.repair-create-modal .form-select:focus,
+.repair-create-modal textarea:focus,
+.cash-create-modal .form-control:focus,
+.cash-create-modal .form-select:focus,
+.cash-create-modal textarea:focus {
+  border-color: rgba(34, 197, 94, 0.34) !important;
+  box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.08) !important;
+}
+
+.repair-create-modal .input-group-text,
+.cash-create-modal .input-group-text {
+  background: #eef7f1 !important;
+  border-color: #d4d9dd !important;
+  color: #111827 !important;
+}
+
+:root[data-theme="dark"] .tf-global-loading {
+  background: rgba(1, 4, 9, 0.62);
+}
+
+:root[data-theme="dark"] .tf-global-loading__card {
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.42);
+}
+
+:root[data-theme="dark"] .product-create-modal,
+:root[data-theme="dark"] .venta-create-modal,
+:root[data-theme="dark"] .repair-create-modal,
+:root[data-theme="dark"] .cash-create-modal {
+  --modal-form-text: #eff8f3;
+  --modal-form-muted: #aabdb5;
+}
+
+:root[data-theme="dark"] form button.btn:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button),
+:root[data-theme="dark"] form .btn[type="submit"]:not(.btn-sm),
+:root[data-theme="dark"] form .btn[type="button"]:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button) {
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] form button.btn:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):disabled,
+:root[data-theme="dark"] form .btn[type="submit"]:not(.btn-sm):disabled,
+:root[data-theme="dark"] form .btn[type="button"]:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):disabled {
+  border-color: #7abf92 !important;
+  background: #7abf92 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+:root[data-theme="dark"] form button[type="submit"].btn:not(.btn-sm),
+:root[data-theme="dark"] form button.btn.btn-primary:not(.btn-sm),
+:root[data-theme="dark"] form button.btn.btn-success:not(.btn-sm),
+:root[data-theme="dark"] form button.btn.products-filter-actions__apply:not(.btn-sm),
+:root[data-theme="dark"] form button.btn.product-form__submit,
+:root[data-theme="dark"] form button.btn.auth-form__submit,
+:root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__apply,
+:root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__apply,
+:root[data-theme="dark"] .repair-create-modal .products-filter-actions__apply,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__submit {
+  border-color: #22c55e !important;
+  background: #22c55e !important;
+  color: #06130a !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] form button[type="submit"].btn:not(.btn-sm):hover,
+:root[data-theme="dark"] form button.btn.btn-primary:not(.btn-sm):hover,
+:root[data-theme="dark"] form button.btn.btn-success:not(.btn-sm):hover,
+:root[data-theme="dark"] form button.btn.products-filter-actions__apply:not(.btn-sm):hover,
+:root[data-theme="dark"] form button.btn.product-form__submit:hover,
+:root[data-theme="dark"] form button.btn.auth-form__submit:hover,
+:root[data-theme="dark"] form button[type="submit"].btn:not(.btn-sm):focus,
+:root[data-theme="dark"] form button.btn.btn-primary:not(.btn-sm):focus,
+:root[data-theme="dark"] form button.btn.btn-success:not(.btn-sm):focus,
+:root[data-theme="dark"] form button.btn.products-filter-actions__apply:not(.btn-sm):focus,
+:root[data-theme="dark"] form button.btn.product-form__submit:focus,
+:root[data-theme="dark"] form button.btn.auth-form__submit:focus,
+:root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__apply:hover,
+:root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__apply:focus,
+:root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__apply:hover,
+:root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__apply:focus,
+:root[data-theme="dark"] .repair-create-modal .products-filter-actions__apply:hover,
+:root[data-theme="dark"] .repair-create-modal .products-filter-actions__apply:focus,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply:hover,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply:focus,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__submit:hover,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__submit:focus {
+  border-color: #39ff7a !important;
+  background: #39ff7a !important;
+  color: #041008 !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] form button.btn.products-filter-actions__clear:not(.btn-sm),
+:root[data-theme="dark"] form button.btn.product-form__cancel,
+:root[data-theme="dark"] form button.btn.btn-light:not(.btn-sm),
+:root[data-theme="dark"] form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button),
+:root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__clear,
+:root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__clear,
+:root[data-theme="dark"] .repair-create-modal .products-filter-actions__clear,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear {
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  color: #1f2937 !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] form button.btn.products-filter-actions__clear:not(.btn-sm):hover,
+:root[data-theme="dark"] form button.btn.product-form__cancel:hover,
+:root[data-theme="dark"] form button.btn.btn-light:not(.btn-sm):hover,
+:root[data-theme="dark"] form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):hover,
+:root[data-theme="dark"] form button.btn.products-filter-actions__clear:not(.btn-sm):focus,
+:root[data-theme="dark"] form button.btn.product-form__cancel:focus,
+:root[data-theme="dark"] form button.btn.btn-light:not(.btn-sm):focus,
+:root[data-theme="dark"] form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):focus,
+:root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__clear:hover,
+:root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__clear:focus,
+:root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__clear:hover,
+:root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__clear:focus,
+:root[data-theme="dark"] .repair-create-modal .products-filter-actions__clear:hover,
+:root[data-theme="dark"] .repair-create-modal .products-filter-actions__clear:focus,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:hover,
+:root[data-theme="dark"] .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear:focus {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+
+@keyframes tf-global-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tf-form-submit-pulse {
+  0% {
+    transform: translateY(0);
+  }
+
+  35% {
+    transform: translateY(-1px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tf-global-loading,
+  .tf-global-loading__card,
+  button,
+  .btn,
+  a.app-nav__link,
+  a.app-nav__sublink,
+  a.app-notifications__item,
+  .app-user-menu__item,
+  .products-page__barcode-btn {
+    transition-duration: 1ms;
+  }
+
+  .tf-global-loading__spinner,
+  form.tf-form-submitting {
+    animation-duration: 1ms;
+  }
+}

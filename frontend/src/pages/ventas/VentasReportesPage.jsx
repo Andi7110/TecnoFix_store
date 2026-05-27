@@ -7,7 +7,6 @@ import { useVentasReports } from "../../hooks/ventas/useVentasReports";
 function VentasReportesPage() {
   const reports = useVentasReports();
   const [dailyFilters, setDailyFilters] = useState(reports.initialFilters.daily);
-  const [monthlyFilters, setMonthlyFilters] = useState(reports.initialFilters.monthly);
   const { modulos } = useProductoCatalogos("", true);
   const reportModules = useMemo(
     () =>
@@ -30,13 +29,6 @@ function VentasReportesPage() {
     }));
   }
 
-  function updateMonthlyFilter(name, value) {
-    setMonthlyFilters((current) => ({
-      ...current,
-      [name]: value,
-    }));
-  }
-
   return (
     <section className="products-page ventas-page ventas-reportes-page ventas-page--minimal">
       <div className="products-page__header ventas-page__header">
@@ -44,7 +36,7 @@ function VentasReportesPage() {
           <p className="section-kicker">Ventas</p>
           <h2>Reportes de ventas</h2>
           <p className="muted-text">
-            Genera cierres diarios, estados mensuales y consulta el historial de reportes guardados.
+            Consulta ventas por fecha, productos, metodos de pago y modulos. Los balances y estados financieros se trabajaran en Caja.
           </p>
         </div>
 
@@ -65,14 +57,6 @@ function VentasReportesPage() {
         dailyLoading={reports.dailyLoading}
         dailyError={reports.dailyError}
         dailySaving={reports.dailySaving}
-        monthlyValues={monthlyFilters}
-        onMonthlyChange={updateMonthlyFilter}
-        onMonthlySubmit={() => reports.generateMonthlyReport(monthlyFilters)}
-        onMonthlySave={() => reports.saveMonthlyReport(monthlyFilters)}
-        monthlyReport={reports.monthlyReport}
-        monthlyLoading={reports.monthlyLoading}
-        monthlyError={reports.monthlyError}
-        monthlySaving={reports.monthlySaving}
         history={reports.history}
         historyLoading={reports.historyLoading}
         historyError={reports.historyError}

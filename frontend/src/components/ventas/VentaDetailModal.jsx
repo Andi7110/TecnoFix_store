@@ -1,3 +1,4 @@
+import { GlobalLoadingOverlay } from "../interactions/GlobalInteractions";
 import { printSaleTicket } from "../../utils/saleTicketPrint";
 
 function formatCurrency(value) {
@@ -12,10 +13,14 @@ function formatDate(value) {
     return "-";
   }
 
+  const normalizedValue = String(value).includes("T")
+    ? value
+    : String(value).replace(" ", "T");
+
   return new Intl.DateTimeFormat("es-SV", {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(new Date(normalizedValue));
 }
 
 function formatMetodo(value) {
@@ -32,6 +37,10 @@ function VentaDetailModal({
 }) {
   if (!venta && !loading && !error) {
     return null;
+  }
+
+  if (!venta && loading) {
+    return <GlobalLoadingOverlay active message="Cargando..." />;
   }
 
   return (
@@ -69,7 +78,6 @@ function VentaDetailModal({
           </div>
         </div>
 
-        {loading ? <p className="empty-state">Cargando detalle...</p> : null}
         {error ? <div className="alert alert-danger">{error}</div> : null}
 
         {venta ? (

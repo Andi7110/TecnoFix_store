@@ -10,10 +10,14 @@ function formatDate(value) {
     return "-";
   }
 
+  const normalizedValue = String(value).includes("T")
+    ? value
+    : String(value).replace(" ", "T");
+
   return new Intl.DateTimeFormat("es-SV", {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(new Date(normalizedValue));
 }
 
 function formatMetodo(value) {

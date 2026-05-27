@@ -4,10 +4,7 @@ import AppLayout from "../components/layout/AppLayout";
 import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/auth/LoginPage";
 import BitacoraPage from "../pages/bitacora/BitacoraPage";
-import CrearMovimientoCajaPage from "../pages/caja/CrearMovimientoCajaPage";
 import CajaMovimientosPage from "../pages/caja/CajaMovimientosPage";
-import CrearProductoPage from "../pages/productos/CrearProductoPage";
-import EditarProductoPage from "../pages/productos/EditarProductoPage";
 import InventarioProductosPage from "../pages/productos/InventarioProductosPage";
 import ProductosPage from "../pages/productos/ProductosPage";
 import EditarReparacionPage from "../pages/reparaciones/EditarReparacionPage";
@@ -26,11 +23,8 @@ function AppRouter() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/caja" element={<CajaMovimientosPage />} />
-            <Route path="/caja/nuevo" element={<CrearMovimientoCajaPage />} />
             <Route path="/productos" element={<ProductosPage />} />
             <Route path="/productos/inventario" element={<InventarioProductosPage />} />
-            <Route path="/productos/nuevo" element={<CrearProductoPage />} />
-            <Route path="/productos/:productoId/editar" element={<EditarProductoPage />} />
             <Route path="/ventas" element={<VentasPage />} />
             <Route path="/ventas/reportes" element={<VentasReportesPage />} />
             <Route path="/reparaciones" element={<ReparacionesPage />} />

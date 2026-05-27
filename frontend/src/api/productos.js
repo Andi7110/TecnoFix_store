@@ -81,8 +81,10 @@ export async function changeProductoEstado(productoId, estado) {
   return response.data.data;
 }
 
-export async function deleteProductoLogico(productoId) {
-  return changeProductoEstado(productoId, false);
+export async function deleteProducto(productoId) {
+  const response = await api.delete(`/inventario/productos/${productoId}`);
+
+  return response.data;
 }
 
 export const listProductos = getProductosPaginados;
