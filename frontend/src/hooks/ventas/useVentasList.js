@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { listVentas } from "../../api/ventas";
+import { notifyError } from "../../utils/toasts";
 
 export function useVentasList(filters) {
   const [ventas, setVentas] = useState([]);
@@ -29,10 +30,10 @@ export function useVentasList(filters) {
           return;
         }
 
-        setError(
-          requestError?.response?.data?.message
-            || "No se pudieron cargar las ventas.",
-        );
+        const message = requestError?.response?.data?.message
+          || "No se pudieron cargar las ventas.";
+        setError(message);
+        notifyError(message);
       } finally {
         if (!ignore) {
           setLoading(false);

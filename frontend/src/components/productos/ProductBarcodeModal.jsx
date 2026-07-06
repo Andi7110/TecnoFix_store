@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Printer, X } from "../../icons/phosphor";
-import { printProductBarcodes } from "../../utils/productBarcodePrint";
+import BarcodePreviewModal from "../reportes/BarcodePreviewModal";
 
 function ProductBarcodeModal({
   isOpen,
@@ -10,6 +10,7 @@ function ProductBarcodeModal({
 }) {
   const [quantities, setQuantities] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
+  const [previewItems, setPreviewItems] = useState(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -20,6 +21,7 @@ function ProductBarcodeModal({
       productos.map((producto) => [String(producto.id), 1]),
     ));
     setErrorMessage("");
+    setPreviewItems(null);
   }, [isOpen, productos]);
 
   const selectedProducts = useMemo(
@@ -56,121 +58,133 @@ function ProductBarcodeModal({
   }
 
   function handlePrint() {
-    try {
-      printProductBarcodes(
-        productos.map((producto) => ({
-          ...producto,
-          quantity: Number(quantities[String(producto.id)] ?? 0),
-        })),
-      );
-      onClose();
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "No se pudo generar la impresion.");
+    const items = productos.map((producto) => ({
+      ...producto,
+      quantity: Number(quantities[String(producto.id)] ?? 0),
+    }));
+
+    if (!items.some((item) => item.quantity > 0)) {
+      setErrorMessage("Selecciona al menos una etiqueta para imprimir.");
+      return;
     }
+
+    setErrorMessage("");
+    setPreviewItems(items);
   }
 
   return createPortal(
-    <div className="barcode-modal" role="dialog" aria-modal="true" aria-labelledby="barcode-modal-title">
-      <div className="barcode-modal__backdrop" onClick={onClose} aria-hidden="true" />
-      <div className="barcode-modal__card surface-card">
-        <div className="barcode-modal__header">
-          <div>
-            <p className="section-kicker">Etiquetas</p>
-            <h3 id="barcode-modal-title">Codigos de barra para productos</h3>
-            <p className="muted-text mb-0">
-              Se imprimen en formato Code 39 para poder escanearlos en el punto de venta.
-            </p>
-          </div>
+    <>
+    {!previewItems ? (
+      <div className="barcode-modal" role="dialog" aria-modal="true" aria-labelledby="barcode-modal-title">
+        <div className="barcode-modal__backdrop" onClick={onClose} aria-hidden="true" />
+        <div className="barcode-modal__card surface-card">
+          <div className="barcode-modal__header">
+            <div>
+              <p className="section-kicker">Etiquetas</p>
+              <h3 id="barcode-modal-title">Codigos de barra para productos</h3>
+              <p className="muted-text mb-0">
+                Se imprimen en formato Code 39 para poder escanearlos en el punto de venta.
+              </p>
+            </div>
 
-          <button
-            type="button"
-            className="barcode-modal__close"
-            onClick={onClose}
-            aria-label="Cerrar"
-          >
-            <X size={18} weight="bold" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="barcode-modal__toolbar">
-          <div className="barcode-modal__summary">
-            <strong>{selectedProducts.length}</strong>
-            <span>productos seleccionados</span>
-            <strong>{selectedLabelsCount}</strong>
-            <span>etiquetas a imprimir</span>
-          </div>
-
-          <div className="barcode-modal__toolbar-actions">
             <button
               type="button"
-              className="btn btn-light"
-              onClick={() => handleFillAll(1)}
+              className="barcode-modal__close"
+              onClick={onClose}
+              aria-label="Cerrar"
             >
-              1 por producto
-            </button>
-            <button
-              type="button"
-              className="btn btn-light"
-              onClick={() => handleFillAll(0)}
-            >
-              Limpiar
+              <X size={18} weight="bold" aria-hidden="true" />
             </button>
           </div>
-        </div>
 
-        {errorMessage ? <div className="alert alert-danger mb-0">{errorMessage}</div> : null}
+          <div className="barcode-modal__toolbar">
+            <div className="barcode-modal__summary">
+              <strong>{selectedProducts.length}</strong>
+              <span>productos seleccionados</span>
+              <strong>{selectedLabelsCount}</strong>
+              <span>etiquetas a imprimir</span>
+            </div>
 
-        <div className="barcode-modal__table-wrap">
-          <table className="table align-middle barcode-modal__table">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Codigo</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th className="text-end">Etiquetas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productos.map((producto) => (
-                <tr key={producto.id}>
-                  <td>
-                    <div className="product-name">{producto.nombre}</div>
-                  </td>
-                  <td>
-                    <div className="product-code">{producto.codigo}</div>
-                  </td>
-                  <td>{new Intl.NumberFormat("es-SV", { style: "currency", currency: "USD" }).format(Number(producto.precio_venta ?? 0))}</td>
-                  <td>{Number(producto.stock ?? 0)}</td>
-                  <td className="text-end">
-                    <input
-                      className="form-control barcode-modal__qty-input"
-                      inputMode="numeric"
-                      value={String(quantities[String(producto.id)] ?? 0)}
-                      onChange={(event) => handleQuantityChange(producto.id, event.target.value)}
-                    />
-                  </td>
+            <div className="barcode-modal__toolbar-actions">
+              <button
+                type="button"
+                className="btn btn-light"
+                onClick={() => handleFillAll(1)}
+              >
+                1 por producto
+              </button>
+              <button
+                type="button"
+                className="btn btn-light"
+                onClick={() => handleFillAll(0)}
+              >
+                Limpiar
+              </button>
+            </div>
+          </div>
+
+          {errorMessage ? <div className="alert alert-danger mb-0">{errorMessage}</div> : null}
+
+          <div className="barcode-modal__table-wrap">
+            <table className="table align-middle barcode-modal__table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Codigo</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th className="text-end">Etiquetas</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {productos.map((producto) => (
+                  <tr key={producto.id}>
+                    <td>
+                      <div className="product-name">{producto.nombre}</div>
+                    </td>
+                    <td>
+                      <div className="product-code">{producto.codigo}</div>
+                    </td>
+                    <td>{new Intl.NumberFormat("es-SV", { style: "currency", currency: "USD" }).format(Number(producto.precio_venta ?? 0))}</td>
+                    <td>{Number(producto.stock ?? 0)}</td>
+                    <td className="text-end">
+                      <input
+                        className="form-control barcode-modal__qty-input"
+                        inputMode="numeric"
+                        value={String(quantities[String(producto.id)] ?? 0)}
+                        onChange={(event) => handleQuantityChange(producto.id, event.target.value)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <div className="barcode-modal__footer">
-          <button type="button" className="btn btn-light" onClick={onClose}>
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="btn products-page__barcode-btn"
-            onClick={handlePrint}
-          >
-            <Printer size={18} weight="bold" aria-hidden="true" />
-            <span>Imprimir etiquetas</span>
-          </button>
+          <div className="barcode-modal__footer">
+            <button type="button" className="btn btn-light" onClick={onClose}>
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn products-page__barcode-btn"
+              onClick={handlePrint}
+            >
+              <Printer size={18} weight="bold" aria-hidden="true" />
+              <span>Vista previa</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>,
+    ) : null}
+
+    {previewItems ? (
+      <BarcodePreviewModal
+        items={previewItems}
+        onClose={() => setPreviewItems(null)}
+      />
+    ) : null}
+    </>,
     document.body,
   );
 }

@@ -1,3 +1,5 @@
+import { WarningCircle } from "../../icons/phosphor";
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-SV", {
     style: "currency",
@@ -113,10 +115,12 @@ function VentasTable({
                 <td className="text-end">
                   <button
                     type="button"
-                    className="btn btn-sm ventas-table__detail-button"
+                    className="table-detail-icon-btn"
                     onClick={() => onViewDetail(venta.id)}
+                    title="Ver detalle"
+                    aria-label={`Ver detalle de ${venta.numero_venta}`}
                   >
-                    Detalle
+                    <WarningCircle size={18} weight="bold" aria-hidden="true" />
                   </button>
                 </td>
               </tr>

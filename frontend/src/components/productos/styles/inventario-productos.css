@@ -6,11 +6,16 @@
 
 /* Miniatura del producto en tablas de inventario/listado. */
 .inventory-photo {
-  width: 44px;
-  height: 44px;
+  display: block;
+  width: 48px;
+  height: 48px;
   object-fit: cover;
   border-radius: 0.65rem;
   border: 1px solid var(--app-surface-border);
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    border-color 180ms ease;
 }
 
 /* Contenedores de secciones: Accesorios, Libreria y secciones de listado. */
@@ -111,19 +116,20 @@
 
 /* Acciones del encabezado de la vista inventario. */
 .inventory-products-page__actions {
-  display: flex;
+  display: inline-flex !important;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  width: 100%;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  width: fit-content !important;
+  max-width: 100%;
 }
 
 .inventory-products-page__action-btn {
-  min-height: 2.75rem;
+  min-height: 2.55rem;
   flex: 0 0 auto !important;
-  width: 11.5rem !important;
-  min-width: 11.5rem;
-  padding: 0.55rem 1rem !important;
+  width: auto !important;
+  min-width: 11.25rem;
+  padding: 0.58rem 0.9rem !important;
   line-height: 1;
 }
 
@@ -209,11 +215,79 @@
 
 /* Boton/imagen para abrir o mostrar fotografia del producto. */
 .inventory-photo-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 0;
-  background: transparent;
-  padding: 0;
-  border-radius: 0.75rem;
+  background: rgba(21, 128, 61, 0.08);
+  padding: 0.2rem;
+  border-radius: 0.8rem;
   cursor: zoom-in;
+  isolation: isolate;
+  box-shadow: 0 0 0 1px rgba(21, 128, 61, 0.16);
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.inventory-photo-button::after {
+  content: "";
+  position: absolute;
+  inset: 0.2rem;
+  border-radius: 0.65rem;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0), rgba(15, 23, 42, 0.48));
+  opacity: 0.78;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.inventory-photo-button__hint {
+  position: absolute;
+  right: 0.28rem;
+  bottom: 0.28rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: #15803d;
+  color: #ffffff;
+  line-height: 1;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+}
+
+.inventory-photo-button__hint svg {
+  width: 0.88rem;
+  height: 0.88rem;
+  display: block;
+  fill: currentColor;
+}
+
+.inventory-photo-button:hover,
+.inventory-photo-button:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(21, 128, 61, 0.14);
+  box-shadow:
+    0 0 0 2px rgba(21, 128, 61, 0.24),
+    0 10px 22px rgba(15, 23, 42, 0.16);
+  outline: 0;
+}
+
+.inventory-photo-button:hover .inventory-photo,
+.inventory-photo-button:focus-visible .inventory-photo {
+  transform: scale(1.04);
+  filter: saturate(1.08) contrast(1.04);
+  border-color: rgba(21, 128, 61, 0.42);
+}
+
+.inventory-photo-button:hover::after,
+.inventory-photo-button:focus-visible::after {
+  opacity: 0.48;
 }
 
 .inventory-photo-button--static {
@@ -311,6 +385,24 @@
 }
 
 /* Modo oscuro base de inventario: modal, filtros, textos, tabla y stock. */
+:root[data-theme="dark"] .inventory-photo-button {
+  background: rgba(57, 255, 122, 0.08);
+  box-shadow: 0 0 0 1px rgba(57, 255, 122, 0.2);
+}
+
+:root[data-theme="dark"] .inventory-photo-button:hover,
+:root[data-theme="dark"] .inventory-photo-button:focus-visible {
+  background: rgba(57, 255, 122, 0.13);
+  box-shadow:
+    0 0 0 2px rgba(57, 255, 122, 0.28),
+    0 10px 22px rgba(0, 0, 0, 0.26);
+}
+
+:root[data-theme="dark"] .inventory-photo-button__hint {
+  background: #39ff7a;
+  color: #06130a;
+}
+
 :root[data-theme="dark"] .inventory-photo-modal__content {
   background: #151b19;
   border-color: rgba(255, 255, 255, 0.12);

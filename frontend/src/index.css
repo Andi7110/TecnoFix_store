@@ -6,12 +6,12 @@
   --app-surface-shadow: rgba(15, 18, 20, 0.07);
   --app-ink: #0f1412;
   --app-muted: #5a6a63;
-  --app-primary: #2bd96b;
-  --app-primary-dark: #15b554;
-  --app-wash: rgba(43, 217, 107, 0.08);
+  --app-primary: #15803d;
+  --app-primary-dark: #15803d;
+  --app-wash: rgba(21, 128, 61, 0.08);
   --app-field-bg: #ffffff;
   --app-field-border: rgba(15, 20, 18, 0.16);
-  --app-field-focus: rgba(43, 217, 107, 0.35);
+  --app-field-focus: rgba(21, 128, 61, 0.35);
   --app-table-row: #ffffff;
   --app-table-row-hover: rgba(24, 94, 56, 0.06);
   --bs-body-color: var(--app-ink);
@@ -38,12 +38,12 @@
   --app-surface-shadow: rgba(1, 4, 9, 0.34);
   --app-ink: #f0f6fc;
   --app-muted: #8b949e;
-  --app-primary: #2ea043;
-  --app-primary-dark: #2ea043;
-  --app-wash: rgba(46, 160, 67, 0.14);
+  --app-primary: #39ff7a;
+  --app-primary-dark: #39ff7a;
+  --app-wash: rgba(57, 255, 122, 0.14);
   --app-field-bg: #0d1117;
   --app-field-border: rgba(48, 54, 61, 0.98);
-  --app-field-focus: rgba(46, 160, 67, 0.28);
+  --app-field-focus: rgba(57, 255, 122, 0.28);
   --app-table-row: #161b22;
   --app-table-row-hover: rgba(139, 148, 158, 0.08);
 }

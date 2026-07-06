@@ -7,13 +7,17 @@ use App\Http\Controllers\Api\Inventario\ModuloController;
 use App\Http\Controllers\Api\Inventario\MovimientoInventarioController;
 use App\Http\Controllers\Api\Inventario\ProductoController;
 use App\Http\Controllers\Api\Caja\MovimientoCajaController;
+use App\Http\Controllers\Api\Costos\CostoOperativoController;
 use App\Http\Controllers\Api\Dashboard\DashboardSummaryController;
 use App\Http\Controllers\Api\Reparaciones\RepairReportController;
 use App\Http\Controllers\Api\Reparaciones\ReparacionController;
 use App\Http\Controllers\Api\Reparaciones\ReparacionCostoController;
+use App\Http\Controllers\Api\Reportes\DocumentPdfController;
+use App\Http\Controllers\Api\Reportes\ReportPdfController;
 use App\Http\Controllers\Api\Ventas\CuentaTransferenciaController;
 use App\Http\Controllers\Api\Ventas\SalesReportController;
 use App\Http\Controllers\Api\Ventas\VentaController;
+use App\Http\Controllers\Api\Usuarios\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->prefix('auth')->group(function (): void {
@@ -23,9 +27,17 @@ Route::middleware('web')->prefix('auth')->group(function (): void {
 });
 
 Route::middleware('auth:sanctum')->group(function (): void {
-    Route::get('dashboard/resumen', DashboardSummaryController::class);
+    Route::get('dashboard/resumen', DashboardSummaryController::class)->middleware('module:dashboard');
+    Route::post('reportes/pdf', ReportPdfController::class);
+    Route::post('reportes/codigos/pdf', [DocumentPdfController::class, 'barcodes']);
+    Route::post('reportes/ticket/pdf', [DocumentPdfController::class, 'ticket']);
 
-    Route::prefix('inventario')->group(function (): void {
+    Route::apiResource('usuarios', UsuarioController::class)
+        ->parameters(['usuarios' => 'usuario'])
+        ->only(['index', 'store', 'update'])
+        ->middleware('module:usuarios');
+
+    Route::middleware('module:inventario')->prefix('inventario')->group(function (): void {
         Route::apiResource('modulos', ModuloController::class)->only(['index', 'store', 'show', 'update']);
         Route::apiResource('categorias', CategoriaController::class)->only(['index', 'store', 'show', 'update']);
         Route::get('productos/inventario', [InventarioProductoController::class, 'index'])->name('productos.inventario.index');
@@ -37,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::apiResource('movimientos', MovimientoInventarioController::class)->only(['index', 'store', 'show']);
     });
 
-    Route::prefix('ventas/reportes')->group(function (): void {
+    Route::middleware('module:ventas')->prefix('ventas/reportes')->group(function (): void {
         Route::get('diario', [SalesReportController::class, 'daily'])->name('ventas.reportes.diario');
         Route::get('estado-resultados', [SalesReportController::class, 'monthlyIncomeStatement'])->name('ventas.reportes.estado-resultados');
         Route::post('diario', [SalesReportController::class, 'storeDaily'])->name('ventas.reportes.diario.store');
@@ -45,29 +57,37 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('historial', [SalesReportController::class, 'history'])->name('ventas.reportes.historial');
     });
 
-    Route::prefix('ventas')->group(function (): void {
+    Route::middleware('module:ventas')->prefix('ventas')->group(function (): void {
         Route::apiResource('cuentas-transferencia', CuentaTransferenciaController::class)
             ->parameters(['cuentas-transferencia' => 'cuentaTransferencia'])
             ->only(['index', 'store', 'update', 'destroy']);
     });
 
-    Route::apiResource('ventas', VentaController::class)->only(['index', 'store', 'show']);
-    Route::prefix('reparaciones/reportes')->group(function (): void {
+    Route::middleware('module:ventas')->apiResource('ventas', VentaController::class)->only(['index', 'store', 'show']);
+    Route::middleware('module:reparaciones')->prefix('reparaciones/reportes')->group(function (): void {
         Route::get('diario', [RepairReportController::class, 'daily'])->name('reparaciones.reportes.diario');
         Route::post('diario', [RepairReportController::class, 'storeDaily'])->name('reparaciones.reportes.diario.store');
         Route::get('mensual', [RepairReportController::class, 'monthly'])->name('reparaciones.reportes.mensual');
         Route::post('mensual', [RepairReportController::class, 'storeMonthly'])->name('reparaciones.reportes.mensual.store');
         Route::get('historial', [RepairReportController::class, 'history'])->name('reparaciones.reportes.historial');
     });
-    Route::patch('reparaciones/{reparacione}/estado', [ReparacionController::class, 'updateEstado'])->name('reparaciones.update-estado');
-    Route::post('reparaciones/{reparacione}/entregar', [ReparacionController::class, 'entregar'])->name('reparaciones.entregar');
-    Route::post('reparaciones/{reparacione}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
-    Route::post('reparaciones/{reparacione}/costos', [ReparacionCostoController::class, 'store'])->name('reparaciones.costos.store');
-    Route::put('reparaciones/{reparacione}/costos/{costo}', [ReparacionCostoController::class, 'update'])->name('reparaciones.costos.update');
-    Route::apiResource('reparaciones', ReparacionController::class)->only(['index', 'store', 'show', 'update']);
-    Route::prefix('caja')->group(function (): void {
+    Route::middleware('module:reparaciones')->group(function (): void {
+        Route::patch('reparaciones/{reparacione}/estado', [ReparacionController::class, 'updateEstado'])->name('reparaciones.update-estado');
+        Route::post('reparaciones/{reparacione}/entregar', [ReparacionController::class, 'entregar'])->name('reparaciones.entregar');
+        Route::post('reparaciones/{reparacione}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
+        Route::post('reparaciones/{reparacione}/costos', [ReparacionCostoController::class, 'store'])->name('reparaciones.costos.store');
+        Route::put('reparaciones/{reparacione}/costos/{costo}', [ReparacionCostoController::class, 'update'])->name('reparaciones.costos.update');
+        Route::apiResource('reparaciones', ReparacionController::class)->only(['index', 'store', 'show', 'update']);
+    });
+    Route::middleware('module:caja')->prefix('caja')->group(function (): void {
         Route::apiResource('movimientos', MovimientoCajaController::class)->only(['index', 'store', 'show']);
     });
 
-    Route::apiResource('bitacora', BitacoraController::class)->only(['index', 'show']);
+    Route::middleware('module:costos,caja')->prefix('costos')->group(function (): void {
+        Route::get('resumen', [CostoOperativoController::class, 'summary'])->name('costos.resumen');
+        Route::get('/', [CostoOperativoController::class, 'index'])->name('costos.index');
+        Route::post('/', [CostoOperativoController::class, 'store'])->name('costos.store');
+    });
+
+    Route::middleware('module:bitacora')->apiResource('bitacora', BitacoraController::class)->only(['index', 'show']);
 });

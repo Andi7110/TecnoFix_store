@@ -2,6 +2,55 @@ import { useEffect, useRef, useState } from "react";
 import { subscribeToGlobalLoading } from "./globalLoadingEvents";
 import "./global-interactions.css";
 
+const ghostBlocks = [
+  "top0",
+  "top1",
+  "top2",
+  "top3",
+  "top4",
+  "st0",
+  "st1",
+  "st2",
+  "st3",
+  "st4",
+  "st5",
+  "an1",
+  "an2",
+  "an3",
+  "an4",
+  "an5",
+  "an6",
+  "an7",
+  "an8",
+  "an9",
+  "an10",
+  "an11",
+  "an12",
+  "an13",
+  "an14",
+  "an15",
+  "an16",
+  "an17",
+  "an18",
+];
+
+function GhostLoader() {
+  return (
+    <div className="tf-ghost-loader" aria-hidden="true">
+      <div className="tf-ghost-loader__body">
+        <div className="tf-ghost-loader__pupil tf-ghost-loader__pupil--left" />
+        <div className="tf-ghost-loader__pupil tf-ghost-loader__pupil--right" />
+        <div className="tf-ghost-loader__eye tf-ghost-loader__eye--left" />
+        <div className="tf-ghost-loader__eye tf-ghost-loader__eye--right" />
+        {ghostBlocks.map((block) => (
+          <div key={block} className={`tf-ghost-loader__pixel tf-ghost-loader__pixel--${block}`} />
+        ))}
+      </div>
+      <div className="tf-ghost-loader__shadow" />
+    </div>
+  );
+}
+
 function GlobalLoadingOverlay({ active, message }) {
   return (
     <div
@@ -9,10 +58,10 @@ function GlobalLoadingOverlay({ active, message }) {
       role="status"
       aria-live="polite"
       aria-hidden={!active}
+      aria-label={message}
     >
       <div className="tf-global-loading__card">
-        <span className="tf-global-loading__spinner" aria-hidden="true" />
-        <span className="tf-global-loading__message">{message}</span>
+        <GhostLoader />
       </div>
     </div>
   );

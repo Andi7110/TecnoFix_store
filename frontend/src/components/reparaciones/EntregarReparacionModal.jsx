@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
-
-function toLocalDateTimeValue(date = new Date()) {
-  const timezoneOffset = date.getTimezoneOffset() * 60000;
-  return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16);
-}
+import { localDateTimeInput } from "../../utils/dateTime";
 
 function money(value) {
   return Number(value ?? 0).toFixed(2);
@@ -30,7 +26,7 @@ function EntregarReparacionModal({
   const [metodoPago, setMetodoPago] = useState("efectivo");
   const [montoTransferencia, setMontoTransferencia] = useState("");
   const [referenciaTransferencia, setReferenciaTransferencia] = useState("");
-  const [fechaMovimiento, setFechaMovimiento] = useState(toLocalDateTimeValue());
+  const [fechaMovimiento, setFechaMovimiento] = useState(localDateTimeInput());
   const [comentario, setComentario] = useState("");
   const [validationError, setValidationError] = useState("");
   const montoEfectivoNumber = Number(normalizeMoneyInput(montoRecibido) || 0);
@@ -52,7 +48,7 @@ function EntregarReparacionModal({
     setMetodoPago("efectivo");
     setMontoTransferencia("");
     setReferenciaTransferencia("");
-    setFechaMovimiento(toLocalDateTimeValue());
+    setFechaMovimiento(localDateTimeInput());
     setComentario("");
     setValidationError("");
   }, [reparacion]);

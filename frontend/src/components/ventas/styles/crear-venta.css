@@ -1,5 +1,11 @@
-/* Estilos del punto de venta y sus modales. */
+/* ==========================================================================
+   Crear venta / punto de venta
+   Este archivo controla la pantalla/modal para registrar una venta:
+   layout principal, buscador de productos, catalogo rapido, carrito,
+   resumen de pago, botones de accion y modales auxiliares.
+   ========================================================================== */
 
+/* Contenedor base del formulario de venta. */
 .venta-form {
   border: 1px solid var(--app-surface-border);
   background: rgba(255, 255, 255, 0.96);
@@ -11,12 +17,14 @@
   border-color: var(--app-surface-border);
 }
 
+/* Distribucion general: captura de productos a la izquierda y cobro a la derecha. */
 .venta-pos-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr);
   gap: 1.25rem;
 }
 
+/* Fila del metodo de pago y acceso a cuentas de transferencia. */
 .venta-form__payment-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -58,6 +66,7 @@
   gap: 1.25rem;
 }
 
+/* Encabezado con resumen rapido de la venta actual. */
 .venta-pos-hero {
   display: flex;
   justify-content: space-between;
@@ -102,6 +111,7 @@
   word-break: break-word;
 }
 
+/* Buscador principal para agregar productos por texto/codigo. */
 .venta-pos-searchbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -136,6 +146,7 @@
   margin-top: 1rem;
 }
 
+/* Catalogo de productos seleccionables dentro del punto de venta. */
 .venta-form__catalog {
   margin-top: 1rem;
   display: grid;
@@ -236,6 +247,7 @@
   margin: 0;
 }
 
+/* Sugerencias de productos frecuentes o relacionados. */
 .venta-pos-suggestions__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -293,6 +305,7 @@
   color: #922f2f;
 }
 
+/* Tarjetas de subtotal, descuento y total del carrito. */
 .venta-form__summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -300,6 +313,7 @@
   margin-top: 1.5rem;
 }
 
+/* Panel lateral de cobro: total, pago recibido, cambio y acciones finales. */
 .venta-form__summary-card {
   border-radius: 1rem;
   border: 1px solid var(--app-surface-border);
@@ -416,6 +430,7 @@
   gap: 0.75rem;
 }
 
+/* Modal que envuelve el formulario cuando se crea venta desde una ventana flotante. */
 .ventas-create-page .venta-pos-sidebar__actions .btn {
   min-height: 2.45rem;
   padding: 0.55rem 1rem;
@@ -512,6 +527,7 @@
   flex-wrap: wrap;
 }
 
+/* Modal para datos y comprobante de transferencia. */
 .venta-transfer-modal {
   position: fixed;
   inset: 0;
@@ -525,6 +541,7 @@
   animation: venta-transfer-backdrop-in 180ms ease-out;
 }
 
+/* Modal para ampliar la foto del producto desde el catalogo. */
 .venta-product-photo-modal {
   position: fixed;
   inset: 0;

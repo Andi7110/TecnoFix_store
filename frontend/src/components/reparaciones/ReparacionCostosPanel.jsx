@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { updateCostoReparacion } from "../../api/reparaciones";
+import { createCostoReparacion, updateCostoReparacion } from "../../api/reparaciones";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
+import { displayDateTime, localDateTimeInput } from "../../utils/dateTime";
 
 const COST_TYPES = [
   { value: "pieza", label: "Pieza" },
@@ -24,14 +25,7 @@ function formatCurrency(value) {
 }
 
 function formatDateTime(value) {
-  if (!value) return "-";
-  return new Intl.DateTimeFormat("es-SV", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
-}
-
-function todayDateTime() {
-  const now = new Date();
-  const offset = now.getTimezoneOffset();
-  return new Date(now.getTime() - offset * 60_000).toISOString().slice(0, 16);
+  return displayDateTime(value);
 }
 
 function normalizeCost(cost) {
@@ -39,7 +33,7 @@ function normalizeCost(cost) {
     tipo_costo: cost.tipo_costo ?? "pieza",
     descripcion: cost.descripcion ?? "",
     monto: formatMoneyInput(cost.monto ?? ""),
-    fecha_costo: cost.fecha_costo ? String(cost.fecha_costo).slice(0, 16) : todayDateTime(),
+    fecha_costo: localDateTimeInput(cost.fecha_costo),
     proveedor: cost.proveedor ?? "",
     referencia: cost.referencia ?? "",
     observacion: cost.observacion ?? "",
@@ -139,6 +133,7 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const costos = values.costos ?? [];
   const costosTotal = useMemo(() => costos.reduce((total, cost) => total + Number(cost.monto ?? 0), 0), [costos]);
@@ -183,6 +178,31 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
     }
   }
 
+  async function createRemoteCost(cost) {
+    const validationErrors = validateCost(cost);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    setMessage("");
+    setSaving(true);
+
+    try {
+      await createCostoReparacion(reparacionId, cost);
+      setIsAdding(false);
+      setMessage("Costo agregado.");
+      onCreated?.();
+    } catch (requestError) {
+      setErrors(requestError.response?.data?.errors ?? {});
+      setMessage(requestError.response?.data?.message ?? "No se pudo agregar el costo.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   const editingCost = costos.find((cost) => cost.id === editingId);
 
   const contentClassName = isCreateMode
@@ -196,9 +216,24 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
           <p className="section-kicker">Inversion</p>
           <h3>Costos de reparacion</h3>
         </div>
-        <div className="repairs-costs-card__totals">
-          <span>Invertido <strong>{formatCurrency(costosTotal)}</strong></span>
-          <span>Utilidad <strong>{formatCurrency(utilidad)}</strong></span>
+        <div className="repairs-costs-card__header-side">
+          <div className="repairs-costs-card__totals">
+            <span>Invertido <strong>{formatCurrency(costosTotal)}</strong></span>
+            <span>Utilidad <strong>{formatCurrency(utilidad)}</strong></span>
+          </div>
+          {!isCreateMode ? (
+            <button
+              type="button"
+              className="btn products-filter-actions__apply btn-sm"
+              onClick={() => {
+                setEditingId(null);
+                setErrors({});
+                setIsAdding((current) => !current);
+              }}
+            >
+              {isAdding ? "Cerrar" : "Agregar costo"}
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -234,6 +269,20 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
           submitLabel="Agregar costo"
           errors={errors}
           onSubmit={addLocalCost}
+        />
+      ) : null}
+
+      {!isCreateMode && isAdding ? (
+        <CostForm
+          key="remote-create"
+          submitLabel="Agregar costo"
+          saving={saving}
+          errors={errors}
+          onSubmit={createRemoteCost}
+          onCancel={() => {
+            setIsAdding(false);
+            setErrors({});
+          }}
         />
       ) : null}
 

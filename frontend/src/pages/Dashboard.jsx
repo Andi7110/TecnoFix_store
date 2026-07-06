@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
 import CrearMovimientoCajaModal from "../components/caja/CrearMovimientoCajaModal";
 import CrearProductoModal from "../components/productos/CrearProductoModal";
 import CrearReparacionModal from "../components/reparaciones/CrearReparacionModal";
 import CrearVentaModal from "../components/ventas/CrearVentaModal";
+import { useAuth } from "../hooks/auth/useAuth";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
-import { CashRegister, CalendarBlank, CheckCircle, DeviceMobileCamera, Package, Pulse, ShoppingCartSimple } from "../icons/phosphor";
+import { CashRegister, CalendarBlank, DeviceMobileCamera, Package, Pulse, ShoppingCartSimple } from "../icons/phosphor";
+import { canAccessModule } from "../utils/accessControl";
+import { notifySuccess } from "../utils/toasts";
 
 // Alerta que se muestra cuando el resumen del dia no reporta problemas.
 const DEFAULT_ALERT = {
@@ -17,10 +20,11 @@ const DEFAULT_ALERT = {
   tone: "success",
   ctaLabel: "Abrir dashboard",
   to: "/",
+  module: "dashboard",
 };
 
 // Convierte los datos del resumen en alertas visibles para el usuario.
-function buildAlerts(summary) {
+function buildAlerts(summary, user) {
   // Extrae los valores usados por las reglas para evitar repetir rutas largas.
   const {
     today: {
@@ -45,6 +49,7 @@ function buildAlerts(summary) {
         tone: "warning",
         ctaLabel: "Ver productos",
         to: "/productos/inventario",
+        module: "inventario",
       },
     },
     {
@@ -56,6 +61,7 @@ function buildAlerts(summary) {
         tone: "accent",
         ctaLabel: "Ver reparaciones",
         to: "/reparaciones",
+        module: "reparaciones",
       },
     },
     {
@@ -67,6 +73,7 @@ function buildAlerts(summary) {
         tone: "neutral",
         ctaLabel: "Ir a ventas",
         to: "/ventas",
+        module: "ventas",
       },
     },
     {
@@ -78,12 +85,13 @@ function buildAlerts(summary) {
         tone: "warning",
         ctaLabel: "Revisar caja",
         to: "/caja",
+        module: "caja",
       },
     },
   ];
 
   const alerts = alertRules
-    .filter(({ active }) => active)
+    .filter(({ active, alert }) => active && canAccessModule(user, alert.module))
     .map(({ alert }) => alert);
 
   // Si ninguna regla se activa, el dashboard muestra una alerta positiva.
@@ -92,7 +100,7 @@ function buildAlerts(summary) {
 
 // Boton de acceso rapido a flujos principales del sistema.
 function QuickAction({ title, description, to, tone = "default", icon, onClick }) {
-  const className = `dashboard-quick-action dashboard-quick-action--${tone} h-100`;
+  const className = `dashboard-quick-action dashboard-quick-action--${tone} card border-0 shadow-sm h-100`;
   const content = (
     <>
       <span className="dashboard-quick-action__symbol" aria-hidden="true">{icon}</span>
@@ -216,52 +224,40 @@ function Dashboard() {
   const [isCreateRepairModalOpen, setIsCreateRepairModalOpen] = useState(false);
   const [isCreateCashModalOpen, setIsCreateCashModalOpen] = useState(false);
   const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const { user } = useAuth();
   // Hook encargado de traer el resumen consolidado desde la API.
   const { summary, loading, error, reload } = useDashboardSummary();
 
   // useMemo evita recalcular alertas si el resumen no cambio.
-  const alerts = useMemo(() => buildAlerts(summary), [summary]);
+  const alerts = useMemo(() => buildAlerts(summary, user), [summary, user]);
   const generatedAt = summary.generated_at ? new Date(summary.generated_at).toLocaleString() : "-";
-
-  useEffect(() => {
-    if (!successMessage) {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => {
-      setSuccessMessage("");
-    }, 3200);
-
-    return () => window.clearTimeout(timer);
-  }, [successMessage]);
 
   function handleVentaCreated(venta) {
     reload();
-    setSuccessMessage(
+    notifySuccess(
       venta?.numero_venta
-        ? `Cobro exitoso. Venta ${venta.numero_venta} registrada.`
-        : "Cobro exitoso.",
+        ? `Venta ${venta.numero_venta} registrada exitosamente.`
+        : "Venta registrada exitosamente.",
     );
   }
 
   function handleReparacionCreated(reparacion) {
     reload();
-    setSuccessMessage(
+    notifySuccess(
       reparacion?.codigo_reparacion
-        ? `Registro exitoso. Reparacion ${reparacion.codigo_reparacion} creada.`
-        : "Registro exitoso.",
+        ? `Reparacion ${reparacion.codigo_reparacion} registrada exitosamente.`
+        : "Reparacion registrada exitosamente.",
     );
   }
 
   function handleMovimientoCajaCreated() {
     reload();
-    setSuccessMessage("Movimiento de caja registrado.");
+    notifySuccess("Movimiento de caja registrado exitosamente.");
   }
 
   function handleProductoCreated() {
     reload();
-    setSuccessMessage("Producto registrado correctamente.");
+    notifySuccess("Producto registrado correctamente.");
   }
 
   return (
@@ -270,7 +266,7 @@ function Dashboard() {
       <div className="products-page__header dashboard-page__header">
         <div>
           <p className="section-kicker">Inicio</p>
-          <h2>Dashboard operativo</h2>
+          <h2>Panel operativo</h2>
           <p className="muted-text">
             Supervisa ventas, caja, inventario y taller desde una sola vista operativa.
           </p>
@@ -301,18 +297,6 @@ function Dashboard() {
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
 
-      {successMessage ? (
-        <div className="dashboard-sale-success" role="status" aria-live="polite">
-          <CheckCircle
-            size={22}
-            weight="fill"
-            className="dashboard-sale-success__icon"
-            aria-hidden="true"
-          />
-          <span>{successMessage}</span>
-        </div>
-      ) : null}
-
       {/* Mientras carga la API, se muestra el skeleton. */}
       {loading ? (
         <DashboardLoadingSkeleton />
@@ -321,42 +305,50 @@ function Dashboard() {
           {/* Accesos directos a las acciones mas usadas. */}
           <div className="dashboard-actions-shell">
             <div className="row g-3">
-              <div className="col-12 col-sm-6 col-xl-3">
-                <QuickAction
-                  title="Ventas"
-                  description="Registrar nueva venta de productos"
-                  tone="primary"
-                  icon={<ShoppingCartSimple size={24} weight="duotone" />}
-                  onClick={() => setIsCreateSaleModalOpen(true)}
-                />
-              </div>
-              <div className="col-12 col-sm-6 col-xl-3">
-                <QuickAction
-                  title="Reparacion"
-                  description="Registrar nuevo dispositivo movil"
-                  tone="repair"
-                  icon={<DeviceMobileCamera size={24} weight="duotone" />}
-                  onClick={() => setIsCreateRepairModalOpen(true)}
-                />
-              </div>
-              <div className="col-12 col-sm-6 col-xl-3">
-                <QuickAction
-                  title="Movimientos de caja"
-                  description="Registrar entradas y salidas de caja"
-                  onClick={() => setIsCreateCashModalOpen(true)}
-                  tone="cash"
-                  icon={<CashRegister size={24} weight="duotone" />}
-                />
-              </div>
-              <div className="col-12 col-sm-6 col-xl-3">
-                <QuickAction
-                  title="Productos"
-                  description="Registrar nuevo producto"
-                  onClick={() => setIsCreateProductModalOpen(true)}
-                  tone="product"
-                  icon={<Package size={24} weight="duotone" />}
-                />
-              </div>
+              {canAccessModule(user, "ventas") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Ventas"
+                    description="Registrar nueva venta de productos"
+                    tone="primary"
+                    icon={<ShoppingCartSimple size={24} weight="duotone" />}
+                    onClick={() => setIsCreateSaleModalOpen(true)}
+                  />
+                </div>
+              ) : null}
+              {canAccessModule(user, "reparaciones") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Reparacion"
+                    description="Registrar nuevo dispositivo movil"
+                    tone="repair"
+                    icon={<DeviceMobileCamera size={24} weight="duotone" />}
+                    onClick={() => setIsCreateRepairModalOpen(true)}
+                  />
+                </div>
+              ) : null}
+              {canAccessModule(user, "caja") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Movimientos de caja"
+                    description="Registrar entradas y salidas de caja"
+                    onClick={() => setIsCreateCashModalOpen(true)}
+                    tone="cash"
+                    icon={<CashRegister size={24} weight="duotone" />}
+                  />
+                </div>
+              ) : null}
+              {canAccessModule(user, "inventario") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Productos"
+                    description="Registrar nuevo producto"
+                    onClick={() => setIsCreateProductModalOpen(true)}
+                    tone="product"
+                    icon={<Package size={24} weight="duotone" />}
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -412,6 +404,7 @@ function Dashboard() {
           onCreated={handleProductoCreated}
         />
       ) : null}
+
     </section>
   );
 }

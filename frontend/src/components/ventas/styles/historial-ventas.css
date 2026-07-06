@@ -1,54 +1,17 @@
-/* Estilos de la vista /ventas: filtros, tabla y acciones. */
+/* ==========================================================================
+   Historial de ventas
+   Este archivo controla la vista /ventas: encabezado, filtros, tabla de
+   ventas registradas, estados de carga y botones superiores.
+   ========================================================================== */
 
+/* Separacion comun entre filtros, tabla y formulario embebido. */
 .ventas-filters,
 .ventas-table-wrapper,
 .venta-form {
   margin-bottom: 1.5rem;
 }
 
-.venta-payment-success {
-  width: fit-content;
-  max-width: 100%;
-  margin: 1rem 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.75rem 0.95rem;
-  border-radius: 0.85rem;
-  border: 1px solid rgba(30, 168, 82, 0.28);
-  background: rgba(30, 168, 82, 0.1);
-  color: #14532d;
-  font-weight: 700;
-  line-height: 1.35;
-  animation: venta-payment-success-in 220ms ease-out;
-}
-
-.venta-payment-success__icon {
-  flex: 0 0 auto;
-  color: #1ea852;
-}
-
-@keyframes venta-payment-success-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-:root[data-theme="dark"] .venta-payment-success {
-  border-color: rgba(46, 160, 67, 0.36);
-  background: var(--app-wash);
-  color: var(--app-ink);
-}
-
-:root[data-theme="dark"] .venta-payment-success__icon {
-  color: var(--app-primary);
-}
-
+/* Grids base compartidos por filtros de ventas y datos del formulario. */
 .ventas-filters__grid,
 .venta-form__grid {
   display: grid;
@@ -77,6 +40,7 @@
   border-color: var(--app-surface-border);
 }
 
+/* Variante minimalista de filtros usada en el historial. */
 .ventas-filters--minimal .section-heading {
   padding-bottom: 0;
   border-bottom: 0;
@@ -126,6 +90,7 @@
   padding-inline: 0.95rem;
 }
 
+/* Contenedor visual de la tabla del historial. */
 .ventas-table-wrapper.surface-card {
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(21, 128, 61, 0.14);
@@ -205,6 +170,7 @@
   box-shadow: none;
 }
 
+/* Skeleton/loading de la tabla mientras se cargan ventas. */
 .ventas-table-wrapper--loading {
   position: relative;
 }
@@ -434,6 +400,7 @@
    sobrios y tabla transparente con encabezado distinguible.
    ========================================================================== */
 
+/* Layout final de la pagina de historial con estilo minimalista. */
 .ventas-page--minimal {
   display: flex;
   flex-direction: column;
@@ -442,15 +409,16 @@
 
 .ventas-page--minimal .ventas-page__header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.95rem;
   margin-bottom: 1.5rem;
-  padding: 1rem 1.1rem;
+  padding: 1.1rem 1.15rem;
   border: 1px solid var(--app-surface-border);
-  border-radius: 0.95rem;
-  background: transparent;
-  box-shadow: none;
+  border-radius: 0.9rem;
+  background: var(--app-surface);
+  box-shadow: var(--app-surface-shadow);
 }
 
 .ventas-page--minimal .ventas-page__header .section-kicker {
@@ -475,26 +443,24 @@
 }
 
 .ventas-page--minimal .ventas-page__header-actions {
-  width: auto;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
+  justify-content: flex-start;
+  gap: 0.7rem;
   flex: 0 1 auto;
+  padding-top: 0.1rem;
 }
 
 .ventas-page--minimal .ventas-page__header-actions--compact {
-  flex-basis: 14rem;
+  flex-basis: auto;
+  width: auto;
 }
 
 .ventas-page--minimal .ventas-page__header-actions .btn {
   min-height: 2.65rem;
-  flex: 1 1 0;
-  border-radius: 0.95rem;
-  background: transparent !important;
-  border: 1px solid rgba(30, 168, 82, 0.28) !important;
-  color: var(--app-ink) !important;
-  box-shadow: none !important;
+  flex: 0 0 auto;
+  border-radius: 0.5rem;
   transition:
     transform 220ms ease,
     background 220ms ease,
@@ -502,9 +468,7 @@
 }
 
 .ventas-page--minimal .venta-page__new-button.products-page__create-btn {
-  min-width: 13rem;
-  border-width: 2px !important;
-  border-color: rgba(30, 168, 82, 0.46) !important;
+  min-width: 12rem;
 }
 
 .ventas-page--minimal .venta-page__reports-button.products-page__inventory-btn {
@@ -518,9 +482,6 @@
 .ventas-page--minimal .ventas-page__header-actions .btn:hover,
 .ventas-page--minimal .ventas-page__header-actions .btn:focus {
   transform: translateY(-2px);
-  background: rgba(30, 168, 82, 0.045) !important;
-  border-color: #1ea852 !important;
-  color: var(--app-ink) !important;
 }
 
 .ventas-page--minimal .ventas-filters--minimal.surface-card {
@@ -612,9 +573,9 @@
 }
 
 :root[data-theme="dark"] .ventas-page--minimal .ventas-page__header {
-  border-color: rgba(255, 255, 255, 0.08);
-  background: transparent;
-  box-shadow: none;
+  border-color: var(--app-surface-border);
+  background: var(--app-surface);
+  box-shadow: var(--app-surface-shadow);
 }
 
 :root[data-theme="dark"] .ventas-page--minimal .ventas-page__header .section-kicker,
@@ -639,17 +600,12 @@
 }
 
 :root[data-theme="dark"] .ventas-page--minimal .ventas-page__header-actions .btn {
-  background: transparent !important;
-  border-color: rgba(34, 197, 94, 0.36) !important;
-  color: #eff8f3 !important;
-  box-shadow: none !important;
+  color: #ffffff !important;
 }
 
 :root[data-theme="dark"] .ventas-page--minimal .ventas-page__header-actions .btn:hover,
 :root[data-theme="dark"] .ventas-page--minimal .ventas-page__header-actions .btn:focus {
-  background: rgba(34, 197, 94, 0.08) !important;
-  border-color: #22c55e !important;
-  color: #eff8f3 !important;
+  color: #ffffff !important;
 }
 
 :root[data-theme="dark"] .ventas-page--minimal .ventas-filters--minimal.surface-card,
@@ -688,69 +644,4 @@
 :root[data-theme="dark"] .ventas-page--minimal .ventas-table__detail-button {
   border-color: rgba(255, 255, 255, 0.1) !important;
   color: #eff8f3 !important;
-}
-
-.venta-ticket-prompt__title {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  line-height: 1.1;
-}
-
-.venta-ticket-prompt__icon {
-  flex: 0 0 auto;
-  color: #15803d;
-  filter: drop-shadow(0 0 10px rgba(21, 128, 61, 0.24));
-  transform-origin: center;
-  animation:
-    venta-ticket-check-pop 520ms cubic-bezier(0.2, 0.9, 0.25, 1.2) both,
-    venta-ticket-check-glow 1.25s ease-in-out 520ms infinite;
-}
-
-.venta-ticket-prompt__question {
-  margin-left: 3rem;
-}
-
-.app-confirm-modal__actions .venta-ticket-prompt__generate {
-  border-color: #15803d !important;
-  background: #15803d !important;
-  color: #ffffff !important;
-  box-shadow: none !important;
-}
-
-.app-confirm-modal__actions .venta-ticket-prompt__generate:hover,
-.app-confirm-modal__actions .venta-ticket-prompt__generate:focus {
-  border-color: #116b32 !important;
-  background: #116b32 !important;
-  color: #ffffff !important;
-}
-
-@keyframes venta-ticket-check-pop {
-  0% {
-    opacity: 0;
-    transform: translateY(5px) scale(0.35) rotate(-18deg);
-  }
-  58% {
-    opacity: 1;
-    transform: translateY(-2px) scale(1.18) rotate(7deg);
-  }
-  78% {
-    transform: translateY(0) scale(0.94) rotate(-3deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(-1px) scale(1) rotate(0);
-  }
-}
-
-@keyframes venta-ticket-check-glow {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 8px rgba(21, 128, 61, 0.22));
-    transform: translateY(-1px) scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 15px rgba(21, 128, 61, 0.42));
-    transform: translateY(-1px) scale(1.05);
-  }
 }

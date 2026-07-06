@@ -1,62 +1,21 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { listProductos } from "../../api/productos";
 
 export function useProductosList(filters) {
-  const [productos, setProductos] = useState([]);
-  const [meta, setMeta] = useState(null);
-  const [links, setLinks] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [reloadToken, setReloadToken] = useState(0);
+  const query = useQuery({
+    queryKey: ["productos", filters],
+    queryFn: () => listProductos(filters),
+  });
 
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadProductos() {
-      setLoading(true);
-      setError("");
-
-      try {
-        const response = await listProductos(filters);
-
-        if (ignore) {
-          return;
-        }
-
-        setProductos(response.data ?? []);
-        setMeta(response.meta ?? null);
-        setLinks(response.links ?? null);
-      } catch (error) {
-        if (ignore) {
-          return;
-        }
-
-        const apiMessage = error?.response?.data?.message;
-        setError(apiMessage || "No se pudieron cargar los productos.");
-      } finally {
-        if (!ignore) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadProductos();
-
-    return () => {
-      ignore = true;
-    };
-  }, [filters, reloadToken]);
-
-  function reload() {
-    setReloadToken((current) => current + 1);
-  }
+  const apiMessage = query.error?.response?.data?.message;
+  const response = query.data ?? {};
 
   return {
-    productos,
-    meta,
-    links,
-    loading,
-    error,
-    reload,
+    productos: response.data ?? [],
+    meta: response.meta ?? null,
+    links: response.links ?? null,
+    loading: query.isLoading || query.isFetching,
+    error: query.isError ? apiMessage || "No se pudieron cargar los productos." : "",
+    reload: query.refetch,
   };
 }

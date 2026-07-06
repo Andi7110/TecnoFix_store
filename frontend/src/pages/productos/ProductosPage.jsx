@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Printer } from "../../icons/phosphor";
+import AgregarStockModal from "../../components/productos/AgregarStockModal";
 import CrearProductoModal from "../../components/productos/CrearProductoModal";
 import EditarProductoModal from "../../components/productos/EditarProductoModal";
 import ProductBarcodeModal from "../../components/productos/ProductBarcodeModal";
 import ProductosTable from "../../components/productos/ProductosTable";
 import { useProductosFilters } from "../../hooks/productos/useProductosFilters";
 import { useProductosList } from "../../hooks/productos/useProductosList";
+import { notifySuccess } from "../../utils/toasts";
 
 const STOCK_ALERT_STORAGE_KEY = "tecnofix.products.stockAlertSeen";
 
@@ -40,12 +42,12 @@ function ProductosPage() {
     [productos],
   );
   const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [isProductsAlertDismissed, setIsProductsAlertDismissed] = useState(
     () => window.localStorage.getItem(STOCK_ALERT_STORAGE_KEY) === "true",
   );
   const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
   const [detailProductId, setDetailProductId] = useState(null);
+  const [stockProduct, setStockProduct] = useState(null);
 
   useEffect(() => {
     if (productosCriticos.length === 0 || isProductsAlertDismissed) {
@@ -55,24 +57,23 @@ function ProductosPage() {
     window.localStorage.setItem(STOCK_ALERT_STORAGE_KEY, "true");
   }, [isProductsAlertDismissed, productosCriticos.length]);
 
-  useEffect(() => {
-    if (!successMessage) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => setSuccessMessage(""), 3200);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [successMessage]);
-
   function handleProductoCreated() {
     reload();
-    setSuccessMessage("Producto registrado correctamente.");
+    notifySuccess("Producto registrado correctamente.");
   }
 
   function handleProductoUpdated() {
     reload();
-    setSuccessMessage("Producto actualizado correctamente.");
+    notifySuccess("Producto actualizado correctamente.");
+  }
+
+  function handleStockUpdated(movimiento) {
+    reload();
+    notifySuccess(
+      movimiento?.producto?.nombre
+        ? `Stock agregado a ${movimiento.producto.nombre}.`
+        : "Stock agregado correctamente.",
+    );
   }
 
   return (
@@ -94,7 +95,7 @@ function ProductosPage() {
             disabled={productos.length === 0}
           >
             <Printer size={18} weight="bold" aria-hidden="true" />
-            <span>Imprimir codigos</span>
+            <span>Codigos de barra</span>
           </button>
           <Link to="/productos/inventario" className="btn products-page__inventory-btn">
             Inventario
@@ -132,11 +133,6 @@ function ProductosPage() {
       ) : null}
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
-      {successMessage ? (
-        <div className="cash-create-success" role="status" aria-live="polite">
-          {successMessage}
-        </div>
-      ) : null}
 
       <div className="row g-3">
         <div className="col-12">
@@ -177,6 +173,7 @@ function ProductosPage() {
               productos={productosAgotados}
               loading={loading}
               onDetalleClick={(producto) => setDetailProductId(producto.id)}
+              onAgregarStockClick={(producto) => setStockProduct(producto)}
             />
           </div>
         </div>
@@ -200,6 +197,14 @@ function ProductosPage() {
           productoId={detailProductId}
           onClose={() => setDetailProductId(null)}
           onUpdated={handleProductoUpdated}
+        />
+      ) : null}
+
+      {stockProduct ? (
+        <AgregarStockModal
+          producto={stockProduct}
+          onClose={() => setStockProduct(null)}
+          onUpdated={handleStockUpdated}
         />
       ) : null}
     </section>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trash } from "../../icons/phosphor";
+import { MagnifyingGlassPlus, Trash, WarningCircle } from "../../icons/phosphor";
 import ProductosPagination from "./ProductosPagination";
 
 function formatCurrency(value) {
@@ -133,12 +133,16 @@ function InventarioProductosTable({
               className="inventory-photo-button"
               onClick={() => openPhoto(registro)}
               title="Ver foto"
+              aria-label={`Ver foto de ${registro.nombre}`}
             >
               <img
                 src={registro.foto_url}
                 alt={registro.nombre}
                 className="inventory-photo"
               />
+              <span className="inventory-photo-button__hint" aria-hidden="true">
+                <MagnifyingGlassPlus size={14} weight="bold" />
+              </span>
             </button>
           ) : (
             <span className="muted-text">Sin foto</span>
@@ -173,15 +177,17 @@ function InventarioProductosTable({
           <div className="products-table__actions">
             <button
               type="button"
-              className="btn btn-success btn-sm"
+              className="table-detail-icon-btn"
               onClick={() => onDetalleClick?.(registro)}
+              title="Ver detalle"
+              aria-label={`Ver detalle de ${registro.nombre}`}
             >
-              Detalle
+              <WarningCircle size={18} weight="bold" aria-hidden="true" />
             </button>
             {canDeleteProducts ? (
               <button
                 type="button"
-                className="btn btn-sm inventory-product-delete-btn"
+                className="btn btn-sm inventory-product-delete-btn table-delete-icon-btn"
                 onClick={() => onProductoDelete?.(registro)}
                 disabled={!registro.estado || Number(deletingProductoId) === Number(registro.producto_id ?? registro.id)}
                 title={registro.estado ? "Eliminar producto" : "Producto inactivo"}

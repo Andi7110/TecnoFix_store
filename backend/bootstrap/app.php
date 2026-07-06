@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
+use App\Http\Middleware\EnsureUserCanAccessModule;
 use App\Http\Middleware\RegisterBitacoraMovement;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -16,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
+        $middleware->alias([
+            'module' => EnsureUserCanAccessModule::class,
+        ]);
         $middleware->appendToGroup('api', RegisterBitacoraMovement::class);
         $middleware->redirectGuestsTo(function (Request $request): ?string {
             if ($request->expectsJson() || $request->is('api/*')) {

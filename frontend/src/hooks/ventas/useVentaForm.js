@@ -8,6 +8,7 @@ import {
 } from "../../api/ventas";
 import { listProductos } from "../../api/productos";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
+import { notifyError } from "../../utils/toasts";
 
 const TICKET_CONFIG_KEY = "tecnofix-pos-ticket-config";
 
@@ -727,10 +728,10 @@ export function useVentaForm({ onSuccess }) {
         setErrors(validationErrors);
       }
 
-      setErrorMessage(
-        requestError?.response?.data?.message
-          || "No se pudo registrar la venta.",
-      );
+      const message = requestError?.response?.data?.message
+        || "No se pudo registrar la venta.";
+      setErrorMessage(message);
+      notifyError(message);
     } finally {
       setSaving(false);
     }

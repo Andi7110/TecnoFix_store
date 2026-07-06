@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Plus, Printer } from "../../icons/phosphor";
 import CrearProductoModal from "../../components/productos/CrearProductoModal";
 import EditarProductoModal from "../../components/productos/EditarProductoModal";
@@ -7,6 +7,8 @@ import InventarioProductosTable from "../../components/productos/InventarioProdu
 import { deleteProducto } from "../../api/productos";
 import { useAuth } from "../../hooks/auth/useAuth";
 import { useInventarioProductosList } from "../../hooks/productos/useInventarioProductosList";
+import { confirmDanger } from "../../utils/alerts";
+import { notifyError, notifySuccess } from "../../utils/toasts";
 
 const initialSectionFilters = {
   nombre: "",
@@ -26,10 +28,8 @@ function InventarioProductosPage() {
   const [libreriaDraftFilters, setLibreriaDraftFilters] = useState(initialSectionFilters);
   const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
   const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [deletingProductoId, setDeletingProductoId] = useState(null);
-  const [pendingDeleteProduct, setPendingDeleteProduct] = useState(null);
   const [detailProductId, setDetailProductId] = useState(null);
 
   const accesoriosQuery = useMemo(
@@ -80,29 +80,21 @@ function InventarioProductosPage() {
     return Array.from(productosMap.values());
   }, [accesoriosListado.registros, libreriaListado.registros]);
 
-  useEffect(() => {
-    if (!successMessage) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => setSuccessMessage(""), 3200);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [successMessage]);
-
   function handleProductoCreated() {
     accesoriosListado.reload();
     libreriaListado.reload();
-    setSuccessMessage("Producto registrado correctamente.");
+    const message = "Producto registrado correctamente.";
+    notifySuccess(message);
   }
 
   function handleProductoUpdated() {
     accesoriosListado.reload();
     libreriaListado.reload();
-    setSuccessMessage("Producto actualizado correctamente.");
+    const message = "Producto actualizado correctamente.";
+    notifySuccess(message);
   }
 
-  function handleProductoDelete(registro) {
+  async function handleProductoDelete(registro) {
     const productoId = registro?.producto_id ?? registro?.id;
 
     if (!productoId || Number(registro?.estado) === 0) {
@@ -110,19 +102,19 @@ function InventarioProductosPage() {
     }
 
     if (!canDeleteProducts) {
-      setDeleteError("Solo un usuario administrador puede eliminar productos del inventario.");
+      const message = "Solo un usuario administrador puede eliminar productos del inventario.";
+      setDeleteError(message);
+      notifyError(message);
       return;
     }
 
-    setPendingDeleteProduct(registro);
-  }
+    const confirmed = await confirmDanger({
+      title: "Eliminar producto",
+      text: `Estas seguro que quieres eliminar ${registro?.nombre ?? "este producto"}?`,
+      confirmButtonText: "Eliminar",
+    });
 
-  async function confirmProductoDelete() {
-    const registro = pendingDeleteProduct;
-    const productoId = registro?.producto_id ?? registro?.id;
-
-    if (!productoId) {
-      setPendingDeleteProduct(null);
+    if (!confirmed) {
       return;
     }
 
@@ -133,11 +125,13 @@ function InventarioProductosPage() {
       await deleteProducto(productoId);
       accesoriosListado.reload();
       libreriaListado.reload();
-      setSuccessMessage("Producto eliminado del inventario correctamente.");
-      setPendingDeleteProduct(null);
+      const message = "Producto eliminado del inventario correctamente.";
+      notifySuccess(message);
     } catch (error) {
       const apiMessage = error?.response?.data?.message;
-      setDeleteError(apiMessage || "No se pudo eliminar el producto del inventario.");
+      const message = apiMessage || "No se pudo eliminar el producto del inventario.";
+      setDeleteError(message);
+      notifyError(message);
     } finally {
       setDeletingProductoId(null);
     }
@@ -165,8 +159,8 @@ function InventarioProductosPage() {
     <section className="products-page inventory-products-page products-page--minimal">
       <div className="products-page__header products-page__header--minimal">
         <div>
-          <p className="section-kicker">Inventario</p>
-          <h2>Submodulo inventario</h2>
+          <p className="section-kicker">Productos</p>
+          <h2>Inventario</h2>
           <p className="muted-text">
             Tabla con los productos registrados desde el modulo Productos.
           </p>
@@ -180,7 +174,7 @@ function InventarioProductosPage() {
             disabled={printableProductos.length === 0}
           >
             <Printer size={18} weight="bold" aria-hidden="true" />
-            <span>Imprimir codigos</span>
+            <span>   Codigos de barra</span>
           </button>
           <button
             type="button"
@@ -198,12 +192,6 @@ function InventarioProductosPage() {
       {accesoriosListado.error ? <div className="alert alert-danger">{accesoriosListado.error}</div> : null}
       {libreriaListado.error ? <div className="alert alert-danger">{libreriaListado.error}</div> : null}
       {deleteError ? <div className="alert alert-danger">{deleteError}</div> : null}
-      {successMessage ? (
-        <div className="cash-create-success" role="status" aria-live="polite">
-          {successMessage}
-        </div>
-      ) : null}
-
       <InventarioProductosTable
         accesoriosRegistros={accesoriosListado.registros}
         accesoriosLoading={accesoriosListado.loading}
@@ -266,45 +254,6 @@ function InventarioProductosPage() {
         />
       ) : null}
 
-      {pendingDeleteProduct ? (
-        <div
-          className="app-confirm-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Confirmar eliminacion de producto"
-          onClick={() => {
-            if (!deletingProductoId) {
-              setPendingDeleteProduct(null);
-            }
-          }}
-        >
-          <div
-            className="app-confirm-modal__card"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h3>Eliminar producto</h3>
-            <p className="muted-text mb-3">Estas seguro que quieres eliminar este producto?</p>
-            <div className="app-confirm-modal__actions">
-              <button
-                type="button"
-                className="btn btn-light"
-                onClick={() => setPendingDeleteProduct(null)}
-                disabled={Boolean(deletingProductoId)}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={confirmProductoDelete}
-                disabled={Boolean(deletingProductoId)}
-              >
-                {deletingProductoId ? "Eliminando..." : "Aceptar"}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </section>
   );
 }

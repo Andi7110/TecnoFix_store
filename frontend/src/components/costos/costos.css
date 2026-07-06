@@ -1,0 +1,165 @@
+.costs-page {
+  gap: 1rem;
+}
+
+.costs-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.costs-summary-card {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 8.25rem;
+  padding: 1rem;
+}
+
+.costs-summary-card__icon {
+  width: 2.15rem;
+  height: 2.15rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 0.55rem;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+}
+
+.costs-summary-card h3,
+.costs-breakdown h3,
+.costs-form h3 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--app-ink);
+}
+
+.costs-summary-card--positive h3 {
+  color: #15803d;
+}
+
+.costs-summary-card--negative h3 {
+  color: #dc2626;
+}
+
+.costs-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.8fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.costs-form,
+.costs-breakdown,
+.costs-filters,
+.costs-table-shell {
+  padding: 1rem;
+}
+
+.costs-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.costs-form__grid,
+.costs-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  align-items: end;
+}
+
+.costs-form__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--app-muted);
+  font-size: 0.92rem;
+}
+
+.costs-form__check input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.costs-breakdown {
+  align-self: start;
+  display: grid;
+  gap: 1rem;
+}
+
+.costs-breakdown__list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.costs-breakdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--app-surface-border);
+  color: var(--app-muted);
+}
+
+.costs-breakdown__item strong {
+  color: var(--app-ink);
+  font-weight: 600;
+}
+
+.costs-filters {
+  margin-bottom: 1rem;
+}
+
+.costs-filters__actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.costs-table {
+  margin: 0;
+}
+
+.costs-table th {
+  color: #047857;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+:root[data-theme="dark"] .costs-summary-card__icon {
+  background: rgba(96, 165, 250, 0.14);
+  color: #93c5fd;
+}
+
+:root[data-theme="dark"] .costs-summary-card--positive h3 {
+  color: #4ade80;
+}
+
+:root[data-theme="dark"] .costs-summary-card--negative h3 {
+  color: #f87171;
+}
+
+@media (max-width: 1100px) {
+  .costs-summary-grid,
+  .costs-layout,
+  .costs-form__grid,
+  .costs-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .costs-summary-grid,
+  .costs-layout,
+  .costs-form__grid,
+  .costs-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .costs-filters__actions {
+    flex-direction: column;
+  }
+}

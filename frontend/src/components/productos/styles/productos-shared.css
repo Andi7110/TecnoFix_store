@@ -96,6 +96,73 @@
   font-weight: 700;
 }
 
+.products-pagination .btn {
+  min-width: 0 !important;
+  min-height: 2.15rem !important;
+  padding: 0.42rem 0.7rem !important;
+  border-radius: 7px !important;
+  background: #1e293b !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12) !important;
+}
+
+.products-pagination .btn:hover,
+.products-pagination .btn:focus {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.products-pagination .btn.btn-success {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.products-pagination .btn:disabled,
+.products-pagination .btn[aria-disabled="true"] {
+  background: #e5e7eb !important;
+  border-color: #cbd5e1 !important;
+  color: #64748b !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.products-pagination__pages .btn {
+  width: 2.15rem !important;
+  padding-inline: 0 !important;
+}
+
+:root[data-theme="dark"] .products-pagination .btn {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+  color: #f8fafc !important;
+}
+
+:root[data-theme="dark"] .products-pagination .btn:hover,
+:root[data-theme="dark"] .products-pagination .btn:focus {
+  background: #1f2937 !important;
+  border-color: #475569 !important;
+}
+
+:root[data-theme="dark"] .products-pagination .btn.btn-success {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+:root[data-theme="dark"] .products-pagination .btn:disabled,
+:root[data-theme="dark"] .products-pagination .btn[aria-disabled="true"] {
+  background: #30363d !important;
+  border-color: #30363d !important;
+  color: #8b949e !important;
+}
+
 /* Estado vacio reutilizado cuando no hay registros. */
 .empty-state {
   margin: 0;

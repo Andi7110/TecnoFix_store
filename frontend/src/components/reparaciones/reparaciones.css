@@ -1777,3 +1777,772 @@
     flex-direction: column;
   }
 }
+
+/* Costos posteriores de reparacion. */
+.repairs-costs-card__header-side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.repairs-table__action-btn--cost {
+  border-color: rgba(21, 128, 61, 0.34) !important;
+  color: #15803d !important;
+}
+
+.repairs-table__action-btn--cost:hover,
+.repairs-table__action-btn--cost:focus {
+  background: rgba(21, 128, 61, 0.08) !important;
+  border-color: #15803d !important;
+  color: #15803d !important;
+}
+
+.repair-cost-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1510;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(9, 8, 16, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.repair-cost-modal__content {
+  width: min(48rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1.25rem;
+  border: 1px solid rgba(15, 20, 18, 0.12);
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(24, 12, 40, 0.28);
+}
+
+.repair-cost-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.repair-cost-modal__header h3 {
+  margin: 0 0 0.25rem;
+  color: var(--app-ink);
+}
+
+.repair-cost-modal .repairs-costs-card {
+  margin-bottom: 0;
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .repairs-table__action-btn--cost {
+  border-color: rgba(57, 255, 122, 0.32) !important;
+  color: #39ff7a !important;
+}
+
+:root[data-theme="dark"] .repairs-table__action-btn--cost:hover,
+:root[data-theme="dark"] .repairs-table__action-btn--cost:focus {
+  background: rgba(57, 255, 122, 0.1) !important;
+  border-color: #39ff7a !important;
+  color: #39ff7a !important;
+}
+
+:root[data-theme="dark"] .repair-cost-modal__content {
+  background: #0d1117;
+  border-color: rgba(57, 255, 122, 0.2);
+  color: #eff8f3;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(57, 255, 122, 0.08);
+}
+
+:root[data-theme="dark"] .repair-cost-modal__header h3 {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .repair-cost-modal .muted-text {
+  color: #aabdb5 !important;
+}
+
+/* Reportes de reparaciones: lectura compacta y tablas tipo inventario. */
+.repairs-reportes-page .ventas-report-center--simple {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.repairs-reportes-page .ventas-report-simple__tabs-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.repairs-reportes-page .ventas-report-tabs--simple {
+  width: fit-content;
+  padding: 0.25rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.85rem;
+  background: transparent;
+}
+
+.repairs-reportes-page .ventas-report-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  padding: 1rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.95rem;
+  background: transparent;
+}
+
+.repairs-reportes-page .ventas-report-simple__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--app-surface-border);
+}
+
+.repairs-reportes-page .ventas-report-simple__header h3,
+.repairs-reportes-page .ventas-report-table-title h4 {
+  margin: 0;
+  color: var(--app-ink);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.repairs-reportes-page .ventas-report-simple__filters {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.55fr) minmax(220px, 0.8fr) minmax(330px, auto);
+  gap: 0.8rem;
+  align-items: end;
+}
+
+.repairs-reportes-page .ventas-report-simple__filters--three {
+  grid-template-columns: minmax(150px, 0.45fr) minmax(120px, 0.35fr) minmax(220px, 0.75fr) minmax(330px, auto);
+}
+
+.repairs-reportes-page .ventas-report-simple__filters .form-label {
+  margin-bottom: 0.35rem;
+  color: var(--app-ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.repairs-reportes-page .ventas-report-simple__filters .form-control,
+.repairs-reportes-page .ventas-report-simple__filters .form-select {
+  min-height: 2.55rem;
+  border-radius: 0.75rem;
+  background: var(--app-field-bg);
+  border-color: rgba(21, 128, 61, 0.16);
+}
+
+.repairs-reportes-page .ventas-report-simple__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.repairs-reportes-page .ventas-report-simple__actions .btn {
+  min-width: 112px;
+  min-height: 2.55rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+}
+
+.repairs-reportes-page .ventas-report-simple__workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.2rem;
+}
+
+.repairs-reportes-page .ventas-report-simple__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.85rem;
+  background: rgba(21, 128, 61, 0.035);
+  color: var(--app-muted);
+  font-size: 0.88rem;
+}
+
+.repairs-reportes-page .ventas-report-simple__meta strong {
+  color: var(--app-ink);
+}
+
+.repairs-reportes-page .ventas-report-table-shell--simple {
+  overflow: hidden;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.95rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.repairs-reportes-page .ventas-report-table-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--app-surface-border);
+}
+
+.repairs-reportes-page .ventas-report-table-title span {
+  color: var(--app-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.repairs-reportes-page .ventas-report-simple__table {
+  margin-bottom: 0;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--app-ink);
+  --bs-table-border-color: var(--app-surface-border);
+  --bs-table-hover-color: var(--app-ink);
+  --bs-table-hover-bg: var(--app-table-row-hover);
+}
+
+.repairs-reportes-page .ventas-report-simple__table thead th {
+  background:
+    linear-gradient(180deg, rgba(30, 168, 82, 0.12), rgba(30, 168, 82, 0.045));
+  color: #14532d !important;
+  border-color: var(--app-surface-border);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.repairs-reportes-page .ventas-report-simple__table tbody td {
+  background: transparent;
+  border-color: var(--app-surface-border);
+  color: var(--app-ink);
+  vertical-align: middle;
+}
+
+.repairs-reportes-page .ventas-report-simple__two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.repairs-reportes-page .ventas-report-simple__loading {
+  padding: 1rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.85rem;
+  color: var(--app-muted);
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-table-shell--simple,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-tabs--simple,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__meta,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__loading {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__header,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-table-title {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__header h3,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-table-title h4,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__meta strong,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__table tbody td {
+  color: #eff8f3 !important;
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__meta,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__loading,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-table-title span {
+  color: #aabdb5;
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__meta {
+  background: rgba(57, 255, 122, 0.04);
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__filters .form-control,
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__filters .form-select {
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #eff8f3;
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #eff8f3;
+  --bs-table-border-color: rgba(255, 255, 255, 0.08);
+  --bs-table-hover-bg: rgba(139, 148, 158, 0.08);
+}
+
+:root[data-theme="dark"] .repairs-reportes-page .ventas-report-simple__table thead th {
+  background:
+    linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.06));
+  color: #bbf7d0 !important;
+}
+
+.report-preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1540;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(9, 8, 16, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.report-preview-modal__content {
+  width: min(72rem, calc(100vw - 2rem));
+  height: min(46rem, calc(100vh - 2rem));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(24, 12, 40, 0.3);
+}
+
+.report-preview-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--app-surface-border);
+}
+
+.report-preview-modal__header h3 {
+  margin: 0;
+  color: var(--app-ink);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.report-preview-modal__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.report-preview-modal__actions .btn {
+  min-height: 2.35rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+}
+
+.report-preview-modal__frame-shell {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 1rem;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.035), rgba(15, 23, 42, 0.02));
+}
+
+.report-preview-modal__frame {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 0.85rem;
+  background: #ffffff;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16);
+}
+
+.report-preview-modal__frame--ticket {
+  display: block;
+  width: min(28rem, 100%);
+  margin: 0 auto;
+}
+
+:root[data-theme="dark"] .report-preview-modal__content {
+  background: #0d1117;
+  border-color: rgba(57, 255, 122, 0.2);
+  color: #eff8f3;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(57, 255, 122, 0.08);
+}
+
+:root[data-theme="dark"] .report-preview-modal__header {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .report-preview-modal__header h3 {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .report-preview-modal__frame-shell {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .report-preview-modal__frame {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 1100px) {
+  .repairs-reportes-page .ventas-report-simple__filters,
+  .repairs-reportes-page .ventas-report-simple__filters--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .repairs-reportes-page .ventas-report-simple__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .repairs-reportes-page .ventas-report-simple__filters,
+  .repairs-reportes-page .ventas-report-simple__filters--three,
+  .repairs-reportes-page .ventas-report-simple__two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .repairs-reportes-page .ventas-report-simple__actions {
+    flex-wrap: wrap;
+  }
+
+  .repairs-reportes-page .ventas-report-simple__actions .btn {
+    flex: 1 1 130px;
+  }
+
+  .repairs-reportes-page .ventas-report-table-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .report-preview-modal__header {
+    flex-direction: column;
+  }
+
+  .report-preview-modal__actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .repair-cost-modal__header,
+  .repairs-costs-card__header-side {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Modal de detalle y edicion de reparacion. */
+.repair-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1505;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(9, 8, 16, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.repair-detail-modal__content {
+  width: min(88rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 0;
+  border: 1px solid rgba(15, 20, 18, 0.12);
+  border-radius: 1.15rem;
+  background:
+    linear-gradient(180deg, rgba(21, 128, 61, 0.045), transparent 15rem),
+    #ffffff;
+  box-shadow: 0 24px 60px rgba(24, 12, 40, 0.28);
+}
+
+.repair-detail-modal__header {
+  display: grid;
+  gap: 0.95rem;
+  padding: 1.15rem 1.15rem 1rem;
+  border-bottom: 1px solid rgba(15, 20, 18, 0.08);
+}
+
+.repair-detail-modal__eyebrow,
+.repair-detail-modal__headline,
+.repair-detail-modal__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.repair-detail-modal__eyebrow {
+  justify-content: flex-start;
+  color: var(--app-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.repair-detail-modal__status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.7rem;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid rgba(21, 128, 61, 0.22);
+  border-radius: 999px;
+  color: #14532d;
+  background: rgba(21, 128, 61, 0.1);
+}
+
+.repair-detail-modal__headline {
+  align-items: flex-start;
+}
+
+.repair-detail-modal__header h3 {
+  margin: 0 0 0.25rem;
+  color: var(--app-ink);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  letter-spacing: 0;
+}
+
+.repair-detail-modal__header .section-kicker {
+  margin-bottom: 0.25rem;
+}
+
+.repair-detail-modal__header .muted-text {
+  margin: 0;
+}
+
+.repair-detail-modal__header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.repair-detail-modal__header-actions .btn {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.72rem;
+  font-size: 0.84rem;
+}
+
+.repair-detail-modal__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.repair-detail-modal__summary div {
+  min-width: 0;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid rgba(21, 128, 61, 0.12);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.repair-detail-modal__summary span {
+  display: block;
+  color: var(--app-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.repair-detail-modal__summary strong {
+  display: block;
+  margin-top: 0.22rem;
+  color: var(--app-ink);
+  font-size: 0.95rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.repair-detail-modal__notice {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(251, 191, 36, 0.22);
+  border-radius: 0.85rem;
+  color: #854d0e;
+  background: rgba(251, 191, 36, 0.1);
+  font-size: 0.88rem;
+}
+
+.repair-detail-modal__layout {
+  grid-template-columns: minmax(0, 1.55fr) minmax(20rem, 0.75fr);
+  gap: 1rem;
+  align-items: start;
+  margin: 0;
+  padding: 1rem;
+}
+
+.repair-detail-modal__main,
+.repair-detail-modal__aside {
+  min-width: 0;
+}
+
+.repair-detail-modal__aside {
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.repair-detail-modal .repair-form,
+.repair-detail-modal .repairs-costs-card,
+.repair-detail-modal .repairs-history-card {
+  border: 1px solid rgba(15, 20, 18, 0.08);
+  border-radius: 0.95rem;
+  box-shadow: none;
+}
+
+.repair-detail-modal .repair-form {
+  padding: 1rem;
+}
+
+.repair-detail-modal .repair-form > .section-heading {
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(15, 20, 18, 0.08);
+}
+
+.repair-detail-modal .repair-form .row {
+  --bs-gutter-x: 0.85rem;
+  --bs-gutter-y: 0.85rem;
+}
+
+.repair-detail-modal .repair-form .input-group {
+  flex-wrap: nowrap;
+}
+
+.repair-detail-modal .repair-form .input-group > .input-group-text {
+  border-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.repair-detail-modal .repair-form .input-group > .form-control,
+.repair-detail-modal .repair-form .input-group > .form-select {
+  margin-left: 0;
+  border-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.repair-detail-modal .repair-form .input-group > .input-group-text + .form-control,
+.repair-detail-modal .repair-form .input-group > .input-group-text + .form-select {
+  border-left: 1px solid transparent;
+}
+
+.repair-detail-modal .repair-form .input-group:focus-within > .input-group-text {
+  border-color: var(--app-primary);
+}
+
+.repair-detail-modal .repair-form .input-group:focus-within > .form-control,
+.repair-detail-modal .repair-form .input-group:focus-within > .form-select {
+  border-color: var(--app-primary);
+}
+
+:root[data-theme="dark"] .repair-detail-modal__content {
+  background:
+    linear-gradient(180deg, rgba(57, 255, 122, 0.055), transparent 15rem),
+    #0d1117;
+  border-color: rgba(57, 255, 122, 0.2);
+  color: #eff8f3;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(57, 255, 122, 0.08);
+}
+
+:root[data-theme="dark"] .repair-detail-modal__header h3 {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .repair-detail-modal__header {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .repair-detail-modal .muted-text {
+  color: #aabdb5 !important;
+}
+
+:root[data-theme="dark"] .repair-detail-modal__status {
+  border-color: rgba(57, 255, 122, 0.24);
+  color: #bbf7d0;
+  background: rgba(57, 255, 122, 0.1);
+}
+
+:root[data-theme="dark"] .repair-detail-modal__summary div,
+:root[data-theme="dark"] .repair-detail-modal .repair-form,
+:root[data-theme="dark"] .repair-detail-modal .repairs-costs-card,
+:root[data-theme="dark"] .repair-detail-modal .repairs-history-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(13, 17, 23, 0.72);
+}
+
+:root[data-theme="dark"] .repair-detail-modal__summary span {
+  color: #aabdb5;
+}
+
+:root[data-theme="dark"] .repair-detail-modal__summary strong {
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .repair-detail-modal__notice {
+  border-color: rgba(251, 191, 36, 0.24);
+  color: #fde68a;
+  background: rgba(251, 191, 36, 0.1);
+}
+
+:root[data-theme="dark"] .repair-detail-modal .repair-form > .section-heading {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .repair-detail-modal .repair-form .input-group > .input-group-text + .form-control,
+:root[data-theme="dark"] .repair-detail-modal .repair-form .input-group > .input-group-text + .form-select {
+  border-left-color: transparent;
+}
+
+:root[data-theme="dark"] .repair-detail-modal .repair-form .input-group:focus-within > .input-group-text,
+:root[data-theme="dark"] .repair-detail-modal .repair-form .input-group:focus-within > .form-control,
+:root[data-theme="dark"] .repair-detail-modal .repair-form .input-group:focus-within > .form-select {
+  border-color: #39ff7a;
+}
+
+@media (max-width: 1180px) {
+  .repair-detail-modal__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .repair-detail-modal__headline,
+  .repair-detail-modal__header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .repair-detail-modal__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .repair-detail-modal__header-actions .btn {
+    width: 100%;
+  }
+}
