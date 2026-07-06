@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { getDashboardSummary } from "../../api/dashboard";
+import { notifyError } from "../../utils/toasts";
 
 const initialSummary = {
   today: {
     total_vendido: 0,
     total_entradas: 0,
     total_salidas: 0,
+    costo_ventas: 0,
+    utilidad_bruta: 0,
+    costos_operativos: 0,
+    utilidad_neta: 0,
+    margen_neto_porcentaje: 0,
     productos_stock_bajo: 0,
     reparaciones_pendientes: 0,
   },
@@ -46,7 +52,9 @@ export function useDashboardSummary() {
         }
       } catch {
         if (!ignore) {
-          setError("No se pudo cargar el resumen del dashboard.");
+          const message = "No se pudo cargar el resumen del dashboard.";
+          setError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {

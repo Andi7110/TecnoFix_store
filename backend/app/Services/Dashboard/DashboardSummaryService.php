@@ -21,6 +21,15 @@ class DashboardSummaryService
             ->whereBetween('fecha_venta', [$yesterdayStart, $yesterdayEnd])
             ->sum('total');
 
+        $detalleVentasHoy = DB::table('detalle_ventas as dv')
+            ->join('ventas as v', 'v.id', '=', 'dv.venta_id')
+            ->selectRaw('
+                COALESCE(SUM(dv.costo_unitario * dv.cantidad), 0) as costo_ventas,
+                COALESCE(SUM(dv.ganancia_item), 0) as utilidad_bruta
+            ')
+            ->whereBetween('v.fecha_venta', [$todayStart, $todayEnd])
+            ->first();
+
         $movimientosHoy = DB::table('movimientos_caja')
             ->selectRaw("
                 SUM(CASE WHEN tipo_movimiento = 'entrada' THEN monto ELSE 0 END) as total_entradas,
@@ -36,6 +45,10 @@ class DashboardSummaryService
             ")
             ->whereBetween('fecha_movimiento', [$yesterdayStart, $yesterdayEnd])
             ->first();
+
+        $costosOperativosHoy = (float) DB::table('costos_operativos')
+            ->whereBetween('fecha_costo', [$todayStart->toDateString(), $todayEnd->toDateString()])
+            ->sum('monto');
 
         $productosStockBajo = (int) DB::table('productos')
             ->where('estado', true)
@@ -77,6 +90,10 @@ class DashboardSummaryService
         $totalEntradasAyer = round((float) ($movimientosAyer->total_entradas ?? 0), 2);
         $totalSalidasAyer = round((float) ($movimientosAyer->total_salidas ?? 0), 2);
         $totalVendidoAyer = round($ventasAyer, 2);
+        $costoVentasHoy = round((float) ($detalleVentasHoy->costo_ventas ?? 0), 2);
+        $utilidadBrutaHoy = round((float) ($detalleVentasHoy->utilidad_bruta ?? 0), 2);
+        $costosOperativosHoy = round($costosOperativosHoy, 2);
+        $utilidadNetaHoy = round($utilidadBrutaHoy - $costosOperativosHoy, 2);
         $actividadReciente = $this->buildRecentActivity();
 
         return [
@@ -84,6 +101,11 @@ class DashboardSummaryService
                 'total_vendido' => $totalVendidoHoy,
                 'total_entradas' => $totalEntradasHoy,
                 'total_salidas' => $totalSalidasHoy,
+                'costo_ventas' => $costoVentasHoy,
+                'utilidad_bruta' => $utilidadBrutaHoy,
+                'costos_operativos' => $costosOperativosHoy,
+                'utilidad_neta' => $utilidadNetaHoy,
+                'margen_neto_porcentaje' => $totalVendidoHoy > 0 ? round(($utilidadNetaHoy / $totalVendidoHoy) * 100, 2) : 0,
                 'productos_stock_bajo' => $productosStockBajo,
                 'reparaciones_pendientes' => $reparacionesPendientes,
             ],
@@ -182,11 +204,27 @@ class DashboardSummaryService
             ->limit(3)
             ->get();
 
+        $costos = DB::table('costos_operativos as co')
+            ->leftJoin('modulos as m', 'm.id', '=', 'co.modulo_id')
+            ->selectRaw("
+                'costo' as tipo,
+                co.id as entidad_id,
+                co.concepto as titulo,
+                COALESCE(m.nombre, 'Costo general') as contexto,
+                co.monto as monto,
+                co.fecha_costo as fecha,
+                CONCAT(co.categoria, ' / ', co.tipo_costo) as descripcion
+            ")
+            ->orderByDesc('co.fecha_costo')
+            ->limit(3)
+            ->get();
+
         return collect()
             ->merge($ventas)
             ->merge($movimientos)
             ->merge($reparaciones)
             ->merge($productos)
+            ->merge($costos)
             ->filter(fn (object $row): bool => filled($row->fecha))
             ->sortByDesc('fecha')
             ->take(8)

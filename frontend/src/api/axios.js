@@ -52,7 +52,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const method = config.method?.toLowerCase() ?? "get";
 
-  if (["post", "put", "patch", "delete"].includes(method)) {
+  if (!config.skipGlobalLoading && ["post", "put", "patch", "delete"].includes(method)) {
     config.__globalLoadingToken = startGlobalLoading("Cargando...");
   }
 

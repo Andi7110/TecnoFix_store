@@ -87,5 +87,11 @@ export async function deleteProducto(productoId) {
   return response.data;
 }
 
+export async function createMovimientoInventario(payload) {
+  const response = await api.post("/inventario/movimientos", payload);
+
+  return response.data.data;
+}
+
 export const listProductos = getProductosPaginados;
 export const updateProductoEstado = changeProductoEstado;

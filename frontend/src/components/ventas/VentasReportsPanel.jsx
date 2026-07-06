@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { exportReportToPdf } from "../../utils/reportPrint";
+import ReportPreviewModal from "../reportes/ReportPreviewModal";
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-SV", { style: "currency", currency: "USD" }).format(Number(value ?? 0));
@@ -284,6 +284,7 @@ function DailyWorkspace({
   dailyLoading,
   dailyError,
   dailySaving,
+  onPreviewReport,
 }) {
   return (
     <article className="ventas-report-simple">
@@ -309,7 +310,7 @@ function DailyWorkspace({
         </div>
         <div className="ventas-report-simple__actions">
           <button type="submit" className="btn btn-primary">Generar</button>
-          <button type="button" className="btn btn-success" onClick={() => exportReportToPdf("daily", dailyReport)} disabled={!dailyReport || dailyLoading}>Exportar PDF</button>
+          <button type="button" className="btn btn-success" onClick={() => onPreviewReport("daily", dailyReport)} disabled={!dailyReport || dailyLoading}>Exportar PDF</button>
           <button type="button" className="btn btn-outline-dark" onClick={onDailySave} disabled={!dailyReport || dailyLoading || dailySaving}>
             {dailySaving ? "Guardando..." : "Guardar"}
           </button>
@@ -369,6 +370,7 @@ function HistoryWorkspace({ history, historyLoading, historyError }) {
 
 function VentasReportsPanel(props) {
   const [section, setSection] = useState("daily");
+  const [previewReport, setPreviewReport] = useState(null);
 
   return (
     <section className="ventas-report-center ventas-report-center--simple">
@@ -383,8 +385,21 @@ function VentasReportsPanel(props) {
         />
       </div>
 
-      {section === "daily" ? <DailyWorkspace {...props} /> : null}
+      {section === "daily" ? (
+        <DailyWorkspace
+          {...props}
+          onPreviewReport={(type, report) => setPreviewReport({ type, report })}
+        />
+      ) : null}
       {section === "history" ? <HistoryWorkspace history={props.history} historyLoading={props.historyLoading} historyError={props.historyError} /> : null}
+
+      {previewReport ? (
+        <ReportPreviewModal
+          type={previewReport.type}
+          report={previewReport.report}
+          onClose={() => setPreviewReport(null)}
+        />
+      ) : null}
     </section>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus } from "../../icons/phosphor";
 import CajaFilters from "../../components/caja/CajaFilters";
 import CrearMovimientoCajaModal from "../../components/caja/CrearMovimientoCajaModal";
@@ -8,10 +8,10 @@ import ProductosPagination from "../../components/productos/ProductosPagination"
 import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos";
 import { useCajaFilters } from "../../hooks/caja/useCajaFilters";
 import { useCajaList } from "../../hooks/caja/useCajaList";
+import { notifySuccess } from "../../utils/toasts";
 
 function CajaMovimientosPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const {
     filters,
     draftFilters,
@@ -23,21 +23,9 @@ function CajaMovimientosPage() {
   const { modulos } = useProductoCatalogos();
   const { movimientos, meta, summary, loading, error, reload } = useCajaList(filters);
 
-  useEffect(() => {
-    if (!successMessage) {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => {
-      setSuccessMessage("");
-    }, 3200);
-
-    return () => window.clearTimeout(timer);
-  }, [successMessage]);
-
   function handleMovimientoCreated() {
     reload();
-    setSuccessMessage("Movimiento de caja registrado.");
+    notifySuccess("Movimiento de caja registrado exitosamente.");
   }
 
   return (
@@ -76,12 +64,6 @@ function CajaMovimientosPage() {
       />
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
-
-      {successMessage ? (
-        <div className="cash-create-success" role="status" aria-live="polite">
-          {successMessage}
-        </div>
-      ) : null}
 
       <CajaTable movimientos={movimientos} loading={loading} />
 

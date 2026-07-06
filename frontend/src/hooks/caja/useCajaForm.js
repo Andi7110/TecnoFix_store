@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createMovimientoCaja } from "../../api/caja";
 import { listModulos } from "../../api/inventarioCatalogos";
+import { notifyError } from "../../utils/toasts";
 
 const initialValues = {
   modulo_id: "",
@@ -71,7 +72,9 @@ export function useCajaForm({ onSuccess }) {
       if (validationErrors) {
         setErrors(validationErrors);
       } else {
-        setErrorMessage("No se pudo guardar el movimiento.");
+        const message = "No se pudo guardar el movimiento.";
+        setErrorMessage(message);
+        notifyError(message);
       }
     } finally {
       setSaving(false);

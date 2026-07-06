@@ -1,5 +1,10 @@
-/* Estilos del modal de detalle de venta usado desde el historial. */
+/* ==========================================================================
+   Modal de detalle de venta
+   Este archivo controla la ventana que se abre desde el historial para ver
+   datos de una venta: encabezado, acciones, resumen, notas y tabla de items.
+   ========================================================================== */
 
+/* Fondo fijo que oscurece la pagina y centra la tarjeta de detalle. */
 .venta-detail-modal {
   position: fixed;
   inset: 0;
@@ -12,6 +17,7 @@
   backdrop-filter: blur(5px);
 }
 
+/* Tarjeta principal con scroll interno para ventas con muchos productos. */
 .venta-detail-modal__card {
   width: min(92vw, 960px);
   max-height: 90vh;
@@ -23,6 +29,7 @@
   padding: 1.25rem;
 }
 
+/* Encabezado del modal y botones de accion como cerrar/imprimir. */
 .venta-detail-modal__header {
   display: flex;
   justify-content: space-between;
@@ -38,6 +45,7 @@
   justify-content: flex-end;
 }
 
+/* Bloques de informacion general y totales de la venta. */
 .venta-detail-modal__meta,
 .venta-detail-modal__summary {
   display: grid;
@@ -62,6 +70,7 @@
   color: var(--app-ink);
 }
 
+/* Ajustes de contraste del modal y sus cards en modo oscuro. */
 :root[data-theme="dark"] .venta-form__product-card,
 :root[data-theme="dark"] .venta-pos-suggestion,
 :root[data-theme="dark"] .venta-pos-sidebar__card,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { listReparaciones } from "../../api/reparaciones";
+import { notifyError } from "../../utils/toasts";
 
 export function useReparacionesList(filters) {
   const [reparaciones, setReparaciones] = useState([]);
@@ -24,7 +25,9 @@ export function useReparacionesList(filters) {
         }
       } catch {
         if (!ignore) {
-          setError("No se pudieron cargar las reparaciones.");
+          const message = "No se pudieron cargar las reparaciones.";
+          setError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {

@@ -1,5 +1,4 @@
 import { GlobalLoadingOverlay } from "../interactions/GlobalInteractions";
-import { printSaleTicket } from "../../utils/saleTicketPrint";
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-SV", {
@@ -34,6 +33,7 @@ function VentaDetailModal({
   loading,
   error,
   onClose,
+  onTicketClick,
 }) {
   if (!venta && !loading && !error) {
     return null;
@@ -67,7 +67,7 @@ function VentaDetailModal({
               <button
                 type="button"
                 className="btn btn-outline-dark btn-sm"
-                onClick={() => printSaleTicket(venta)}
+                onClick={() => onTicketClick?.(venta)}
               >
                 Ticket
               </button>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { listMovimientosCaja } from "../../api/caja";
+import { notifyError } from "../../utils/toasts";
 
 export function useCajaList(filters) {
   const [movimientos, setMovimientos] = useState([]);
@@ -36,7 +37,9 @@ export function useCajaList(filters) {
         }
       } catch {
         if (!ignore) {
-          setError("No se pudieron cargar los movimientos de caja.");
+          const message = "No se pudieron cargar los movimientos de caja.";
+          setError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {

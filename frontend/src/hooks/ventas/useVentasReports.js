@@ -4,6 +4,7 @@ import {
   listSalesReports,
   saveDailySalesReport,
 } from "../../api/ventas";
+import { notifyError, notifySuccess } from "../../utils/toasts";
 
 function getTodayDateValue() {
   const now = new Date();
@@ -50,10 +51,10 @@ export function useVentasReports() {
         }
       } catch (requestError) {
         if (!ignore) {
-          setDailyError(
-            requestError?.response?.data?.message
-              || "No se pudo generar el reporte diario.",
-          );
+          const message = requestError?.response?.data?.message
+            || "No se pudo generar el reporte diario.";
+          setDailyError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {
@@ -85,10 +86,10 @@ export function useVentasReports() {
         }
       } catch (requestError) {
         if (!ignore) {
-          setHistoryError(
-            requestError?.response?.data?.message
-              || "No se pudo cargar el historial de reportes.",
-          );
+          const message = requestError?.response?.data?.message
+            || "No se pudo cargar el historial de reportes.";
+          setHistoryError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {
@@ -117,10 +118,10 @@ export function useVentasReports() {
       setHistory(response.data ?? []);
       setHistoryMeta(response.meta ?? null);
     } catch (requestError) {
-      setHistoryError(
-        requestError?.response?.data?.message
-          || "No se pudo actualizar el historial de reportes.",
-      );
+      const message = requestError?.response?.data?.message
+        || "No se pudo actualizar el historial de reportes.";
+      setHistoryError(message);
+      notifyError(message);
     } finally {
       setHistoryLoading(false);
     }
@@ -132,8 +133,14 @@ export function useVentasReports() {
     try {
       const saved = await saveDailySalesReport(filters);
       await refreshHistory();
+      notifySuccess("Reporte de ventas guardado correctamente.");
 
       return saved;
+    } catch (requestError) {
+      const message = requestError?.response?.data?.message
+        || "No se pudo guardar el reporte de ventas.";
+      notifyError(message);
+      return null;
     } finally {
       setDailySaving(false);
     }

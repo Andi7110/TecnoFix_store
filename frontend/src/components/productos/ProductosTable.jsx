@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MagnifyingGlassPlus, WarningCircle } from "../../icons/phosphor";
 
 const moneyFormatter = new Intl.NumberFormat("es-SV", {
   style: "currency",
@@ -50,6 +51,7 @@ function ProductosTable({
   productos,
   loading,
   onDetalleClick,
+  onAgregarStockClick,
 }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
@@ -106,12 +108,16 @@ function ProductosTable({
                         className="inventory-photo-button"
                         onClick={() => openPhoto(producto)}
                         title="Ver foto"
+                        aria-label={`Ver foto de ${producto.nombre}`}
                       >
                         <img
                           src={producto.foto_url}
                           alt={producto.nombre}
                           className="inventory-photo"
                         />
+                        <span className="inventory-photo-button__hint" aria-hidden="true">
+                          <MagnifyingGlassPlus size={14} weight="bold" />
+                        </span>
                       </button>
                     ) : (
                       <span className="muted-text">Sin foto</span>
@@ -138,12 +144,23 @@ function ProductosTable({
                   </td>
                   <td className="text-end">
                     <div className="products-table__actions">
+                      {onAgregarStockClick ? (
+                        <button
+                          type="button"
+                          className="btn btn-sm products-table__stock-button"
+                          onClick={() => onAgregarStockClick(producto)}
+                        >
+                          Agregar stock
+                        </button>
+                      ) : null}
                       <button
                         type="button"
-                        className="btn btn-sm btn-success"
+                        className="table-detail-icon-btn"
                         onClick={() => onDetalleClick?.(producto)}
+                        title="Ver detalle"
+                        aria-label={`Ver detalle de ${producto.nombre}`}
                       >
-                        Detalle
+                        <WarningCircle size={18} weight="bold" aria-hidden="true" />
                       </button>
                     </div>
                   </td>

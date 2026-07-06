@@ -53,12 +53,14 @@ class RepairReportService
             'estado_actual' => $this->getCurrentStatusBreakdown($moduleId),
             'reparaciones_por_estado' => $this->getPeriodStatusBreakdown($start, $end, $moduleId),
             'ingresos_por_dia' => $this->getRepairIncomeByDay($start, $end, $moduleId),
+            'utilidad_entregas_por_dia' => $this->getDeliveredProfitByDay($start, $end, $moduleId),
             'ingresos_por_modulo' => $this->getRepairIncomeByModule($start, $end, $moduleId),
             'costos_por_dia' => $this->getRepairCostsByDay($start, $end, $moduleId),
             'costos_por_tipo' => $this->getRepairCostsByType($start, $end, $moduleId),
+            'entregas_recientes' => $this->getDeliveredRepairs($start, $end, $moduleId),
             'notas' => [
-                'Los ingresos se calculan desde caja con categoria reparacion.',
-                'Los costos se calculan desde los costos registrados en cada reparacion.',
+                'La utilidad principal se calcula con reparaciones entregadas: valor cobrado menos costos registrados de esas reparaciones.',
+                'El flujo neto de caja se calcula con entradas de caja del periodo menos costos registrados en el periodo.',
                 'Las reparaciones ingresadas se calculan por fecha_ingreso.',
                 'Las entregas se calculan por fecha_entrega y estado entregado.',
             ],
@@ -121,6 +123,8 @@ class RepairReportService
 
     private function buildSummary(Carbon $start, Carbon $end, int|string|null $moduleId): array
     {
+        $costsByRepair = $this->costsByRepairSubquery();
+
         $created = $this->repairsBaseQuery($moduleId)
             ->whereBetween('fecha_ingreso', [$start, $end])
             ->selectRaw('COUNT(*) as total')
@@ -129,10 +133,14 @@ class RepairReportService
             ->first();
 
         $delivered = $this->repairsBaseQuery($moduleId)
+            ->leftJoinSub($costsByRepair, 'costos_por_reparacion', function ($join): void {
+                $join->on('costos_por_reparacion.reparacion_id', '=', 'reparaciones.id');
+            })
             ->where('estado_reparacion', 'entregado')
             ->whereBetween('fecha_entrega', [$start, $end])
             ->selectRaw('COUNT(*) as total')
-            ->selectRaw('COALESCE(SUM(costo_reparacion), 0) as valor')
+            ->selectRaw('COALESCE(SUM(reparaciones.costo_reparacion), 0) as valor')
+            ->selectRaw('COALESCE(SUM(costos_por_reparacion.costos_total), 0) as costos_total')
             ->selectRaw('COALESCE(AVG(TIMESTAMPDIFF(HOUR, fecha_ingreso, fecha_entrega)), 0) as horas_promedio')
             ->first();
 
@@ -157,21 +165,27 @@ class RepairReportService
 
         $incomeTotal = round((float) ($income->total ?? 0), 2);
         $costsTotal = round((float) ($costs->total ?? 0), 2);
-        $profit = round($incomeTotal - $costsTotal, 2);
+        $cashProfit = round($incomeTotal - $costsTotal, 2);
+        $deliveredValue = round((float) ($delivered->valor ?? 0), 2);
+        $deliveredCosts = round((float) ($delivered->costos_total ?? 0), 2);
+        $deliveredProfit = round($deliveredValue - $deliveredCosts, 2);
 
         return [
             'ingresadas' => (int) ($created->total ?? 0),
             'valor_estimado' => round((float) ($created->valor_estimado ?? 0), 2),
             'ticket_promedio' => round((float) ($created->ticket_promedio ?? 0), 2),
             'entregadas' => (int) ($delivered->total ?? 0),
-            'valor_entregado' => round((float) ($delivered->valor ?? 0), 2),
+            'valor_entregado' => $deliveredValue,
+            'costos_entregadas' => $deliveredCosts,
+            'utilidad_entregadas' => $deliveredProfit,
             'horas_promedio_entrega' => round((float) ($delivered->horas_promedio ?? 0), 1),
             'ingresos_caja' => $incomeTotal,
             'movimientos_caja' => (int) ($income->movimientos ?? 0),
             'costos_reparacion' => $costsTotal,
             'movimientos_costos' => (int) ($costs->movimientos ?? 0),
-            'utilidad_reparaciones' => $profit,
-            'margen_utilidad_porcentaje' => $incomeTotal > 0 ? round(($profit / $incomeTotal) * 100, 2) : 0,
+            'utilidad_reparaciones' => $deliveredProfit,
+            'utilidad_caja_periodo' => $cashProfit,
+            'margen_utilidad_porcentaje' => $deliveredValue > 0 ? round(($deliveredProfit / $deliveredValue) * 100, 2) : 0,
             'saldo_pendiente_abierto' => round((float) $openBalance, 2),
             'canceladas' => (int) $cancelled,
         ];
@@ -225,6 +239,33 @@ class RepairReportService
                 'fecha' => $row->fecha,
                 'movimientos' => (int) $row->movimientos,
                 'total' => round((float) $row->total, 2),
+            ])
+            ->all();
+    }
+
+    private function getDeliveredProfitByDay(Carbon $start, Carbon $end, int|string|null $moduleId): array
+    {
+        $costsByRepair = $this->costsByRepairSubquery();
+
+        return $this->repairsBaseQuery($moduleId)
+            ->leftJoinSub($costsByRepair, 'costos_por_reparacion', function ($join): void {
+                $join->on('costos_por_reparacion.reparacion_id', '=', 'reparaciones.id');
+            })
+            ->where('reparaciones.estado_reparacion', 'entregado')
+            ->whereBetween('reparaciones.fecha_entrega', [$start, $end])
+            ->selectRaw('DATE(reparaciones.fecha_entrega) as fecha')
+            ->selectRaw('COUNT(reparaciones.id) as entregadas')
+            ->selectRaw('COALESCE(SUM(reparaciones.costo_reparacion), 0) as valor')
+            ->selectRaw('COALESCE(SUM(costos_por_reparacion.costos_total), 0) as costos')
+            ->groupByRaw('DATE(reparaciones.fecha_entrega)')
+            ->orderBy('fecha')
+            ->get()
+            ->map(fn (object $row): array => [
+                'fecha' => $row->fecha,
+                'entregadas' => (int) $row->entregadas,
+                'valor' => round((float) $row->valor, 2),
+                'costos' => round((float) $row->costos, 2),
+                'utilidad' => round((float) $row->valor - (float) $row->costos, 2),
             ])
             ->all();
     }
@@ -284,8 +325,13 @@ class RepairReportService
 
     private function getDeliveredRepairs(Carbon $start, Carbon $end, int|string|null $moduleId): array
     {
+        $costsByRepair = $this->costsByRepairSubquery();
+
         return $this->repairsBaseQuery($moduleId)
             ->leftJoin('clientes as c', 'c.id', '=', 'reparaciones.cliente_id')
+            ->leftJoinSub($costsByRepair, 'costos_por_reparacion', function ($join): void {
+                $join->on('costos_por_reparacion.reparacion_id', '=', 'reparaciones.id');
+            })
             ->where('estado_reparacion', 'entregado')
             ->whereBetween('fecha_entrega', [$start, $end])
             ->select([
@@ -296,6 +342,7 @@ class RepairReportService
                 'reparaciones.fecha_entrega',
                 'c.nombre as cliente_nombre',
             ])
+            ->selectRaw('COALESCE(costos_por_reparacion.costos_total, 0) as costos_total')
             ->orderByDesc('fecha_entrega')
             ->limit(8)
             ->get()
@@ -304,6 +351,8 @@ class RepairReportService
                 'cliente_nombre' => $row->cliente_nombre,
                 'equipo' => trim($row->marca.' '.$row->modelo),
                 'costo_reparacion' => round((float) $row->costo_reparacion, 2),
+                'costos_total' => round((float) $row->costos_total, 2),
+                'utilidad' => round((float) $row->costo_reparacion - (float) $row->costos_total, 2),
                 'fecha_entrega' => $row->fecha_entrega,
             ])
             ->all();
@@ -367,5 +416,13 @@ class RepairReportService
         }
 
         return $query;
+    }
+
+    private function costsByRepairSubquery(): Builder
+    {
+        return DB::table('costos_reparacion')
+            ->select('reparacion_id')
+            ->selectRaw('COALESCE(SUM(monto), 0) as costos_total')
+            ->groupBy('reparacion_id');
     }
 }

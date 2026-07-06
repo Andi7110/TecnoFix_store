@@ -1,5 +1,11 @@
-/* Estilos de la vista /ventas/reportes. */
+/* ==========================================================================
+   Reportes de ventas
+   Este archivo controla la vista /ventas/reportes: filtros por periodo,
+   KPIs, resumen diario, tablas, graficas simples, tabs, estados de carga
+   y variantes de modo claro/oscuro.
+   ========================================================================== */
 
+/* Layout base de reportes y contenedor principal del centro de reporteria. */
 .ventas-reportes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -28,6 +34,7 @@
     var(--app-surface);
 }
 
+/* Barra de filtros/acciones para generar reportes. */
 .ventas-report-shell__header h3,
 .ventas-report-banner h3 {
   margin: 0;
@@ -56,6 +63,7 @@
   justify-content: flex-end;
 }
 
+/* Espacio de resultados: banner, KPIs, insights y bloques de salud. */
 .ventas-report-workspace {
   display: flex;
   flex-direction: column;
@@ -189,6 +197,7 @@
   color: #135432;
 }
 
+/* Secciones de resumen financiero y movimientos del periodo. */
 .ventas-report-grid--balanced {
   grid-template-columns: 1.1fr 0.9fr;
 }
@@ -282,6 +291,7 @@
   gap: 1rem;
 }
 
+/* Formularios internos usados por reportes antiguos y variantes de filtros. */
 .ventas-report-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -366,6 +376,7 @@
   grid-column: 1 / -1;
 }
 
+/* Tablas, notas y paneles de detalle dentro de los reportes. */
 .ventas-report-panel__header {
   display: flex;
   justify-content: space-between;
@@ -398,6 +409,7 @@
   margin-top: 0.45rem;
 }
 
+/* Contraste general de reportes en modo oscuro. */
 :root[data-theme="dark"] .ventas-report-card,
 :root[data-theme="dark"] .ventas-report-panel,
 :root[data-theme="dark"] .ventas-report-metric,
@@ -632,6 +644,7 @@
   color: var(--app-ink) !important;
 }
 
+/* Navegacion por tabs del reporte seleccionado. */
 .ventas-report-tabs {
   gap: 0.5rem;
 }
@@ -703,6 +716,7 @@
   --bs-table-hover-bg: var(--app-table-row-hover);
 }
 
+/* Skeleton/loading de tablas, KPIs y bloques de reporteria. */
 .ventas-report-table th,
 .ventas-report-table td {
   background: transparent;

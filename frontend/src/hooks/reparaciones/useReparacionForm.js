@@ -9,6 +9,7 @@ import {
   formatMoneyInput,
   normalizeMoneyInput,
 } from "../../utils/currencyInput";
+import { notifyError } from "../../utils/toasts";
 
 const initialValues = {
   modulo_id: "",
@@ -24,8 +25,8 @@ const initialValues = {
   tipo_equipo: "celular",
   problema_reportado: "",
   diagnostico: "",
-  costo_reparacion: "0",
-  anticipo: "0",
+  costo_reparacion: "",
+  anticipo: "",
   fecha_ingreso: "",
   fecha_estimada_entrega: "",
   observacion: "",
@@ -290,7 +291,9 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
         }
       } catch {
         if (!ignore) {
-          setErrorMessage("No se pudo cargar la reparacion.");
+          const message = "No se pudo cargar la reparacion.";
+          setErrorMessage(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {
@@ -382,7 +385,9 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
       if (validationErrors) {
         setErrors(validationErrors);
       } else {
-        setErrorMessage("No se pudo guardar la reparacion.");
+        const message = "No se pudo guardar la reparacion.";
+        setErrorMessage(message);
+        notifyError(message);
       }
     } finally {
       setSaving(false);

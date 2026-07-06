@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChartLine, CheckCircle, Plus } from "../../icons/phosphor";
+import { ChartLine, Plus } from "../../icons/phosphor";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import CrearReparacionModal from "../../components/reparaciones/CrearReparacionModal";
+import ReparacionDetalleModal from "../../components/reparaciones/ReparacionDetalleModal";
 import EntregarReparacionModal from "../../components/reparaciones/EntregarReparacionModal";
+import ReparacionCostosModal from "../../components/reparaciones/ReparacionCostosModal";
 import ReparacionesFilters from "../../components/reparaciones/ReparacionesFilters";
 import ReparacionesTable from "../../components/reparaciones/ReparacionesTable";
 import { abonarReparacion, entregarReparacion, updateEstadoReparacion } from "../../api/reparaciones";
 import { useReparacionesFilters } from "../../hooks/reparaciones/useReparacionesFilters";
 import { useReparacionesList } from "../../hooks/reparaciones/useReparacionesList";
+import { notifyError, notifySuccess } from "../../utils/toasts";
 
 function ReparacionesPage() {
   const {
@@ -16,7 +19,7 @@ function ReparacionesPage() {
     draftFilters,
     updateDraftFilter,
     applyFilters,
-    clearFilters,
+    clearFilters, 
     changePage,
     changePerPage,
   } = useReparacionesFilters();
@@ -25,27 +28,16 @@ function ReparacionesPage() {
   const [statusError, setStatusError] = useState("");
   const [deliveryReparacion, setDeliveryReparacion] = useState(null);
   const [paymentMode, setPaymentMode] = useState("entrega");
+  const [costReparacion, setCostReparacion] = useState(null);
+  const [detailReparacionId, setDetailReparacionId] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-
-  useEffect(() => {
-    if (!successMessage) {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => {
-      setSuccessMessage("");
-    }, 3200);
-
-    return () => window.clearTimeout(timer);
-  }, [successMessage]);
 
   function handleReparacionCreated(reparacion) {
     reload();
-    setSuccessMessage(
+    notifySuccess(
       reparacion?.codigo_reparacion
-        ? `Registro exitoso. Reparacion ${reparacion.codigo_reparacion} creada.`
-        : "Registro exitoso.",
+        ? `Reparacion ${reparacion.codigo_reparacion} registrada exitosamente.`
+        : "Reparacion registrada exitosamente.",
     );
   }
 
@@ -71,7 +63,9 @@ function ReparacionesPage() {
       });
       reload();
     } catch {
-      setStatusError("No se pudo actualizar el estado de la reparacion.");
+      const message = "No se pudo actualizar el estado de la reparacion.";
+      setStatusError(message);
+      notifyError(message);
     } finally {
       setStatusSavingId(null);
     }
@@ -93,11 +87,17 @@ function ReparacionesPage() {
       }
       setDeliveryReparacion(null);
       reload();
+      notifySuccess(
+        paymentMode === "abono"
+          ? "Abono registrado exitosamente."
+          : "Reparacion entregada exitosamente.",
+      );
     } catch (error) {
       const message = error.response?.data?.message
         ?? Object.values(error.response?.data?.errors ?? {})?.[0]?.[0]
         ?? "No se pudo entregar y cobrar la reparacion.";
       setStatusError(message);
+      notifyError(message);
     } finally {
       setStatusSavingId(null);
     }
@@ -141,17 +141,6 @@ function ReparacionesPage() {
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
       {statusError && !deliveryReparacion ? <div className="alert alert-danger">{statusError}</div> : null}
-      {successMessage ? (
-        <div className="repair-create-success" role="status" aria-live="polite">
-          <CheckCircle
-            size={22}
-            weight="fill"
-            className="repair-create-success__icon"
-            aria-hidden="true"
-          />
-          <span>{successMessage}</span>
-        </div>
-      ) : null}
 
       <ReparacionesTable
         reparaciones={reparaciones}
@@ -162,6 +151,14 @@ function ReparacionesPage() {
           setStatusError("");
           setPaymentMode("abono");
           setDeliveryReparacion(reparacion);
+        }}
+        onCostoClick={(reparacion) => {
+          setStatusError("");
+          setCostReparacion(reparacion);
+        }}
+        onDetalleClick={(reparacion) => {
+          setStatusError("");
+          setDetailReparacionId(reparacion.id);
         }}
       />
 
@@ -202,6 +199,28 @@ function ReparacionesPage() {
         <CrearReparacionModal
           onClose={() => setIsCreateModalOpen(false)}
           onCreated={handleReparacionCreated}
+        />
+      ) : null}
+
+      {costReparacion ? (
+        <ReparacionCostosModal
+          reparacion={costReparacion}
+          onClose={() => setCostReparacion(null)}
+          onUpdated={() => {
+            reload();
+            notifySuccess("Costo de reparacion agregado exitosamente.");
+          }}
+        />
+      ) : null}
+
+      {detailReparacionId ? (
+        <ReparacionDetalleModal
+          reparacionId={detailReparacionId}
+          onClose={() => setDetailReparacionId(null)}
+          onUpdated={(message) => {
+            reload();
+            notifySuccess(message ?? "Reparacion actualizada correctamente.");
+          }}
         />
       ) : null}
     </section>

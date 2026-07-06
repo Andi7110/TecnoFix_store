@@ -1,5 +1,11 @@
-/* Ajustes responsive compartidos por las vistas de ventas. */
+/* ==========================================================================
+   Responsive de ventas
+   Este archivo concentra los cambios de layout para tablet y movil en
+   historial, crear venta, detalle de venta y reportes. Solo debe contener
+   ajustes de columnas, direccion de flex y acomodo responsive compartido.
+   ========================================================================== */
 
+/* Tablet: reduce grids grandes a dos columnas y apila el POS. */
 @media (max-width: 992px) {
   .ventas-report-controlbar,
   .ventas-report-controlbar--three,
@@ -54,6 +60,7 @@
   }
 }
 
+/* Movil: deja formularios, tablas auxiliares y paneles en una sola columna. */
 @media (max-width: 768px) {
   .ventas-report-controlbar,
   .ventas-report-controlbar--three,

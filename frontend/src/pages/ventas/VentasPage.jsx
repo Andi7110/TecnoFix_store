@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChartLine, CheckCircle, Plus } from "../../icons/phosphor";
+import { ChartLine, Plus } from "../../icons/phosphor";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import CrearVentaModal from "../../components/ventas/CrearVentaModal";
 import VentaDetailModal from "../../components/ventas/VentaDetailModal";
+import TicketPreviewModal from "../../components/reportes/TicketPreviewModal";
 import VentasFilters from "../../components/ventas/VentasFilters";
 import VentasTable from "../../components/ventas/VentasTable";
 import { useProductoCatalogos } from "../../hooks/productos/useProductoCatalogos";
 import { useVentaDetail } from "../../hooks/ventas/useVentaDetail";
 import { useVentasFilters } from "../../hooks/ventas/useVentasFilters";
 import { useVentasList } from "../../hooks/ventas/useVentasList";
-import { printSaleTicket } from "../../utils/saleTicketPrint";
+import { notifySuccess } from "../../utils/toasts";
 
 function VentasPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [ticketPrompt, setTicketPrompt] = useState(null);
+  const [ticketPreview, setTicketPreview] = useState(null);
   const {
     filters,
     draftFilters,
@@ -29,37 +29,13 @@ function VentasPage() {
   const { ventas, meta, loading, error, reload } = useVentasList(filters);
   const ventaDetail = useVentaDetail();
 
-  useEffect(() => {
-    if (!successMessage) {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => {
-      setSuccessMessage("");
-    }, 3200);
-
-    return () => window.clearTimeout(timer);
-  }, [successMessage]);
-
-  function handleVentaCreated(venta, ticketConfig) {
+  function handleVentaCreated(venta) {
     reload();
-    setSuccessMessage(
+    notifySuccess(
       venta?.numero_venta
-        ? `Cobro exitoso. Venta ${venta.numero_venta} registrada.`
-        : "Cobro exitoso.",
+        ? `Venta ${venta.numero_venta} registrada exitosamente.`
+        : "Venta registrada exitosamente.",
     );
-    setTicketPrompt({
-      venta,
-      ticketConfig,
-    });
-  }
-
-  function handleGenerateTicket() {
-    if (ticketPrompt?.venta) {
-      printSaleTicket(ticketPrompt.venta, ticketPrompt.ticketConfig);
-    }
-
-    setTicketPrompt(null);
   }
 
   return (
@@ -101,18 +77,6 @@ function VentasPage() {
 
       {error ? <div className="alert alert-danger">{error}</div> : null}
 
-      {successMessage ? (
-        <div className="venta-payment-success" role="status" aria-live="polite">
-          <CheckCircle
-            size={22}
-            weight="fill"
-            className="venta-payment-success__icon"
-            aria-hidden="true"
-          />
-          <span>{successMessage}</span>
-        </div>
-      ) : null}
-
       <VentasTable
         ventas={ventas}
         loading={loading}
@@ -132,6 +96,7 @@ function VentasPage() {
         loading={ventaDetail.loading}
         error={ventaDetail.error}
         onClose={ventaDetail.closeVenta}
+        onTicketClick={(venta) => setTicketPreview({ venta })}
       />
 
       {isCreateModalOpen ? (
@@ -141,48 +106,12 @@ function VentasPage() {
         />
       ) : null}
 
-      {ticketPrompt ? (
-        <div
-          className="app-confirm-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Venta registrada"
-          onClick={() => setTicketPrompt(null)}
-        >
-          <div
-            className="app-confirm-modal__card"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h3 className="venta-ticket-prompt__title">
-              <CheckCircle
-                size={34}
-                weight="fill"
-                className="venta-ticket-prompt__icon"
-                aria-hidden="true"
-              />
-              <span>Venta registrada</span>
-            </h3>
-            <p className="muted-text mb-3 venta-ticket-prompt__question">
-              &iquest;Desea generar ticket?
-            </p>
-            <div className="app-confirm-modal__actions">
-              <button
-                type="button"
-                className="btn btn-light"
-                onClick={() => setTicketPrompt(null)}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="btn btn-success venta-ticket-prompt__generate"
-                onClick={handleGenerateTicket}
-              >
-                <span>Generar</span>
-              </button>
-            </div>
-          </div>
-        </div>
+      {ticketPreview ? (
+        <TicketPreviewModal
+          venta={ticketPreview.venta}
+          ticketConfig={ticketPreview.ticketConfig}
+          onClose={() => setTicketPreview(null)}
+        />
       ) : null}
     </section>
   );

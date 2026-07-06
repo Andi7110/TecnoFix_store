@@ -24,6 +24,23 @@ function DashboardMetricCards({ today }) {
       hint: "Egreso operativo del dia",
     },
     {
+      label: "Utilidad bruta",
+      value: formatMoney(today.utilidad_bruta),
+      hint: "Ventas menos costo de productos",
+      tone: "accent",
+    },
+    {
+      label: "Costos operativos",
+      value: formatMoney(today.costos_operativos),
+      hint: "Gastos registrados para operar",
+    },
+    {
+      label: "Utilidad neta",
+      value: formatMoney(today.utilidad_neta),
+      hint: `Margen neto ${Number(today.margen_neto_porcentaje ?? 0).toFixed(2)}%`,
+      tone: Number(today.utilidad_neta ?? 0) < 0 ? "warning" : "accent",
+    },
+    {
       label: "Stock bajo",
       value: today.productos_stock_bajo,
       hint: "Productos que requieren atencion",

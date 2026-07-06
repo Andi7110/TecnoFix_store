@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
 import { getDashboardSummary } from "../../api/dashboard";
+import { canAccessModule } from "../../utils/accessControl";
 
 const THEME_MODE_KEY = "tecnofix-theme-mode";
 const NOTIFICATIONS_READ_KEY = "tecnofix-notifications-read";
@@ -85,6 +86,14 @@ function BitacoraIcon() {
   );
 }
 
+function UsersIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8.5 12a4 4 0 1 1 0-8a4 4 0 0 1 0 8Zm0 2c3.31 0 6 1.79 6 4v1H2v-1c0-2.21 2.69-4 6.5-4Zm8-4a3 3 0 1 1 0-6a3 3 0 0 1 0 6Zm.25 3c2.83 0 5.25 1.46 5.25 3.5V18h-4.5v-.5c0-1.66-.83-3.12-2.17-4.2c.46-.2.98-.3 1.42-.3Z" />
+    </svg>
+  );
+}
+
 function SearchIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -95,8 +104,17 @@ function SearchIcon() {
 
 function BellIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 18.918a6 6 0 0 0 8 0c0 1.105-1.79 2-4 2s-4-.895-4-2Zm4-15.5a4.5 4.5 0 0 0-4.5 4.5c0 1.098-.5 6-2.5 7.5h14c-2-1.5-2.5-6.402-2.5-7.5a4.5 4.5 0 0 0-4.5-4.5Z" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8" />
+      <path d="M10 20a2 2 0 0 0 4 0" />
     </svg>
   );
 }
@@ -227,6 +245,13 @@ function getPageMeta(pathname) {
     };
   }
 
+  if (pathname.startsWith("/usuarios")) {
+    return {
+      title: "Usuarios",
+      description: "Administra roles y permisos de acceso.",
+    };
+  }
+
   if (pathname.startsWith("/productos/inventario")) {
     return {
       title: "Inventario",
@@ -248,7 +273,7 @@ function getPageMeta(pathname) {
 }
 
 function shouldShowBackButton(pathname) {
-  return !["/", "/productos", "/ventas", "/reparaciones", "/caja", "/bitacora"].includes(pathname);
+  return !["/", "/productos", "/ventas", "/reparaciones", "/caja", "/bitacora", "/usuarios"].includes(pathname);
 }
 
 function AppLayout() {
@@ -286,6 +311,7 @@ function AppLayout() {
   });
   const userMenuRef = useRef(null);
   const notificationsRef = useRef(null);
+  const canViewDashboard = canAccessModule(user, "dashboard");
 
   useEffect(() => {
     const mode = isDarkMode ? "dark" : "light";
@@ -356,6 +382,12 @@ function AppLayout() {
   }, []);
 
   useEffect(() => {
+    if (!canViewDashboard) {
+      setNotificationsLoading(false);
+      setNotificationsSummary(null);
+      return undefined;
+    }
+
     let ignore = false;
 
     async function loadNotifications() {
@@ -389,7 +421,7 @@ function AppLayout() {
       ignore = true;
       window.clearInterval(intervalId);
     };
-  }, []);
+  }, [canViewDashboard]);
 
   const notificationItems = useMemo(
     () => buildNotificationItems(notificationsSummary),
@@ -418,17 +450,19 @@ function AppLayout() {
   }
 
   const navItems = [
-    { to: "/", label: "Inicio", end: true, icon: <DashboardIcon /> },
+    { to: "/", label: "Inicio", end: true, icon: <DashboardIcon />, module: "dashboard" },
     {
       to: "/productos",
       label: "Productos",
       icon: <ProductsIcon />,
+      module: "inventario",
       children: [{ to: "/productos/inventario", label: "Inventario", icon: <InventoryIcon /> }],
     },
     {
       to: "/ventas",
       label: "Ventas",
       icon: <SalesIcon />,
+      module: "ventas",
       children: [
         { to: "/ventas/reportes", label: "Reportes", icon: <ReportsIcon /> },
       ],
@@ -437,13 +471,16 @@ function AppLayout() {
       to: "/reparaciones",
       label: "Reparaciones",
       icon: <RepairsIcon />,
+      module: "reparaciones",
       children: [
         { to: "/reparaciones/reportes", label: "Reportes", icon: <ReportsIcon /> },
       ],
     },
-    { to: "/caja", label: "Caja", icon: <CashIcon /> },
-    { to: "/bitacora", label: "Bitacora", icon: <BitacoraIcon /> },
-  ];
+    { to: "/caja", label: "Caja", icon: <CashIcon />, module: "caja" },
+    { to: "/costos", label: "Costos", icon: <ReportsIcon />, module: "costos" },
+    { to: "/bitacora", label: "Bitacora", icon: <BitacoraIcon />, module: "bitacora" },
+    { to: "/usuarios", label: "Usuarios", icon: <UsersIcon />, module: "usuarios" },
+  ].filter((item) => canAccessModule(user, item.module));
 
   async function handleConfirmLogout() {
     setIsLoggingOut(true);
@@ -483,6 +520,9 @@ function AppLayout() {
                     }
                     title={item.label}
                   >
+                    <span className="app-nav__iso-layer app-nav__iso-layer--one" aria-hidden="true" />
+                    <span className="app-nav__iso-layer app-nav__iso-layer--two" aria-hidden="true" />
+                    <span className="app-nav__iso-layer app-nav__iso-layer--three" aria-hidden="true" />
                     <span className="app-nav__icon">{item.icon}</span>
                     <span className="app-nav__label app-nav__label--visible">{item.label}</span>
                   </NavLink>
@@ -498,6 +538,9 @@ function AppLayout() {
                           }
                           title={child.label}
                         >
+                          <span className="app-nav__iso-layer app-nav__iso-layer--one" aria-hidden="true" />
+                          <span className="app-nav__iso-layer app-nav__iso-layer--two" aria-hidden="true" />
+                          <span className="app-nav__iso-layer app-nav__iso-layer--three" aria-hidden="true" />
                           <span className="app-nav__sublink-icon">{child.icon}</span>
                           <span>{child.label}</span>
                         </NavLink>
@@ -545,13 +588,14 @@ function AppLayout() {
                 <strong>{pageMeta.title}</strong>
               </div>
 
+              {canViewDashboard ? (
               <div
                 ref={notificationsRef}
                 className={`app-notifications ${isNotificationsOpen ? "is-open" : ""}`}
               >
                 <button
                   type="button"
-                  className="btn app-topbar__alerts"
+                  className="app-topbar__alerts"
                   title="Alertas del sistema"
                   aria-haspopup="menu"
                   aria-expanded={isNotificationsOpen}
@@ -573,9 +617,6 @@ function AppLayout() {
                   }}
                 >
                   <BellIcon />
-                  {notificationCount > 0 ? (
-                    <span className="app-topbar__alerts-badge">{notificationCount}</span>
-                  ) : null}
                 </button>
 
                 {isNotificationsOpen ? (
@@ -655,22 +696,34 @@ function AppLayout() {
                   </div>
                 ) : null}
               </div>
+              ) : null}
 
-              <button
-                type="button"
-                className={`app-theme-switch ${isDarkMode ? "is-active" : ""}`}
-                onClick={() => setIsDarkMode((current) => !current)}
-                role="switch"
-                aria-checked={isDarkMode}
-                title="Cambiar modo oscuro"
+              <label
+                className="app-theme-switch"
+                title={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
               >
-                <span className="app-theme-switch__track">
+                <input
+                  type="checkbox"
+                  className="app-theme-switch__input"
+                  checked={isDarkMode}
+                  onChange={() => setIsDarkMode((current) => !current)}
+                  role="switch"
+                  aria-label={isDarkMode ? "Modo oscuro activo" : "Modo claro activo"}
+                />
+                <span className="app-theme-switch__track" aria-hidden="true">
                   <span className="app-theme-switch__thumb" />
+                  <span className="app-theme-switch__icon app-theme-switch__icon--moon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path fillRule="evenodd" clipRule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162z" />
+                    </svg>
+                  </span>
+                  <span className="app-theme-switch__icon app-theme-switch__icon--sun">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75zM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0zM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59zM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75zM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591zM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18zM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59zM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12zM6.697 7.757a.75.75 0 1 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591z" />
+                    </svg>
+                  </span>
                 </span>
-                <span className="app-theme-switch__label">
-                  {isDarkMode ? "Modo oscuro" : "Modo claro"}
-                </span>
-              </button>
+              </label>
 
               <div
                 ref={userMenuRef}

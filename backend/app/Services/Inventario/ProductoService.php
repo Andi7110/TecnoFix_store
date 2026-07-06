@@ -5,6 +5,7 @@ namespace App\Services\Inventario;
 use App\Actions\Inventario\CambiarEstadoProductoAction;
 use App\Actions\Inventario\RegistrarInventarioProductoAction;
 use App\Actions\Inventario\RegistrarMovimientoInventarioAction;
+use App\Models\InventarioProducto;
 use App\Models\Producto;
 use App\Support\Filters\Inventario\ProductoFilter;
 use Illuminate\Http\UploadedFile;
@@ -107,6 +108,8 @@ class ProductoService
                 ...$data,
                 'foto_path' => $fotoPath,
             ]);
+            $producto->refresh();
+            $this->syncInventarioSnapshot($producto);
 
             $this->deleteFoto($oldPath);
 
@@ -114,6 +117,8 @@ class ProductoService
         }
 
         $producto->update($data);
+        $producto->refresh();
+        $this->syncInventarioSnapshot($producto);
 
         return $this->loadRelations($producto);
     }
@@ -171,5 +176,24 @@ class ProductoService
 
         Storage::disk('imagenes')->delete($path);
         Storage::disk('public')->delete($path);
+    }
+
+    private function syncInventarioSnapshot(Producto $producto): void
+    {
+        InventarioProducto::query()
+            ->where('producto_id', $producto->id)
+            ->update([
+                'modulo_id' => $producto->modulo_id,
+                'categoria_id' => $producto->categoria_id,
+                'codigo' => $producto->codigo,
+                'nombre' => $producto->nombre,
+                'descripcion' => $producto->descripcion,
+                'foto_path' => $producto->foto_path,
+                'precio_compra' => $producto->precio_compra,
+                'precio_venta' => $producto->precio_venta,
+                'stock_minimo' => $producto->stock_minimo,
+                'unidad_medida' => $producto->unidad_medida,
+                'estado' => $producto->estado,
+            ]);
     }
 }

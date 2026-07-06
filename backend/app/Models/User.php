@@ -24,6 +24,9 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'role',
+        'allowed_modules',
+        'is_active',
     ];
 
     /**
@@ -46,6 +49,22 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'allowed_modules' => 'array',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function canAccessModule(string $module): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return in_array($module, $this->allowed_modules ?? [], true);
     }
 }

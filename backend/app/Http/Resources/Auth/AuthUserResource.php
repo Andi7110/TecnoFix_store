@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Auth;
 
+use App\Support\Auth\AccessModules;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +15,10 @@ class AuthUserResource extends JsonResource
             'name' => $this->name,
             'username' => $this->username,
             'email' => $this->email,
+            'role' => $this->role,
+            'allowed_modules' => $this->isAdmin() ? AccessModules::ALL : ($this->allowed_modules ?? []),
+            'is_admin' => $this->isAdmin(),
+            'is_active' => (bool) $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

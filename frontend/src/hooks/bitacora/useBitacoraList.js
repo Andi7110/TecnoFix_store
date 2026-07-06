@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { listBitacora } from "../../api/bitacora";
+import { notifyError } from "../../utils/toasts";
 
 export function useBitacoraList(filters) {
   const [movimientos, setMovimientos] = useState([]);
@@ -23,7 +24,9 @@ export function useBitacoraList(filters) {
         }
       } catch {
         if (!ignore) {
-          setError("No se pudo cargar la bitacora del sistema.");
+          const message = "No se pudo cargar la bitacora del sistema.";
+          setError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {

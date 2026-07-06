@@ -21,6 +21,7 @@ function ReparacionForm({
   readOnly = false,
   onEdit,
   hideActions = false,
+  hideReadOnlyActions = false,
 }) {
   if (loading) {
     return (
@@ -37,7 +38,7 @@ function ReparacionForm({
           <p className="section-kicker">Taller</p>
           <h2>{title}</h2>
         </div>
-        {readOnly ? (
+        {readOnly && !hideReadOnlyActions ? (
           <div className="repair-form__header-actions">
             <button type="button" className="btn products-filter-actions__apply" onClick={onEdit}>
               Editar
@@ -89,7 +90,7 @@ function ReparacionForm({
         </div>
 
         <div className="col-md-4">
-          <label className="form-label">DUI</label>
+          <label className="form-label notranslate" translate="no">DUI</label>
           <input
             className={`form-control ${fieldError(errors, "cliente.documento") ? "is-invalid" : ""}`}
             value={values.cliente.documento}
@@ -200,7 +201,7 @@ function ReparacionForm({
         </div>
 
         <div className="col-md-2">
-          <label className="form-label">Costo</label>
+          <label className="form-label">Costo estimado</label>
           <div className="input-group product-money-input">
             <span className="input-group-text">$</span>
             <input
@@ -216,7 +217,7 @@ function ReparacionForm({
           </div>
           <div className="invalid-feedback">{fieldError(errors, "costo_reparacion")}</div>
           <small className="muted-text d-block mt-2">
-            Ingresa el costo de la reparacion. Acepta coma o punto y se ajusta a 2 decimales.
+            Si aun no se conoce, dejalo en 0. Puedes actualizarlo despues.
           </small>
         </div>
 
@@ -237,7 +238,7 @@ function ReparacionForm({
           </div>
           <div className="invalid-feedback">{fieldError(errors, "anticipo")}</div>
           <small className="muted-text d-block mt-2">
-            Ingresa el anticipo recibido. Acepta coma o punto y se ajusta a 2 decimales.
+            Registra anticipo solo cuando aplique al costo definido.
           </small>
         </div>
 

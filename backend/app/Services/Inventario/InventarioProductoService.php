@@ -42,7 +42,7 @@ class InventarioProductoService
                 'updated_at',
             ])
             ->with([
-                'producto:id,stock',
+                'producto:id,stock,foto_path',
                 'modulo:id,nombre',
                 'categoria:id,nombre',
                 'registradoPor:id,name,username,email',

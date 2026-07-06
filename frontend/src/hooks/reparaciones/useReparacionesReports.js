@@ -6,6 +6,7 @@ import {
   saveDailyRepairReport,
   saveMonthlyRepairReport,
 } from "../../api/reparaciones";
+import { notifyError, notifySuccess } from "../../utils/toasts";
 
 function getTodayDateValue() {
   const now = new Date();
@@ -63,7 +64,9 @@ export function useReparacionesReports() {
         }
       } catch (requestError) {
         if (!ignore) {
-          setDailyError(requestError?.response?.data?.message || "No se pudo generar el reporte diario.");
+          const message = requestError?.response?.data?.message || "No se pudo generar el reporte diario.";
+          setDailyError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {
@@ -94,7 +97,9 @@ export function useReparacionesReports() {
         }
       } catch (requestError) {
         if (!ignore) {
-          setMonthlyError(requestError?.response?.data?.message || "No se pudo generar el reporte mensual.");
+          const message = requestError?.response?.data?.message || "No se pudo generar el reporte mensual.";
+          setMonthlyError(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {
@@ -118,7 +123,9 @@ export function useReparacionesReports() {
       const response = await listRepairReports({ per_page: 10 });
       setHistory(response.data ?? []);
     } catch (requestError) {
-      setHistoryError(requestError?.response?.data?.message || "No se pudo cargar el historial de reportes.");
+      const message = requestError?.response?.data?.message || "No se pudo cargar el historial de reportes.";
+      setHistoryError(message);
+      notifyError(message);
     } finally {
       setHistoryLoading(false);
     }
@@ -134,8 +141,13 @@ export function useReparacionesReports() {
     try {
       const saved = await saveDailyRepairReport(filters);
       await refreshHistory();
+      notifySuccess("Reporte diario de reparaciones guardado correctamente.");
 
       return saved;
+    } catch (requestError) {
+      const message = requestError?.response?.data?.message || "No se pudo guardar el reporte diario.";
+      notifyError(message);
+      return null;
     } finally {
       setDailySaving(false);
     }
@@ -147,8 +159,13 @@ export function useReparacionesReports() {
     try {
       const saved = await saveMonthlyRepairReport(filters);
       await refreshHistory();
+      notifySuccess("Reporte mensual de reparaciones guardado correctamente.");
 
       return saved;
+    } catch (requestError) {
+      const message = requestError?.response?.data?.message || "No se pudo guardar el reporte mensual.";
+      notifyError(message);
+      return null;
     } finally {
       setMonthlySaving(false);
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { listInventarioProductos } from "../../api/inventarioProductos";
+import { notifyError } from "../../utils/toasts";
 
 export function useInventarioProductosList(filters) {
   const [registros, setRegistros] = useState([]);
@@ -29,7 +30,9 @@ export function useInventarioProductosList(filters) {
           return;
         }
 
-        setError("No se pudo cargar el inventario de productos.");
+        const message = "No se pudo cargar el inventario de productos.";
+        setError(message);
+        notifyError(message);
       } finally {
         if (!ignore) {
           setLoading(false);

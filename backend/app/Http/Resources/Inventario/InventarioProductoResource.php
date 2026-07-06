@@ -9,6 +9,10 @@ class InventarioProductoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $fotoPath = $this->relationLoaded('producto') && $this->producto
+            ? $this->producto->foto_path
+            : $this->foto_path;
+
         return [
             'id' => $this->id,
             'producto_id' => $this->producto_id,
@@ -18,7 +22,7 @@ class InventarioProductoResource extends JsonResource
             'codigo' => $this->codigo,
             'nombre' => $this->nombre,
             'descripcion' => $this->descripcion,
-            'foto_url' => $this->foto_path ? route('productos.foto', ['path' => $this->foto_path]) : null,
+            'foto_url' => $fotoPath ? route('productos.foto', ['path' => $fotoPath]) : null,
             'precio_compra' => $this->precio_compra,
             'precio_venta' => $this->precio_venta,
             'stock' => $this->whenLoaded('producto', fn (): int => (int) $this->producto->stock),

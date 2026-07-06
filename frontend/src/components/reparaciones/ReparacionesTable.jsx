@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { ClipboardText, CurrencyDollar } from "../../icons/phosphor";
+import { CurrencyDollar, PlusCircle, WarningCircle } from "../../icons/phosphor";
 
 const ESTADOS_REPARACION = [
   { value: "registrado", label: "Registrado" },
@@ -73,6 +72,8 @@ function ReparacionesTable({
   statusSavingId,
   onEstadoChange,
   onAbonoClick,
+  onCostoClick,
+  onDetalleClick,
 }) {
   if (loading) {
     return <ReparacionesTableSkeleton />;
@@ -161,14 +162,26 @@ function ReparacionesTable({
                   </td>
                   <td className="text-center">
                     <div className="products-table__actions repairs-table__actions">
-                      <Link
-                        to={`/reparaciones/${reparacion.id}/editar`}
-                        className="btn btn-sm repairs-table__action-btn"
+                      <button
+                        type="button"
+                        className="table-detail-icon-btn"
+                        onClick={() => onDetalleClick?.(reparacion)}
+                        disabled={statusSavingId === reparacion.id}
                         title="Ver detalle"
                         aria-label={`Ver detalle de ${reparacion.codigo_reparacion}`}
                       >
-                        <ClipboardText size={21} weight="bold" aria-hidden="true" />
-                      </Link>
+                        <WarningCircle size={18} weight="bold" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm repairs-table__action-btn repairs-table__action-btn--cost"
+                        onClick={() => onCostoClick?.(reparacion)}
+                        disabled={statusSavingId === reparacion.id}
+                        title="Agregar costo"
+                        aria-label={`Agregar costo a ${reparacion.codigo_reparacion}`}
+                      >
+                        <PlusCircle size={21} weight="bold" aria-hidden="true" />
+                      </button>
                       {Number(reparacion.saldo_pendiente ?? 0) > 0 ? (
                         <button
                           type="button"

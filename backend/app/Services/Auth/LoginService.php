@@ -24,6 +24,14 @@ class LoginService
             ]);
         }
 
+        if (! $request->user()?->is_active) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'username' => ['Usuario inactivo. Contacta al administrador.'],
+            ]);
+        }
+
         $request->session()->regenerate();
 
         return $request->user()->fresh();

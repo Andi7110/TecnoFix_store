@@ -14,6 +14,7 @@ import {
   formatMoneyInput,
   normalizeMoneyInput,
 } from "../../utils/currencyInput";
+import { notifyError } from "../../utils/toasts";
 import { useProductoCatalogos } from "./useProductoCatalogos";
 
 const initialForm = {
@@ -134,7 +135,9 @@ export function useProductoForm({ productoId, onSuccess }) {
         }
       } catch {
         if (!ignore) {
-          setErrorMessage("No se pudo cargar el producto.");
+          const message = "No se pudo cargar el producto.";
+          setErrorMessage(message);
+          notifyError(message);
         }
       } finally {
         if (!ignore) {
@@ -327,23 +330,28 @@ export function useProductoForm({ productoId, onSuccess }) {
             ? "No se puede registrar el producto porque ese codigo ya esta registrado. Usa un codigo diferente."
             : firstMessage,
         );
+        notifyError(firstMessage);
       } else if (responseStatus === 422) {
         const duplicateCode = /codigo|already been taken|ya existe|registrado|duplicate|duplicado/i.test(
           responseMessage,
         );
+        const message = duplicateCode
+          ? "No se puede registrar el producto porque ese codigo ya esta registrado. Usa un codigo diferente."
+          : responseMessage;
 
         openValidationModal(
           duplicateCode ? "Codigo ya registrado" : "No se pudo guardar el producto",
-          duplicateCode
-            ? "No se puede registrar el producto porque ese codigo ya esta registrado. Usa un codigo diferente."
-            : responseMessage,
+          message,
         );
+        notifyError(message);
       } else {
-        setErrorMessage("No se pudo guardar el producto.");
+        const message = "No se pudo guardar el producto.";
+        setErrorMessage(message);
         openValidationModal(
           "No se pudo guardar el producto",
           "Ocurrio un problema al intentar registrar el producto.",
         );
+        notifyError(message);
       }
     } finally {
       setSaving(false);
