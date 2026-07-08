@@ -41,7 +41,6 @@ function VentaForm({
   productosCriticos,
   productosSugeridos,
   resumenVenta,
-  ticketConfig,
   transferAccounts,
   transferAccount,
   selectedTransferAccountId,
@@ -63,7 +62,6 @@ function VentaForm({
   onMontoTransferenciaChange,
   onMontoTransferenciaBlur,
   onApplyQuickCash,
-  onTicketConfigChange,
   onTransferAccountChange,
   onSelectTransferAccount,
   onAddTransferAccount,
@@ -75,6 +73,14 @@ function VentaForm({
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [selectedProductPhoto, setSelectedProductPhoto] = useState(null);
   const [transferActionMessage, setTransferActionMessage] = useState("");
+  const [isPendingDebtModalOpen, setIsPendingDebtModalOpen] = useState(false);
+  const [pendingDebt, setPendingDebt] = useState({
+    cliente_nombre: "",
+    cliente_telefono: "",
+    fecha_promesa_pago: "",
+    motivo: "",
+  });
+  const [pendingDebtErrors, setPendingDebtErrors] = useState({});
   const searchInputRef = useRef(null);
   const scannerBufferRef = useRef("");
   const scannerTimeoutRef = useRef(null);
@@ -126,6 +132,46 @@ function VentaForm({
 
   function closeProductPhoto() {
     setSelectedProductPhoto(null);
+  }
+
+  function handlePendingDebtChange(field, value) {
+    setPendingDebt((current) => ({
+      ...current,
+      [field]: value,
+    }));
+    setPendingDebtErrors((current) => ({
+      ...current,
+      [field]: "",
+    }));
+  }
+
+  function handleFormSubmit(event) {
+    if (total > 0 && faltante > 0) {
+      event.preventDefault();
+      setIsPendingDebtModalOpen(true);
+      return;
+    }
+
+    onSubmit(event);
+  }
+
+  function confirmPendingDebt() {
+    const nextErrors = {};
+
+    if (!pendingDebt.cliente_nombre.trim()) {
+      nextErrors.cliente_nombre = "Ingresa el nombre del cliente.";
+    }
+
+    if (!pendingDebt.motivo.trim()) {
+      nextErrors.motivo = "Escribe por que queda debiendo.";
+    }
+
+    if (Object.keys(nextErrors).length > 0) {
+      setPendingDebtErrors(nextErrors);
+      return;
+    }
+
+    onSubmit({ preventDefault() {} }, pendingDebt);
   }
 
   function handleProductCardKeyDown(event, producto) {
@@ -256,7 +302,7 @@ function VentaForm({
   }
 
   return (
-    <form className="surface-card venta-form" onSubmit={onSubmit}>
+    <form className="surface-card venta-form" onSubmit={handleFormSubmit}>
       <div className="venta-pos-layout">
         <section className="venta-pos-main">
           <div className="venta-pos-hero">
@@ -615,8 +661,8 @@ function VentaForm({
                 </div>
                 <div className="invalid-feedback d-block">{fieldError(errors, "monto_recibido")}</div>
                 {montoRecibidoInsuficiente ? (
-                  <p className="venta-pos-helper venta-pos-helper--danger mb-0">
-                    El monto recibido debe ser igual o mayor al total de la venta.
+                  <p className="venta-pos-helper venta-pos-helper--warning mb-0">
+                    Quedara un saldo pendiente. Al registrar se pediran los datos del cliente.
                   </p>
                 ) : null}
 
@@ -669,8 +715,8 @@ function VentaForm({
                 </div>
                 <div className="invalid-feedback d-block">{fieldError(errors, "monto_transferencia")}</div>
                 {montoTransferenciaInsuficiente ? (
-                  <p className="venta-pos-helper venta-pos-helper--danger mb-0">
-                    El monto transferido debe ser igual o mayor al total de la venta.
+                  <p className="venta-pos-helper venta-pos-helper--warning mb-0">
+                    Quedara un saldo pendiente. Al registrar se pediran los datos del cliente.
                   </p>
                 ) : null}
 
@@ -736,8 +782,8 @@ function VentaForm({
                 </div>
                 <div className="invalid-feedback d-block">{fieldError(errors, "pago_mixto")}</div>
                 {pagoMixtoInsuficiente ? (
-                  <p className="venta-pos-helper venta-pos-helper--danger mb-0">
-                    La suma del efectivo y la transferencia debe ser igual o mayor al total.
+                  <p className="venta-pos-helper venta-pos-helper--warning mb-0">
+                    Quedara un saldo pendiente. Al registrar se pediran los datos del cliente.
                   </p>
                 ) : (
                   <p className="venta-pos-helper mb-0">
@@ -757,17 +803,6 @@ function VentaForm({
                 </div>
               </>
             ) : null}
-          </div>
-
-          <div className="venta-pos-sidebar__card">
-            <label className="form-label">Observacion</label>
-            <textarea
-              className="form-control"
-              rows="4"
-              value={values.observacion}
-              onChange={(event) => onChange("observacion", event.target.value)}
-              placeholder="Comentario opcional para ticket o control interno"
-            />
           </div>
 
           {(values.metodo_pago === "transferencia" || values.metodo_pago === "mixto") ? (
@@ -808,43 +843,11 @@ function VentaForm({
             </div>
           ) : null}
 
-          <div className="venta-pos-sidebar__card">
-            <div>
-              <p className="section-kicker">Ticket</p>
-              <h3 className="mb-0">Datos del negocio</h3>
-            </div>
-            <input
-              className="form-control"
-              value={ticketConfig.businessName}
-              onChange={(event) => onTicketConfigChange("businessName", event.target.value)}
-              placeholder="Nombre del negocio"
-            />
-            <input
-              className="form-control"
-              value={ticketConfig.businessPhone}
-              onChange={(event) => onTicketConfigChange("businessPhone", event.target.value)}
-              placeholder="Telefono"
-            />
-            <textarea
-              className="form-control"
-              rows="2"
-              value={ticketConfig.businessAddress}
-              onChange={(event) => onTicketConfigChange("businessAddress", event.target.value)}
-              placeholder="Direccion"
-            />
-            <input
-              className="form-control"
-              value={ticketConfig.footerNote}
-              onChange={(event) => onTicketConfigChange("footerNote", event.target.value)}
-              placeholder="Mensaje final del ticket"
-            />
-          </div>
-
           <div className="venta-pos-sidebar__actions">
             <button
               type="submit"
               className="btn products-filter-actions__apply venta-pos-sidebar__submit"
-              disabled={saving || montoRecibidoInsuficiente || montoTransferenciaInsuficiente || pagoMixtoInsuficiente}
+              disabled={saving}
             >
               {saving ? "Registrando..." : "Registrar venta"}
             </button>
@@ -888,6 +891,98 @@ function VentaForm({
                 alt={selectedProductPhoto.name}
                 className="venta-product-photo-modal__image"
               />
+            </div>
+          </div>
+        </div>
+      ), document.body) : null}
+
+      {isPendingDebtModalOpen && typeof document !== "undefined" ? createPortal((
+        <div
+          className="venta-pending-debt-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirmar saldo pendiente"
+        >
+          <div className="venta-pending-debt-modal__card">
+            <div className="venta-pending-debt-modal__header">
+              <div>
+                <p className="section-kicker">Saldo pendiente</p>
+                <h3 className="mb-0">Guardar venta con deuda</h3>
+              </div>
+              <button
+                type="button"
+                className="btn venta-transfer-modal__close"
+                onClick={() => setIsPendingDebtModalOpen(false)}
+                aria-label="Cerrar"
+              >
+                <X size={18} weight="bold" aria-hidden="true" />
+              </button>
+            </div>
+
+            <p className="venta-pending-debt-modal__message">
+              Esta venta tiene un total de {formatCurrency(total)}, se recibio {formatCurrency(totalPagado)}
+              {" "}y quedara pendiente {formatCurrency(faltante)}.
+            </p>
+
+            <div className="venta-transfer-modal__grid">
+              <label className="form-label">
+                Cliente que debe
+                <input
+                  className={`form-control ${pendingDebtErrors.cliente_nombre ? "is-invalid" : ""}`}
+                  value={pendingDebt.cliente_nombre}
+                  onChange={(event) => handlePendingDebtChange("cliente_nombre", event.target.value)}
+                  placeholder="Nombre del cliente"
+                />
+                <span className="invalid-feedback d-block">{pendingDebtErrors.cliente_nombre}</span>
+              </label>
+              <label className="form-label">
+                Telefono
+                <input
+                  className="form-control"
+                  value={pendingDebt.cliente_telefono}
+                  onChange={(event) => handlePendingDebtChange("cliente_telefono", event.target.value)}
+                  placeholder="Telefono opcional"
+                />
+              </label>
+              <label className="form-label">
+                Promesa de pago
+                <input
+                  type="date"
+                  className="form-control"
+                  value={pendingDebt.fecha_promesa_pago}
+                  onChange={(event) => handlePendingDebtChange("fecha_promesa_pago", event.target.value)}
+                />
+              </label>
+            </div>
+
+            <label className="form-label">
+              Por que debe
+              <textarea
+                className={`form-control ${pendingDebtErrors.motivo ? "is-invalid" : ""}`}
+                rows="3"
+                value={pendingDebt.motivo}
+                onChange={(event) => handlePendingDebtChange("motivo", event.target.value)}
+                placeholder="Ejemplo: pagara el resto el viernes"
+              />
+              <span className="invalid-feedback d-block">{pendingDebtErrors.motivo}</span>
+            </label>
+
+            <div className="venta-pending-debt-modal__actions">
+              <button
+                type="button"
+                className="btn products-filter-actions__clear"
+                onClick={() => setIsPendingDebtModalOpen(false)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn products-filter-actions__apply"
+                onClick={confirmPendingDebt}
+                disabled={saving}
+              >
+                {saving ? "Registrando..." : "Guardar asi"}
+              </button>
             </div>
           </div>
         </div>

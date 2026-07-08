@@ -7,14 +7,18 @@ use App\Models\Venta;
 
 class RegistrarMovimientoCajaVentaAction
 {
-    public function execute(Venta $venta): MovimientoCaja
+    public function execute(Venta $venta, mixed $montoPagado = null): MovimientoCaja
     {
+        $monto = $montoPagado === null
+            ? $venta->total
+            : min((float) $montoPagado, (float) $venta->total);
+
         return MovimientoCaja::query()->create([
             'modulo_id' => $venta->modulo_id,
             'tipo_movimiento' => 'entrada',
             'categoria_movimiento' => 'venta',
             'concepto' => 'Venta '.$venta->numero_venta,
-            'monto' => $venta->total,
+            'monto' => $monto,
             'fecha_movimiento' => $venta->fecha_venta,
             'referencia' => $venta->numero_venta,
             'observacion' => $venta->observacion,

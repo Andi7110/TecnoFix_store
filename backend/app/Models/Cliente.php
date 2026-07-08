@@ -35,4 +35,9 @@ class Cliente extends Model
     {
         return $this->hasMany(Reparacion::class);
     }
+
+    public function cuentasPorCobrar(): HasMany
+    {
+        return $this->hasMany(CuentaPorCobrar::class);
+    }
 }

@@ -5,6 +5,7 @@ export const ACCESS_MODULES = [
   { value: "reparaciones", label: "Reparaciones y reportes" },
   { value: "caja", label: "Caja" },
   { value: "costos", label: "Costos y rentabilidad" },
+  { value: "cuentas_cobrar", label: "Cuentas por cobrar" },
   { value: "bitacora", label: "Bitacora" },
   { value: "usuarios", label: "Usuarios" },
 ];
@@ -35,6 +36,7 @@ export function getDefaultPathForUser(user) {
     ["inventario", "/productos"],
     ["caja", "/caja"],
     ["costos", "/costos"],
+    ["cuentas_cobrar", "/cuentas-por-cobrar"],
     ["bitacora", "/bitacora"],
     ["usuarios", "/usuarios"],
   ];

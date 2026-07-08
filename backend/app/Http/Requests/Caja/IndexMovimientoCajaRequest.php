@@ -25,6 +25,7 @@ class IndexMovimientoCajaRequest extends FormRequest
                 'ingreso_manual',
                 'ajuste_caja',
                 'compra_productos',
+                'cuenta_por_cobrar',
             ])],
             'modulo_id' => ['nullable', 'integer', 'exists:modulos,id'],
             'fecha_desde' => ['nullable', 'date'],

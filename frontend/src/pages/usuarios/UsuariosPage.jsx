@@ -10,7 +10,7 @@ const EMPTY_FORM = {
   email: "",
   password: "",
   role: "vendedor",
-  allowed_modules: ["dashboard", "ventas"],
+  allowed_modules: ["dashboard", "ventas", "cuentas_cobrar"],
   is_active: true,
 };
 
@@ -60,7 +60,7 @@ function UsuarioModal({ usuario, onClose, onSaved }) {
       }
 
       if (field === "role" && value === "vendedor") {
-        next.allowed_modules = ["dashboard", "ventas"];
+        next.allowed_modules = ["dashboard", "ventas", "cuentas_cobrar"];
       }
 
       if (field === "role" && value === "tecnico") {

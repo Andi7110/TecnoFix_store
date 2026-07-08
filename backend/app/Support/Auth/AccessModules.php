@@ -11,6 +11,7 @@ class AccessModules
         'reparaciones',
         'caja',
         'costos',
+        'cuentas_cobrar',
         'bitacora',
         'usuarios',
     ];
