@@ -238,6 +238,13 @@ function getPageMeta(pathname) {
     };
   }
 
+  if (pathname.startsWith("/cuentas-por-cobrar")) {
+    return {
+      title: "Cuentas por cobrar",
+      description: "Controla ventas con saldo pendiente y abonos de clientes.",
+    };
+  }
+
   if (pathname.startsWith("/bitacora")) {
     return {
       title: "Bitacora",
@@ -273,7 +280,7 @@ function getPageMeta(pathname) {
 }
 
 function shouldShowBackButton(pathname) {
-  return !["/", "/productos", "/ventas", "/reparaciones", "/caja", "/bitacora", "/usuarios"].includes(pathname);
+  return !["/", "/productos", "/ventas", "/reparaciones", "/caja", "/cuentas-por-cobrar", "/bitacora", "/usuarios"].includes(pathname);
 }
 
 function AppLayout() {
@@ -478,6 +485,7 @@ function AppLayout() {
     },
     { to: "/caja", label: "Caja", icon: <CashIcon />, module: "caja" },
     { to: "/costos", label: "Costos", icon: <ReportsIcon />, module: "costos" },
+    { to: "/cuentas-por-cobrar", label: "Cuentas por cobrar", icon: <CashIcon />, module: "cuentas_cobrar" },
     { to: "/bitacora", label: "Bitacora", icon: <BitacoraIcon />, module: "bitacora" },
     { to: "/usuarios", label: "Usuarios", icon: <UsersIcon />, module: "usuarios" },
   ].filter((item) => canAccessModule(user, item.module));

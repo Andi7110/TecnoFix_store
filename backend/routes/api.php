@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Inventario\MovimientoInventarioController;
 use App\Http\Controllers\Api\Inventario\ProductoController;
 use App\Http\Controllers\Api\Caja\MovimientoCajaController;
 use App\Http\Controllers\Api\Costos\CostoOperativoController;
+use App\Http\Controllers\Api\CuentasPorCobrar\CuentaPorCobrarController;
 use App\Http\Controllers\Api\Dashboard\DashboardSummaryController;
 use App\Http\Controllers\Api\Reparaciones\RepairReportController;
 use App\Http\Controllers\Api\Reparaciones\ReparacionController;
@@ -87,6 +88,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('resumen', [CostoOperativoController::class, 'summary'])->name('costos.resumen');
         Route::get('/', [CostoOperativoController::class, 'index'])->name('costos.index');
         Route::post('/', [CostoOperativoController::class, 'store'])->name('costos.store');
+    });
+
+    Route::middleware('module:cuentas_cobrar,caja')->prefix('cuentas-por-cobrar')->group(function (): void {
+        Route::get('/', [CuentaPorCobrarController::class, 'index'])->name('cuentas-por-cobrar.index');
+        Route::get('{cuentaPorCobrar}', [CuentaPorCobrarController::class, 'show'])->name('cuentas-por-cobrar.show');
+        Route::post('{cuentaPorCobrar}/abonos', [CuentaPorCobrarController::class, 'abonar'])->name('cuentas-por-cobrar.abonar');
     });
 
     Route::middleware('module:bitacora')->apiResource('bitacora', BitacoraController::class)->only(['index', 'show']);

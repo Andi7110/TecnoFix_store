@@ -3,6 +3,7 @@ import "./components/auth/auth.css";
 import "./components/bitacora/bitacora.css";
 import "./components/caja/caja.css";
 import "./components/costos/costos.css";
+import "./components/cuentas/cuentas.css";
 import "./components/dashboard/dashboard.css";
 import "./components/productos/productos.css";
 import "./components/reparaciones/reparaciones.css";

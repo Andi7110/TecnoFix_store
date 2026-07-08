@@ -26,6 +26,7 @@ class StoreMovimientoCajaRequest extends FormRequest
                 'ingreso_manual',
                 'ajuste_caja',
                 'compra_productos',
+                'cuenta_por_cobrar',
             ])],
             'concepto' => ['required', 'string', 'max:255'],
             'monto' => ['required', 'numeric', 'min:0.01'],

@@ -7,6 +7,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import BitacoraPage from "../pages/bitacora/BitacoraPage";
 import CajaMovimientosPage from "../pages/caja/CajaMovimientosPage";
 import CostosPage from "../pages/costos/CostosPage";
+import CuentasPorCobrarPage from "../pages/cuentas/CuentasPorCobrarPage";
 import InventarioProductosPage from "../pages/productos/InventarioProductosPage";
 import ProductosPage from "../pages/productos/ProductosPage";
 import ReparacionesPage from "../pages/reparaciones/ReparacionesPage";
@@ -31,6 +32,9 @@ function AppRouter() {
             </Route>
             <Route element={<ModuleRoute module="costos" />}>
               <Route path="/costos" element={<CostosPage />} />
+            </Route>
+            <Route element={<ModuleRoute module="cuentas_cobrar" />}>
+              <Route path="/cuentas-por-cobrar" element={<CuentasPorCobrarPage />} />
             </Route>
             <Route element={<ModuleRoute module="inventario" />}>
               <Route path="/productos" element={<ProductosPage />} />

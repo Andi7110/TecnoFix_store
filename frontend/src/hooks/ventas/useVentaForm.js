@@ -647,7 +647,7 @@ export function useVentaForm({ onSuccess }) {
     setErrorMessage("");
   }
 
-  async function submit(event) {
+  async function submit(event, pendingDebt = null) {
     event.preventDefault();
 
     setSaving(true);
@@ -672,41 +672,34 @@ export function useVentaForm({ onSuccess }) {
       return;
     }
 
-    if (values.metodo_pago === "efectivo" && total > 0 && montoRecibidoNormalizado < total) {
-      setErrors({
-        monto_recibido: ["El monto recibido debe cubrir el total para ventas en efectivo."],
-      });
-      setSaving(false);
-      return;
-    }
-
-    if (values.metodo_pago === "transferencia" && total > 0 && montoTransferenciaNormalizado < total) {
-      setErrors({
-        monto_transferencia: ["El monto transferido debe cubrir el total de la venta."],
-      });
-      setSaving(false);
-      return;
-    }
-
-    if (values.metodo_pago === "mixto" && total > 0 && totalPagado < total) {
-      setErrors({
-        pago_mixto: ["La suma de efectivo y transferencia debe cubrir el total de la venta."],
-      });
-      setSaving(false);
-      return;
-    }
+    const montoPagado = Math.min(totalPagado, total);
+    const pendingDebtSummary = pendingDebt ? [
+      "Venta con saldo pendiente:",
+      `Cliente: ${pendingDebt.cliente_nombre?.trim() || "Sin nombre"}`,
+      pendingDebt.cliente_telefono?.trim() ? `Telefono: ${pendingDebt.cliente_telefono.trim()}` : "",
+      `Pagado: ${montoPagado.toFixed(2)}`,
+      `Pendiente: ${faltante.toFixed(2)}`,
+      `Motivo: ${pendingDebt.motivo?.trim() || "No especificado"}`,
+    ].filter(Boolean).join("\n") : "";
 
     const payload = {
       modulo_id: Number(values.modulo_id),
       fecha_venta: values.fecha_venta,
       descuento: descuento || 0,
       metodo_pago: values.metodo_pago,
+      monto_pagado: montoPagado,
+      cuenta_por_cobrar: pendingDebt ? {
+        cliente_nombre: pendingDebt.cliente_nombre?.trim(),
+        cliente_telefono: pendingDebt.cliente_telefono?.trim() || null,
+        motivo: pendingDebt.motivo?.trim(),
+        fecha_promesa_pago: pendingDebt.fecha_promesa_pago || null,
+      } : undefined,
       observacion: [values.observacion.trim(), buildTransferSummary({
         values,
         transferAccount,
         montoRecibido,
         montoTransferencia,
-      })]
+      }), pendingDebtSummary]
         .filter(Boolean)
         .join("\n\n") || null,
       items: items.map((item) => ({

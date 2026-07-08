@@ -414,6 +414,11 @@
   font-weight: 600;
 }
 
+.venta-pos-helper--warning {
+  color: #b7791f;
+  font-weight: 600;
+}
+
 .venta-pos-transfer-note {
   border-radius: 0.9rem;
   border: 1px dashed rgba(30, 168, 82, 0.28);
@@ -528,7 +533,8 @@
 }
 
 /* Modal para datos y comprobante de transferencia. */
-.venta-transfer-modal {
+.venta-transfer-modal,
+.venta-pending-debt-modal {
   position: fixed;
   inset: 0;
   z-index: 1520;
@@ -628,7 +634,8 @@
   object-fit: contain;
 }
 
-.venta-transfer-modal__card {
+.venta-transfer-modal__card,
+.venta-pending-debt-modal__card {
   width: min(92vw, 760px);
   max-height: 90vh;
   overflow: auto;
@@ -643,13 +650,31 @@
   animation: venta-transfer-card-in 220ms ease-out;
 }
 
-.venta-transfer-modal__header {
+.venta-transfer-modal__header,
+.venta-pending-debt-modal__header {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: flex-start;
   position: relative;
   padding-right: 3.2rem;
+}
+
+.venta-pending-debt-modal__card {
+  width: min(92vw, 620px);
+}
+
+.venta-pending-debt-modal__message {
+  margin: 0;
+  color: var(--app-muted);
+  line-height: 1.5;
+}
+
+.venta-pending-debt-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .venta-transfer-modal__actions {

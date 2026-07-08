@@ -13,7 +13,7 @@ class SalesReportService
 {
     private const OPERATING_EXPENSE_CATEGORIES = ['gasto', 'costo_fijo'];
     private const OTHER_INCOME_CATEGORIES = ['reparacion', 'ingreso_manual'];
-    private const EXCLUDED_CASH_CATEGORIES = ['retiro', 'ajuste_caja', 'compra_productos'];
+    private const EXCLUDED_CASH_CATEGORIES = ['retiro', 'ajuste_caja', 'compra_productos', 'cuenta_por_cobrar'];
 
     public function getDailyReport(array $filters): array
     {
