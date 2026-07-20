@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import DashboardMetricCards from "../components/dashboard/DashboardMetricCards";
 import DashboardModulesTable from "../components/dashboard/DashboardModulesTable";
-import CrearMovimientoCajaModal from "../components/caja/CrearMovimientoCajaModal";
 import CrearProductoModal from "../components/productos/CrearProductoModal";
 import CrearReparacionModal from "../components/reparaciones/CrearReparacionModal";
 import CrearVentaModal from "../components/ventas/CrearVentaModal";
+import UsuarioModal from "./usuarios/UsuarioModal";
 import { useAuth } from "../hooks/auth/useAuth";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
-import { CashRegister, CalendarBlank, DeviceMobileCamera, Package, Pulse, ShoppingCartSimple } from "../icons/phosphor";
+import { CalendarBlank, DeviceMobileCamera, Package, Pulse, ShoppingCartSimple, UserPlus } from "../icons/phosphor";
 import { canAccessModule } from "../utils/accessControl";
 import { notifySuccess } from "../utils/toasts";
 
@@ -222,7 +222,7 @@ function DashboardLoadingSkeleton() {
 function Dashboard() {
   const [isCreateSaleModalOpen, setIsCreateSaleModalOpen] = useState(false);
   const [isCreateRepairModalOpen, setIsCreateRepairModalOpen] = useState(false);
-  const [isCreateCashModalOpen, setIsCreateCashModalOpen] = useState(false);
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
   const { user } = useAuth();
   // Hook encargado de traer el resumen consolidado desde la API.
@@ -248,11 +248,6 @@ function Dashboard() {
         ? `Reparacion ${reparacion.codigo_reparacion} registrada exitosamente.`
         : "Reparacion registrada exitosamente.",
     );
-  }
-
-  function handleMovimientoCajaCreated() {
-    reload();
-    notifySuccess("Movimiento de caja registrado exitosamente.");
   }
 
   function handleProductoCreated() {
@@ -327,14 +322,14 @@ function Dashboard() {
                   />
                 </div>
               ) : null}
-              {canAccessModule(user, "caja") ? (
+              {canAccessModule(user, "usuarios") ? (
                 <div className="col-12 col-sm-6 col-xl-3">
                   <QuickAction
-                    title="Movimientos de caja"
-                    description="Registrar entradas y salidas de caja"
-                    onClick={() => setIsCreateCashModalOpen(true)}
-                    tone="cash"
-                    icon={<CashRegister size={24} weight="duotone" />}
+                    title="Usuarios"
+                    description="Agregar un nuevo usuario y sus permisos"
+                    onClick={() => setIsCreateUserModalOpen(true)}
+                    tone="users"
+                    icon={<UserPlus size={24} weight="duotone" />}
                   />
                 </div>
               ) : null}
@@ -391,10 +386,11 @@ function Dashboard() {
         />
       ) : null}
 
-      {isCreateCashModalOpen ? (
-        <CrearMovimientoCajaModal
-          onClose={() => setIsCreateCashModalOpen(false)}
-          onCreated={handleMovimientoCajaCreated}
+      {isCreateUserModalOpen ? (
+        <UsuarioModal
+          usuario={null}
+          onClose={() => setIsCreateUserModalOpen(false)}
+          onSaved={() => setIsCreateUserModalOpen(false)}
         />
       ) : null}
 

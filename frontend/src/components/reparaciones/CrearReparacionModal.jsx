@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { X } from "@phosphor-icons/react";
 import ReparacionFormContainer from "./ReparacionFormContainer";
 
 function CrearReparacionModal({ onClose, onCreated }) {
@@ -36,6 +37,15 @@ function CrearReparacionModal({ onClose, onCreated }) {
         className="repair-create-modal__content repair-create-page"
         onClick={(event) => event.stopPropagation()}
       >
+        <button
+          type="button"
+          className="repair-create-modal__close"
+          onClick={onClose}
+          aria-label="Cerrar registro de reparacion"
+          title="Cerrar"
+        >
+          <X size={20} weight="bold" aria-hidden="true" />
+        </button>
         <div className="repair-create-modal__body">
           <ReparacionFormContainer
             formId="create-repair-modal-form"

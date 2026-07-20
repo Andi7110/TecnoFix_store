@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { X } from "@phosphor-icons/react";
 import VentaFormContainer from "./VentaFormContainer";
 
 function CrearVentaModal({ onClose, onCreated }) {
@@ -40,6 +41,15 @@ function CrearVentaModal({ onClose, onCreated }) {
         className="venta-create-modal__content ventas-create-page"
         onClick={(event) => event.stopPropagation()}
       >
+        <button
+          type="button"
+          className="venta-create-modal__close"
+          onClick={onClose}
+          aria-label="Cerrar caja registradora"
+          title="Cerrar"
+        >
+          <X size={20} weight="bold" aria-hidden="true" />
+        </button>
         <div className="venta-create-modal__body">
           <VentaFormContainer
             onSuccess={handleSuccess}

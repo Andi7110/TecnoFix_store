@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { X } from "../../icons/phosphor";
 import ProductoForm from "./ProductoForm";
 import { useProductoForm } from "../../hooks/productos/useProductoForm";
 
@@ -39,6 +40,15 @@ function CrearProductoModal({ onClose, onCreated }) {
         className="product-create-modal__content"
         onClick={(event) => event.stopPropagation()}
       >
+        <button
+          type="button"
+          className="product-create-modal__close"
+          onClick={onClose}
+          aria-label="Cerrar registro de producto"
+          title="Cerrar"
+        >
+          <X size={20} weight="bold" aria-hidden="true" />
+        </button>
         <div className="product-create-modal__body">
           <ProductoForm
             title="Crear producto"

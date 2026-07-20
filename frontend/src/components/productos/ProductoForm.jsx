@@ -63,7 +63,8 @@ function ProductoForm({
 
         {errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null}
 
-        <div className="products-filter-grid">
+        <div className="product-form__scroll-area">
+          <div className="products-filter-grid">
           <div>
             <label className="form-label">Modulo</label>
             <select
@@ -303,33 +304,35 @@ function ProductoForm({
             </div>
           </div>
         ) : null}
-        </div>
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label">Descripcion</label>
-          <textarea
-            className={`form-control ${fieldError(errors, "descripcion") ? "is-invalid" : ""}`}
-            rows="4"
-            value={values.descripcion}
-            onChange={(event) => onChange("descripcion", event.target.value)}
-          />
-          <div className="invalid-feedback">{fieldError(errors, "descripcion")}</div>
+          <div className="mb-3">
+            <label className="form-label">Descripcion</label>
+            <textarea
+              className={`form-control ${fieldError(errors, "descripcion") ? "is-invalid" : ""}`}
+              rows="4"
+              value={values.descripcion}
+              onChange={(event) => onChange("descripcion", event.target.value)}
+            />
+            <div className="invalid-feedback">{fieldError(errors, "descripcion")}</div>
+          </div>
         </div>
 
         <div className="products-filter-actions">
-          <button
-            type="submit"
-            className="btn product-form__submit"
-            disabled={saving}
-          >
-            {saving ? "Guardando..." : isEdit ? "Actualizar producto" : "Crear producto"}
-          </button>
           <button
             type="button"
             className="btn product-form__cancel"
             onClick={onCancel}
           >
             Cancelar
+          </button>
+          <button
+            type="submit"
+            className="btn product-form__submit"
+            style={{ "--primary-color": "#15803d", "--hover-color": "#116b33" }}
+            disabled={saving}
+          >
+            {saving ? "Guardando..." : isEdit ? "Actualizar producto" : "Crear producto"}
           </button>
         </div>
       </form>

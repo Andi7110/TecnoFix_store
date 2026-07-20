@@ -9,6 +9,31 @@
   --primary-green: #15803d;
 }
 
+/* Acciones y encabezado de la modal de usuarios. */
+.user-admin-modal .user-admin-modal__actions .btn.btn-success {
+  color: #ffffff !important;
+  background: #15803d !important;
+  border-color: #15803d !important;
+  box-shadow: 0 10px 22px rgba(21, 128, 61, 0.2) !important;
+}
+
+.user-admin-modal .user-admin-modal__actions .btn.btn-success:hover,
+.user-admin-modal .user-admin-modal__actions .btn.btn-success:focus {
+  color: #ffffff !important;
+  background: #116b33 !important;
+  border-color: #116b33 !important;
+}
+
+.user-admin-modal .user-admin-modal__actions .btn.btn-light {
+  color: #1f2937 !important;
+  background: #dfe4e1 !important;
+  border-color: #dfe4e1 !important;
+}
+
+.user-admin-modal .user-admin-modules__header .section-kicker {
+  color: rgba(255, 255, 255, 0.84) !important;
+}
+
 :root[data-theme="dark"] {
   --app-primary: #39ff7a;
   --app-primary-dark: #39ff7a;
@@ -464,4 +489,210 @@
   margin-left: 0 !important;
   border-left: 0 !important;
   border-radius: 0 0.72rem 0.72rem 0 !important;
+}
+
+/* Acciones de cobro: verde de la tarjeta total y orden operativo. */
+#root .venta-create-modal .ventas-create-page .venta-pos-quickcash .btn,
+#root .venta-create-modal .ventas-create-page .venta-pos-quickcash .btn-light,
+#root .venta-create-modal .ventas-create-page .venta-pos-quickcash .btn-outline-dark {
+  border-color: #167a40 !important;
+  background: #167a40 !important;
+  color: #ffffff !important;
+}
+
+#root .venta-create-modal .ventas-create-page .venta-pos-quickcash .btn:hover,
+#root .venta-create-modal .ventas-create-page .venta-pos-quickcash .btn:focus {
+  border-color: #0f5132 !important;
+  background: #0f5132 !important;
+  color: #ffffff !important;
+}
+
+#root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply,
+#root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .venta-pos-sidebar__submit {
+  grid-column: 2;
+  grid-row: 1;
+  border-color: #167a40 !important;
+  background: #167a40 !important;
+  color: #ffffff !important;
+}
+
+#root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply:hover,
+#root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply:focus,
+#root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .venta-pos-sidebar__submit:hover,
+#root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .venta-pos-sidebar__submit:focus {
+  border-color: #0f5132 !important;
+  background: #0f5132 !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 430px) {
+  #root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__clear {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .products-filter-actions__apply,
+  #root .venta-create-modal .ventas-create-page .venta-pos-sidebar__actions .venta-pos-sidebar__submit {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+
+/* Reparacion: mismas acciones verdes y jerarquia de la caja registradora. */
+#root .repair-create-modal .repair-create-page .repair-create-actions .btn {
+  min-height: 44px !important;
+  height: 44px !important;
+  padding: 0.5rem 0.75rem !important;
+  line-height: 1.2 !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-create-actions .products-filter-actions__apply,
+#root .repair-create-modal .repair-create-page .repairs-cost-form__actions .btn-primary {
+  border-color: #167a40 !important;
+  background: #167a40 !important;
+  color: #ffffff !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-create-actions .products-filter-actions__apply:hover,
+#root .repair-create-modal .repair-create-page .repair-create-actions .products-filter-actions__apply:focus,
+#root .repair-create-modal .repair-create-page .repairs-cost-form__actions .btn-primary:hover,
+#root .repair-create-modal .repair-create-page .repairs-cost-form__actions .btn-primary:focus {
+  border-color: #0f5132 !important;
+  background: #0f5132 !important;
+  color: #ffffff !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-create-actions .products-filter-actions__clear {
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  color: #1f2937 !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-create-actions .products-filter-actions__clear:hover,
+#root .repair-create-modal .repair-create-page .repair-create-actions .products-filter-actions__clear:focus {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+}
+
+/* Fechas de reparacion: icono y campo forman un unico control. */
+#root .repair-create-modal .repair-create-page .repair-date-input {
+  width: 100%;
+  min-height: 2.45rem;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  overflow: hidden;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 6px;
+  background: var(--app-field-bg);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+#root .repair-create-modal .repair-create-page .repair-date-input:focus-within {
+  border-color: rgba(30, 168, 82, 0.5);
+  box-shadow: 0 0 0 0.18rem rgba(30, 168, 82, 0.1);
+}
+
+#root .repair-create-modal .repair-create-page .repair-date-input > .input-group-text,
+#root .repair-create-modal .repair-create-page .repair-date-input > .form-control {
+  min-height: 2.35rem;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-date-input > .input-group-text {
+  flex: 0 0 2.7rem;
+  justify-content: center;
+  padding: 0 !important;
+  color: #167a40 !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-date-input > .form-control {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding-left: 0.2rem;
+}
+
+/* El kicker del panel verde conserva contraste alto. */
+#root .repair-create-modal .repair-create-page .repairs-costs-card--create .repairs-costs-card__header .section-kicker {
+  color: rgba(255, 255, 255, 0.84) !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Montos de reparacion: prefijo $ e input comparten un unico contorno. */
+#root .repair-create-modal .repair-create-page .repair-form .product-money-input,
+#root .repair-create-modal .repair-create-page .repairs-cost-form .input-group {
+  width: 100%;
+  min-height: 2.45rem;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  overflow: hidden;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 6px;
+  background: var(--app-field-bg);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+#root .repair-create-modal .repair-create-page .repair-form .product-money-input:focus-within,
+#root .repair-create-modal .repair-create-page .repairs-cost-form .input-group:focus-within {
+  border-color: rgba(30, 168, 82, 0.5);
+  box-shadow: 0 0 0 0.18rem rgba(30, 168, 82, 0.1);
+}
+
+#root .repair-create-modal .repair-create-page .repair-form .product-money-input > .input-group-text,
+#root .repair-create-modal .repair-create-page .repair-form .product-money-input > .form-control,
+#root .repair-create-modal .repair-create-page .repairs-cost-form .input-group > .input-group-text,
+#root .repair-create-modal .repair-create-page .repairs-cost-form .input-group > .form-control {
+  min-height: 2.35rem;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-form .product-money-input > .input-group-text,
+#root .repair-create-modal .repair-create-page .repairs-cost-form .input-group > .input-group-text {
+  flex: 0 0 2.7rem;
+  justify-content: center;
+  padding: 0 !important;
+  color: #167a40 !important;
+}
+
+#root .repair-create-modal .repair-create-page .repair-form .product-money-input > .form-control,
+#root .repair-create-modal .repair-create-page .repairs-cost-form .input-group > .form-control {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding-left: 0.2rem;
+}
+
+/* Etiquetas de campos: replica exactamente la tipografia de Caja registradora. */
+#root .repair-create-modal .repair-create-page .repair-form .form-label,
+#root .repair-create-modal .repair-create-page .repairs-costs-card .form-label,
+#root .product-create-modal .product-form .form-label,
+#root .user-admin-modal .user-admin-form__grid .form-label {
+  min-height: 0 !important;
+  display: inline-block !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--app-muted) !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 0.74rem !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0.08em !important;
+}
+
+:root[data-theme="dark"] #root .user-admin-modal .user-admin-form__grid .form-label {
+  color: #aabdb5 !important;
 }
