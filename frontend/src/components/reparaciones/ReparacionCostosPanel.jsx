@@ -101,8 +101,8 @@ function CostForm({ initialValue, submitLabel, saving, errors, onSubmit, onCance
           <div className="input-group">
             <span className="input-group-text">$</span>
             <input className={`form-control ${errorFor(errors, "monto") ? "is-invalid" : ""}`} value={form.monto} onChange={(event) => updateField("monto", event.target.value)} onBlur={() => updateField("monto", formatMoneyInput(form.monto))} inputMode="decimal" />
-            {errorFor(errors, "monto") ? <div className="invalid-feedback">{errorFor(errors, "monto")}</div> : null}
           </div>
+          {errorFor(errors, "monto") ? <div className="invalid-feedback">{errorFor(errors, "monto")}</div> : null}
         </div>
         <div className="col-md-7">
           <label className="form-label">Fecha</label>

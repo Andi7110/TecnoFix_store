@@ -30,21 +30,21 @@ function ReparacionFormContainer({
             onLocalAdd={form.addCosto}
             onLocalRemove={form.removeCosto}
           />
-        </aside>
-      </div>
 
-      <div className="products-filter-actions repair-create-actions">
-        <button
-          type="submit"
-          form={formId}
-          className="btn products-filter-actions__apply"
-          disabled={form.saving}
-        >
-          {form.saving ? "Guardando..." : "Registrar reparacion"}
-        </button>
-        <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
-          Cancelar
-        </button>
+          <div className="products-filter-actions repair-create-actions">
+            <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form={formId}
+              className="btn products-filter-actions__apply"
+              disabled={form.saving}
+            >
+              {form.saving ? "Guardando..." : "Registrar reparacion"}
+            </button>
+          </div>
+        </aside>
       </div>
     </>
   );

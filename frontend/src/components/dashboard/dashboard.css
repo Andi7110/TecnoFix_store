@@ -1596,6 +1596,13 @@
   --quick-action-line: rgba(245, 158, 11, 0.2);
 }
 
+.dashboard-page .dashboard-quick-action--users {
+  --quick-action-accent: #15803d;
+  --quick-action-accent-2: #22c55e;
+  --quick-action-soft: rgba(21, 128, 61, 0.09);
+  --quick-action-line: rgba(21, 128, 61, 0.2);
+}
+
 .dashboard-page .dashboard-quick-action--product {
   --quick-action-accent: #ec4899;
   --quick-action-accent-2: #be185d;

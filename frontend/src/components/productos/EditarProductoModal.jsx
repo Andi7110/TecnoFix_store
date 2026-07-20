@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { X } from "../../icons/phosphor";
 import ProductoForm from "./ProductoForm";
 import { GlobalLoadingOverlay } from "../interactions/GlobalInteractions";
 import { useProductoForm } from "../../hooks/productos/useProductoForm";
@@ -49,6 +50,15 @@ function EditarProductoModal({ productoId, onClose, onUpdated }) {
         className="product-create-modal__content"
         onClick={(event) => event.stopPropagation()}
       >
+        <button
+          type="button"
+          className="product-create-modal__close"
+          onClick={onClose}
+          aria-label="Cerrar detalle de producto"
+          title="Cerrar"
+        >
+          <X size={20} weight="bold" aria-hidden="true" />
+        </button>
         <div className="product-create-modal__body">
           <ProductoForm
             title="Detalle de producto"
