@@ -36,6 +36,15 @@ class StoreCostoOperativoRequest extends FormRequest
             'cantidad_distribucion' => ['nullable', 'integer', 'min:1', 'max:100000'],
             'registrar_en_caja' => ['nullable', 'boolean'],
             'observacion' => ['nullable', 'string'],
+            'comprobantes' => ['nullable', 'array', 'max:5'],
+            'comprobantes.*' => ['file', 'mimes:pdf,jpg,jpeg,png,webp', 'max:10240'],
+            'tipo_comprobante' => ['nullable', Rule::in(['factura', 'ticket', 'recibo', 'otro'])],
+            'proveedor_comprobante' => ['nullable', 'string', 'max:255'],
+            'fecha_documento' => ['nullable', 'date'],
+            'periodo_desde' => ['nullable', 'date'],
+            'periodo_hasta' => ['nullable', 'date', 'after_or_equal:periodo_desde'],
+            'dias_cobrados' => ['nullable', 'integer', 'min:1', 'max:3660'],
+            'tarifa_diaria' => ['nullable', 'numeric', 'min:0.01', 'max:999999.99'],
         ];
     }
 }

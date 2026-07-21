@@ -6,6 +6,8 @@ import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/auth/LoginPage";
 import BitacoraPage from "../pages/bitacora/BitacoraPage";
 import CajaMovimientosPage from "../pages/caja/CajaMovimientosPage";
+import CajaComprobantesPage from "../pages/caja/CajaComprobantesPage";
+import CajaReportesPage from "../pages/caja/CajaReportesPage";
 import CostosPage from "../pages/costos/CostosPage";
 import CuentasPorCobrarPage from "../pages/cuentas/CuentasPorCobrarPage";
 import InventarioProductosPage from "../pages/productos/InventarioProductosPage";
@@ -29,6 +31,8 @@ function AppRouter() {
             </Route>
             <Route element={<ModuleRoute module="caja" />}>
               <Route path="/caja" element={<CajaMovimientosPage />} />
+              <Route path="/caja/comprobantes" element={<CajaComprobantesPage />} />
+              <Route path="/caja/reportes" element={<CajaReportesPage />} />
             </Route>
             <Route element={<ModuleRoute module="costos" />}>
               <Route path="/costos" element={<CostosPage />} />

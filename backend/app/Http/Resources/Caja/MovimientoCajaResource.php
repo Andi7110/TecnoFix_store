@@ -19,6 +19,12 @@ class MovimientoCajaResource extends JsonResource
             'fecha_movimiento' => $this->fecha_movimiento,
             'referencia' => $this->referencia,
             'observacion' => $this->observacion,
+            'comprobantes' => $this->whenLoaded('comprobantes', fn () => $this->comprobantes->map(fn ($comprobante): array => [
+                'id' => $comprobante->id,
+                'nombre_original' => $comprobante->nombre_original,
+                'mime_type' => $comprobante->mime_type,
+                'archivo_url' => route('caja.comprobantes.archivo', ['comprobante' => $comprobante->id]),
+            ])),
             'modulo' => $this->whenLoaded('modulo', fn (): ?array => $this->modulo ? [
                 'id' => $this->modulo->id,
                 'nombre' => $this->modulo->nombre,

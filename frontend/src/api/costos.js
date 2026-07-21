@@ -10,7 +10,27 @@ export async function listCostos(params = {}) {
 }
 
 export async function createCosto(payload) {
-  const response = await api.post("/costos", payload);
+  return postCostoForm("/costos", payload);
+}
+
+export async function createCompraInventario(payload) {
+  return postCostoForm("/costos/compras", payload);
+}
+
+async function postCostoForm(url, payload) {
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (key === "comprobantes") {
+      value.forEach((file) => formData.append("comprobantes[]", file));
+    } else if (typeof value === "boolean") {
+      formData.append(key, value ? "1" : "0");
+    } else if (value !== null && value !== undefined && value !== "") {
+      formData.append(key, value);
+    }
+  });
+
+  const response = await api.post(url, formData);
 
   return response.data.data;
 }

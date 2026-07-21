@@ -1,13 +1,6 @@
 function CajaFilters({ values, modulos, onChange, onSubmit, onClear }) {
   return (
-    <form className="surface-card repairs-filters products-filters--minimal cash-filters" onSubmit={onSubmit}>
-      <div className="section-heading">
-        <div>
-          <p className="section-kicker">Caja</p>
-          <h2>Filtros de movimientos</h2>
-        </div>
-      </div>
-
+    <form className="cash-filters" onSubmit={onSubmit}>
       <div className="repairs-grid products-filter-grid">
         <div>
           <label className="form-label">Tipo</label>
@@ -23,7 +16,7 @@ function CajaFilters({ values, modulos, onChange, onSubmit, onClear }) {
         </div>
 
         <div>
-          <label className="form-label">Categoria</label>
+          <label className="form-label">Categoría</label>
           <select
             className="form-select"
             value={values.categoria_movimiento}
@@ -42,7 +35,7 @@ function CajaFilters({ values, modulos, onChange, onSubmit, onClear }) {
         </div>
 
         <div>
-          <label className="form-label">Modulo</label>
+          <label className="form-label">Área</label>
           <select
             className="form-select"
             value={values.modulo_id}
@@ -58,7 +51,7 @@ function CajaFilters({ values, modulos, onChange, onSubmit, onClear }) {
         </div>
 
         <div>
-          <label className="form-label">Fecha desde</label>
+          <label className="form-label">Desde</label>
           <input
             className="form-control"
             type="date"
@@ -68,7 +61,7 @@ function CajaFilters({ values, modulos, onChange, onSubmit, onClear }) {
         </div>
 
         <div>
-          <label className="form-label">Fecha hasta</label>
+          <label className="form-label">Hasta</label>
           <input
             className="form-control"
             type="date"
@@ -80,7 +73,7 @@ function CajaFilters({ values, modulos, onChange, onSubmit, onClear }) {
 
       <div className="products-filter-actions">
         <button type="submit" className="btn products-filter-actions__apply">
-          Aplicar filtros
+          Aplicar
         </button>
         <button type="button" className="btn products-filter-actions__clear" onClick={onClear}>
           Limpiar

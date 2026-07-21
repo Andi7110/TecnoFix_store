@@ -121,6 +121,19 @@
   flex-direction: column;
   gap: 0.55rem;
   margin-top: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.3rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.app-nav::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .app-nav__group {
@@ -1687,6 +1700,9 @@
   .app-nav {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex: none;
+    overflow: visible;
+    padding-right: 0;
   }
 
   .app-nav__sublinks {

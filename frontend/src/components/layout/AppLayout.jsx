@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
 import { getDashboardSummary } from "../../api/dashboard";
+import { getMenu } from "../../api/menu";
 import { canAccessModule } from "../../utils/accessControl";
 
 const THEME_MODE_KEY = "tecnofix-theme-mode";
@@ -84,6 +85,14 @@ function BitacoraIcon() {
       <path d="M5 3h14v18H5V3Zm3 4h8V5H8v2Zm0 4h8V9H8v2Zm0 4h5v-2H8v2Zm8.5 4a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5Zm0-1.5a1 1 0 1 1 0-2a1 1 0 0 1 0 2Z" />
     </svg>
   );
+}
+
+function getMenuIcon(icon) {
+  if (icon === "reports") {
+    return <ReportsIcon />;
+  }
+
+  return <CashIcon />;
 }
 
 function UsersIcon() {
@@ -304,6 +313,7 @@ function AppLayout() {
   const [notificationsSummary, setNotificationsSummary] = useState(null);
   const [notificationsLoading, setNotificationsLoading] = useState(true);
   const [notificationsError, setNotificationsError] = useState("");
+  const [databaseMenu, setDatabaseMenu] = useState([]);
   const [readNotificationIds, setReadNotificationIds] = useState(() => {
     if (typeof window === "undefined") {
       return [];
@@ -389,6 +399,26 @@ function AppLayout() {
   }, []);
 
   useEffect(() => {
+    let ignore = false;
+
+    getMenu()
+      .then((items) => {
+        if (!ignore) {
+          setDatabaseMenu(items);
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          setDatabaseMenu([]);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!canViewDashboard) {
       setNotificationsLoading(false);
       setNotificationsSummary(null);
@@ -456,6 +486,27 @@ function AppLayout() {
     setReadNotificationIds((current) => [...new Set([...current, ...ids])]);
   }
 
+  const cashMenuItems = databaseMenu.map((item) => {
+    const canAccessParent = canAccessModule(user, item.modulo);
+    const children = (item.children ?? [])
+      .filter((child) => canAccessParent || canAccessModule(user, child.modulo))
+      .map((child) => ({
+        to: child.ruta,
+        label: child.nombre,
+        icon: getMenuIcon(child.icono),
+        module: child.modulo,
+      }));
+
+    return {
+      to: item.ruta,
+      label: item.nombre,
+      icon: getMenuIcon(item.icono),
+      module: item.modulo,
+      children,
+      visible: canAccessParent || children.length > 0,
+    };
+  });
+
   const navItems = [
     { to: "/", label: "Inicio", end: true, icon: <DashboardIcon />, module: "dashboard" },
     {
@@ -483,12 +534,10 @@ function AppLayout() {
         { to: "/reparaciones/reportes", label: "Reportes", icon: <ReportsIcon /> },
       ],
     },
-    { to: "/caja", label: "Caja", icon: <CashIcon />, module: "caja" },
-    { to: "/costos", label: "Costos", icon: <ReportsIcon />, module: "costos" },
-    { to: "/cuentas-por-cobrar", label: "Cuentas por cobrar", icon: <CashIcon />, module: "cuentas_cobrar" },
+    ...cashMenuItems,
     { to: "/bitacora", label: "Bitacora", icon: <BitacoraIcon />, module: "bitacora" },
     { to: "/usuarios", label: "Usuarios", icon: <UsersIcon />, module: "usuarios" },
-  ].filter((item) => canAccessModule(user, item.module));
+  ].filter((item) => item.visible ?? canAccessModule(user, item.module));
 
   async function handleConfirmLogout() {
     setIsLoggingOut(true);
@@ -516,7 +565,8 @@ function AppLayout() {
 
           <nav className="app-nav">
             {navItems.map((item) => {
-              const groupSelected = pathname.startsWith(item.to);
+              const groupSelected = pathname.startsWith(item.to)
+                || item.children?.some((child) => pathname.startsWith(child.to));
 
               return (
                 <div key={item.to} className="app-nav__group">
@@ -524,7 +574,7 @@ function AppLayout() {
                     to={item.to}
                     end={item.end}
                     className={({ isActive }) =>
-                      `app-nav__link ${isActive ? "is-active" : ""}`
+                      `app-nav__link ${isActive || groupSelected ? "is-active" : ""}`
                     }
                     title={item.label}
                   >

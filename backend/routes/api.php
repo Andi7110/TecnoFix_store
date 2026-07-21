@@ -6,7 +6,10 @@ use App\Http\Controllers\Api\Inventario\InventarioProductoController;
 use App\Http\Controllers\Api\Inventario\ModuloController;
 use App\Http\Controllers\Api\Inventario\MovimientoInventarioController;
 use App\Http\Controllers\Api\Inventario\ProductoController;
+use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\Caja\MovimientoCajaController;
+use App\Http\Controllers\Api\Caja\CajaReportController;
+use App\Http\Controllers\Api\Caja\ComprobanteController;
 use App\Http\Controllers\Api\Costos\CostoOperativoController;
 use App\Http\Controllers\Api\CuentasPorCobrar\CuentaPorCobrarController;
 use App\Http\Controllers\Api\Dashboard\DashboardSummaryController;
@@ -28,6 +31,7 @@ Route::middleware('web')->prefix('auth')->group(function (): void {
 });
 
 Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get('menu', MenuController::class)->name('menu.index');
     Route::get('dashboard/resumen', DashboardSummaryController::class)->middleware('module:dashboard');
     Route::post('reportes/pdf', ReportPdfController::class);
     Route::post('reportes/codigos/pdf', [DocumentPdfController::class, 'barcodes']);
@@ -81,11 +85,17 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::apiResource('reparaciones', ReparacionController::class)->only(['index', 'store', 'show', 'update']);
     });
     Route::middleware('module:caja')->prefix('caja')->group(function (): void {
+        Route::get('comprobantes', [ComprobanteController::class, 'index'])->name('caja.comprobantes.index');
+        Route::get('comprobantes/{comprobante}/archivo', [ComprobanteController::class, 'archivo'])->name('caja.comprobantes.archivo');
+        Route::get('reportes/mensual', [CajaReportController::class, 'monthly'])->name('caja.reportes.mensual');
+        Route::post('reportes/cierre', [CajaReportController::class, 'close'])->name('caja.reportes.cierre');
+        Route::get('reportes/historial', [CajaReportController::class, 'history'])->name('caja.reportes.historial');
         Route::apiResource('movimientos', MovimientoCajaController::class)->only(['index', 'store', 'show']);
     });
 
     Route::middleware('module:costos,caja')->prefix('costos')->group(function (): void {
         Route::get('resumen', [CostoOperativoController::class, 'summary'])->name('costos.resumen');
+        Route::post('compras', [CostoOperativoController::class, 'storeCompra'])->name('costos.compras.store');
         Route::get('/', [CostoOperativoController::class, 'index'])->name('costos.index');
         Route::post('/', [CostoOperativoController::class, 'store'])->name('costos.store');
     });

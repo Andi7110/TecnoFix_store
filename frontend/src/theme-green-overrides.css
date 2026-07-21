@@ -9,6 +9,33 @@
   --primary-green: #15803d;
 }
 
+/* Colores finales de las acciones del reporte mensual de Caja. */
+#root .cash-reports-page .cash-report-action--generate {
+  border-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+#root .cash-reports-page .cash-report-action--generate:hover,
+#root .cash-reports-page .cash-report-action--generate:focus {
+  border-color: #0f172a !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+}
+
+#root .cash-reports-page .cash-report-action--close {
+  border-color: #7c3aed !important;
+  background: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+#root .cash-reports-page .cash-report-action--close:hover,
+#root .cash-reports-page .cash-report-action--close:focus {
+  border-color: #6d28d9 !important;
+  background: #6d28d9 !important;
+  color: #ffffff !important;
+}
+
 /* Acciones y encabezado de la modal de usuarios. */
 .user-admin-modal .user-admin-modal__actions .btn.btn-success {
   color: #ffffff !important;
