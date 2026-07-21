@@ -34,6 +34,7 @@ class MovimientoCajaService
             ])
             ->with([
                 'modulo:id,nombre,estado',
+                'comprobantes:id,movimiento_caja_id,nombre_original,mime_type',
             ]);
 
         $this->filter->apply($query, $filters);
@@ -52,6 +53,7 @@ class MovimientoCajaService
     {
         return $movimientoCaja->load([
             'modulo:id,nombre,estado',
+            'comprobantes:id,movimiento_caja_id,nombre_original,mime_type',
         ]);
     }
 

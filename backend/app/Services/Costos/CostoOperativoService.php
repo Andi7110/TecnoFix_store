@@ -4,18 +4,23 @@ namespace App\Services\Costos;
 
 use App\Models\CostoOperativo;
 use App\Models\MovimientoCaja;
+use App\Services\Comprobantes\ComprobanteService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CostoOperativoService
 {
+    public function __construct(private readonly ComprobanteService $comprobanteService)
+    {
+    }
+
     public function paginate(array $filters): array
     {
         $perPage = min(max((int) ($filters['per_page'] ?? 10), 1), 100);
 
         $query = CostoOperativo::query()
-            ->with(['modulo:id,nombre,estado', 'producto:id,codigo,nombre', 'registradoPor:id,name,username'])
+            ->with(['modulo:id,nombre,estado', 'producto:id,codigo,nombre', 'registradoPor:id,name,username', 'comprobantes:id,costo_operativo_id,nombre_original,mime_type'])
             ->porFecha($filters['fecha_desde'] ?? null, $filters['fecha_hasta'] ?? null)
             ->when(filled($filters['categoria'] ?? null), fn ($query) => $query->where('categoria', $filters['categoria']))
             ->when(filled($filters['tipo_costo'] ?? null), fn ($query) => $query->where('tipo_costo', $filters['tipo_costo']))
@@ -54,7 +59,7 @@ class CostoOperativoService
                 ]);
             }
 
-            return CostoOperativo::query()->create([
+            $costo = CostoOperativo::query()->create([
                 'modulo_id' => $data['modulo_id'] ?? null,
                 'producto_id' => $data['producto_id'] ?? null,
                 'movimiento_caja_id' => $movimientoCaja?->id,
@@ -69,7 +74,77 @@ class CostoOperativoService
                 'costo_unitario_estimado' => $costoUnitario,
                 'registrar_en_caja' => $registrarEnCaja,
                 'observacion' => $data['observacion'] ?? null,
-            ])->load(['modulo:id,nombre,estado', 'producto:id,codigo,nombre', 'registradoPor:id,name,username']);
+            ]);
+
+            $this->comprobanteService->storeFor($costo, $movimientoCaja, [
+                ...$data,
+                'fecha_documento' => $data['fecha_documento'] ?? $data['fecha_costo'],
+            ], $userId);
+
+            return $costo->load([
+                'modulo:id,nombre,estado',
+                'producto:id,codigo,nombre',
+                'registradoPor:id,name,username',
+                'comprobantes:id,costo_operativo_id,nombre_original,mime_type',
+            ]);
+        });
+    }
+
+    public function storeCompra(array $data, ?int $userId = null): CostoOperativo
+    {
+        return DB::transaction(function () use ($data, $userId): CostoOperativo {
+            $monto = round((float) $data['monto'], 2);
+            $registrarEnCaja = (bool) ($data['registrar_en_caja'] ?? true);
+            $tipoCompra = $data['tipo_compra'];
+            $tipoCompraLabel = match ($tipoCompra) {
+                'accesorios' => 'accesorios',
+                'libreria' => 'librería',
+                default => 'otros productos',
+            };
+            $concepto = 'Compra de '.$tipoCompraLabel;
+            $movimientoCaja = null;
+
+            if ($registrarEnCaja) {
+                $movimientoCaja = MovimientoCaja::query()->create([
+                    'modulo_id' => null,
+                    'tipo_movimiento' => 'salida',
+                    'categoria_movimiento' => 'compra_productos',
+                    'concepto' => $concepto,
+                    'monto' => $monto,
+                    'fecha_movimiento' => Carbon::parse($data['fecha_compra'])->startOfDay(),
+                    'referencia' => 'compra-inventario',
+                    'observacion' => $data['observacion'] ?? null,
+                ]);
+            }
+
+            $costo = CostoOperativo::query()->create([
+                'modulo_id' => null,
+                'producto_id' => null,
+                'movimiento_caja_id' => $movimientoCaja?->id,
+                'registrado_por' => $userId,
+                'concepto' => $concepto,
+                'categoria' => 'mercaderia',
+                'tipo_costo' => 'compra',
+                'frecuencia' => 'unico',
+                'monto' => $monto,
+                'fecha_costo' => Carbon::parse($data['fecha_compra'])->toDateString(),
+                'cantidad_distribucion' => null,
+                'costo_unitario_estimado' => null,
+                'registrar_en_caja' => $registrarEnCaja,
+                'observacion' => $data['observacion'] ?? null,
+            ]);
+
+            $this->comprobanteService->storeFor($costo, $movimientoCaja, [
+                ...$data,
+                'fecha_documento' => $data['fecha_documento'] ?? $data['fecha_compra'],
+            ], $userId);
+
+            return $costo->load([
+                'modulo:id,nombre,estado',
+                'producto:id,codigo,nombre',
+                'registradoPor:id,name,username',
+                'comprobantes:id,costo_operativo_id,nombre_original,mime_type',
+            ]);
         });
     }
 
@@ -87,8 +162,10 @@ class CostoOperativoService
             ->whereBetween('fecha_costo', [$start->toDateString(), $end->toDateString()])
             ->when(filled($moduleId), fn ($query) => $query->where('modulo_id', $moduleId));
 
-        $totalCostos = round((float) (clone $base)->sum('monto'), 2);
-        $porCategoria = (clone $base)
+        $operatingBase = (clone $base)->where('tipo_costo', '!=', 'compra');
+        $totalCostos = round((float) (clone $operatingBase)->sum('monto'), 2);
+        $totalCompras = round((float) (clone $base)->where('tipo_costo', 'compra')->sum('monto'), 2);
+        $porCategoria = (clone $operatingBase)
             ->select('categoria')
             ->selectRaw('COUNT(*) as costos_count')
             ->selectRaw('COALESCE(SUM(monto), 0) as total')
@@ -130,6 +207,7 @@ class CostoOperativoService
             'costo_ventas' => $costoVentas,
             'utilidad_bruta' => $utilidadBruta,
             'costos_operativos' => $totalCostos,
+            'compras_inventario' => $totalCompras,
             'utilidad_neta' => $utilidadNeta,
             'margen_neto_porcentaje' => $ventasNetas > 0 ? round(($utilidadNeta / $ventasNetas) * 100, 2) : 0,
             'por_categoria' => $porCategoria,

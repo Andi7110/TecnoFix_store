@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Costos;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Costos\IndexCostoOperativoRequest;
+use App\Http\Requests\Costos\StoreCompraInventarioRequest;
 use App\Http\Requests\Costos\StoreCostoOperativoRequest;
 use App\Http\Resources\Costos\CostoOperativoResource;
 use App\Services\Costos\CostoOperativoService;
@@ -30,6 +31,13 @@ class CostoOperativoController extends Controller
     {
         return new CostoOperativoResource(
             $this->costoOperativoService->store($request->validated(), $request->user()?->id)
+        );
+    }
+
+    public function storeCompra(StoreCompraInventarioRequest $request): CostoOperativoResource
+    {
+        return new CostoOperativoResource(
+            $this->costoOperativoService->storeCompra($request->validated(), $request->user()?->id)
         );
     }
 

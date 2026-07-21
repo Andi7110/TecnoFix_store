@@ -1,5 +1,37 @@
-.cuentas-page {
-  gap: 1rem;
+.cuentas-page.products-page--minimal {
+  gap: 1.2rem;
+}
+
+.cuentas-help-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: 0.85rem;
+  background: rgba(37, 99, 235, 0.055);
+  color: #2563eb;
+}
+
+.cuentas-help-strip svg {
+  flex: 0 0 auto;
+  margin-top: 0.1rem;
+}
+
+.cuentas-help-strip div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.cuentas-help-strip strong {
+  color: var(--app-ink);
+  font-size: 0.86rem;
+}
+
+.cuentas-help-strip span {
+  color: var(--app-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .cuentas-summary {
@@ -9,7 +41,6 @@
 }
 
 .cuentas-summary article,
-.cuentas-filters,
 .cuentas-table-shell,
 .cuentas-abono-modal__card {
   border: 1px solid var(--app-surface-border);
@@ -19,32 +50,99 @@
 }
 
 .cuentas-summary article {
-  padding: 1rem;
   display: grid;
+  align-content: start;
   gap: 0.35rem;
+  min-height: 8.5rem;
+  padding: 1rem;
 }
 
-.cuentas-summary span,
+.cuentas-summary article > span:not(.cuentas-summary__icon),
+.cuentas-summary small,
 .cuentas-table td span,
 .cuentas-abono-modal__header span {
   color: var(--app-muted);
 }
 
+.cuentas-summary article > span:not(.cuentas-summary__icon) {
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cuentas-summary small {
+  font-size: 0.78rem;
+}
+
 .cuentas-summary strong {
   color: var(--app-ink);
-  font-size: 1.45rem;
+  font-size: 1.5rem;
+}
+
+.cuentas-summary__icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.65rem;
+  background: rgba(37, 99, 235, 0.09);
+  color: #2563eb;
+}
+
+.cuentas-summary__icon--pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.cuentas-summary__icon--paid {
+  background: rgba(22, 163, 74, 0.11);
+  color: #15803d;
+}
+
+.cuentas-table-shell {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.1rem;
+  overflow: hidden;
+}
+
+.cuentas-table-shell__heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cuentas-table-shell__heading h3,
+.cuentas-table-shell__heading p {
+  margin-bottom: 0;
+}
+
+.cuentas-table-shell__heading h3 {
+  color: var(--app-ink);
+  font-size: 1.3rem;
+}
+
+.cuentas-table-shell__heading > span {
+  color: var(--app-muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .cuentas-filters {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px) auto;
-  gap: 0.85rem;
+  grid-template-columns: minmax(16rem, 1.6fr) minmax(12rem, 0.8fr) auto;
+  gap: 0.75rem;
   align-items: end;
-  padding: 1rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--app-surface-border);
+  border-bottom: 1px solid var(--app-surface-border);
 }
 
-.cuentas-table-shell {
-  overflow: hidden;
+.cuentas-filters__actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .cuentas-table td strong,
@@ -52,12 +150,28 @@
   display: block;
 }
 
+.cuentas-table td {
+  vertical-align: middle;
+}
+
+.cuentas-table th {
+  color: #047857;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cuentas-table td:nth-child(6) strong {
+  color: #b45309;
+  font-size: 1rem;
+}
+
 .cuentas-status {
   width: fit-content;
   margin-top: 0.3rem;
   padding: 0.22rem 0.5rem;
-  border-radius: 0.55rem;
-  font-size: 0.72rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -77,55 +191,193 @@
   color: #991b1b;
 }
 
+.cuentas-table .btn-sm {
+  white-space: nowrap;
+}
+
 .cuentas-abono-modal {
   position: fixed;
   inset: 0;
   z-index: 1520;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   padding: 1rem;
-  background: rgba(7, 10, 9, 0.72);
+  background: rgba(7, 10, 9, 0.67);
   backdrop-filter: blur(5px);
 }
 
 .cuentas-abono-modal__card {
-  width: min(92vw, 620px);
-  max-height: 90vh;
-  overflow: auto;
+  width: min(94vw, 640px);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 1rem;
 }
 
 .cuentas-abono-modal__header {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.cuentas-abono-modal__header h3,
+.cuentas-abono-modal__header p {
+  margin: 0;
 }
 
 .cuentas-abono-modal__header h3 {
-  margin: 0;
+  color: var(--app-ink);
+  font-size: 1.3rem;
+}
+
+.cuentas-abono-modal__icon {
+  flex: 0 0 auto;
+  width: 2.8rem;
+  height: 2.8rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.75rem;
+  background: #15803d;
+  color: #fff !important;
+}
+
+.cuentas-abono-modal__account {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.cuentas-abono-modal__account div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.cuentas-abono-modal__account span {
+  color: var(--app-muted);
+  font-size: 0.7rem;
+}
+
+.cuentas-abono-modal__account strong {
+  color: var(--app-ink);
+  font-size: 0.85rem;
+}
+
+.cuentas-abono-modal__amount-row {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.cuentas-money-input {
+  position: relative;
+}
+
+.cuentas-money-input > span {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 0.85rem;
+  transform: translateY(-50%);
+  color: #15803d;
+  font-weight: 700;
+}
+
+.cuentas-money-input input {
+  padding-left: 1.85rem;
+  font-weight: 700;
+}
+
+.cuentas-abono-modal__quick-actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.cuentas-abono-modal__quick-actions button {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 999px;
+  background: var(--app-surface);
+  color: var(--app-muted);
+  font-size: 0.76rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.cuentas-abono-modal__quick-actions button:hover {
+  border-color: #16a34a;
+  color: #15803d;
+}
+
+.cuentas-abono-modal__remaining {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(22, 163, 74, 0.22);
+  border-radius: 0.75rem;
+  background: rgba(22, 163, 74, 0.06);
+}
+
+.cuentas-abono-modal__remaining span {
+  color: var(--app-muted);
+  font-size: 0.8rem;
+}
+
+.cuentas-abono-modal__remaining strong {
+  color: #15803d;
+  font-size: 1.2rem;
 }
 
 .cuentas-abono-modal__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
+  gap: 0.75rem;
+}
+
+.cuentas-abono-modal__optional {
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.7rem;
+}
+
+.cuentas-abono-modal__optional summary {
+  padding: 0.75rem 0.85rem;
+  color: var(--app-ink);
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.cuentas-abono-modal__optional > div {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 0.7rem;
+  padding: 0 0.85rem 0.85rem;
 }
 
 .cuentas-abono-modal__actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
+  gap: 0.65rem;
+}
+
+.cuentas-abono-modal__actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
 
 :root[data-theme="dark"] .cuentas-summary article,
-:root[data-theme="dark"] .cuentas-filters,
 :root[data-theme="dark"] .cuentas-table-shell,
 :root[data-theme="dark"] .cuentas-abono-modal__card {
-  background: rgba(15, 23, 42, 0.72);
+  background: rgba(15, 23, 42, 0.82);
   border-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -135,10 +387,49 @@
   color: #f8fafc;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
+  .cuentas-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cuentas-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cuentas-filters__actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
   .cuentas-summary,
   .cuentas-filters,
-  .cuentas-abono-modal__grid {
+  .cuentas-abono-modal__account,
+  .cuentas-abono-modal__amount-row,
+  .cuentas-abono-modal__grid,
+  .cuentas-abono-modal__optional > div {
     grid-template-columns: 1fr;
+  }
+
+  .cuentas-filters__actions {
+    grid-column: auto;
+    flex-direction: column;
+  }
+
+  .cuentas-table-shell__heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cuentas-abono-modal__quick-actions {
+    flex-wrap: wrap;
+  }
+
+  .cuentas-abono-modal__actions {
+    flex-direction: column-reverse;
+  }
+
+  .cuentas-abono-modal__actions .btn {
+    width: 100%;
   }
 }
