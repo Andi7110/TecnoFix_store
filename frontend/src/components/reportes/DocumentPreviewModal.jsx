@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import AppModal from "../common/AppModal";
 
 function DocumentPreviewModal({
   title,
@@ -8,34 +8,10 @@ function DocumentPreviewModal({
   onClose,
   frameClassName = "",
 }) {
-  useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
-
   return (
-    <div
-      className="report-preview-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-      onClick={onClose}
-    >
+    <AppModal overlayClassName="report-preview-modal" ariaLabel={title} onClose={onClose}>
       <div
         className="report-preview-modal__content"
-        onClick={(event) => event.stopPropagation()}
       >
         <div className="report-preview-modal__header">
           <div>
@@ -58,7 +34,7 @@ function DocumentPreviewModal({
           />
         </div>
       </div>
-    </div>
+    </AppModal>
   );
 }
 

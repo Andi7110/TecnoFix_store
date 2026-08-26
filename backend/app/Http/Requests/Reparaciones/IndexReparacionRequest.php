@@ -15,6 +15,7 @@ class IndexReparacionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'q' => ['nullable', 'string', 'max:150'],
             'modulo_id' => ['nullable', 'integer', 'exists:modulos,id'],
             'estado' => ['nullable', Rule::in(['registrado', 'en_proceso', 'terminado', 'entregado', 'cancelado'])],
             'cliente' => ['nullable', 'string', 'max:150'],

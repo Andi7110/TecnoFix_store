@@ -30,6 +30,7 @@ function CajaFilters({ values, modulos, onChange, onSubmit, onClear }) {
             <option value="retiro">Retiro</option>
             <option value="ingreso_manual">Ingreso manual</option>
             <option value="ajuste_caja">Ajuste caja</option>
+            <option value="saldo_inicial">Saldo inicial</option>
             <option value="compra_productos">Compra productos</option>
           </select>
         </div>

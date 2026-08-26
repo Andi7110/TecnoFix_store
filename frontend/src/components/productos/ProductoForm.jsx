@@ -1,3 +1,5 @@
+import AppModal from "../common/AppModal";
+
 function fieldError(errors, name) {
   return errors?.[name]?.[0];
 }
@@ -11,18 +13,20 @@ function ProductoForm({
   validationModal,
   saving,
   loading,
+  loadingCode,
+  codeError,
   isEdit,
   modulos,
   categorias,
   loadingCategorias,
   codePrefix,
   codeSequence,
-  fotoPreview,
+  variantPreviews,
+  existingVariants,
+  variantFilesCount,
   fixedStockMinimo,
   onChange,
-  onFotoChange,
-  onCodeSequenceChange,
-  onCodeSequenceBlur,
+  onVariantPhotosChange,
   onPriceChange,
   onPriceBlur,
   onStockInitialChange,
@@ -42,13 +46,13 @@ function ProductoForm({
 
   const hasSelectedModulo = Boolean(values.modulo_id);
   const categoriaSelectDisabled = !hasSelectedModulo || loadingCategorias;
+  const stockControlledByPhotos = values.maneja_variantes;
 
   return (
     <>
       <form className={`surface-card product-form ${isEdit ? "product-form--edit" : ""}`} onSubmit={onSubmit}>
         <div className="section-heading">
           <div>
-            <p className="section-kicker">Formulario</p>
             <h2>{title}</h2>
             <p className="muted-text">{description}</p>
           </div>
@@ -66,13 +70,13 @@ function ProductoForm({
         <div className="product-form__scroll-area">
           <div className="products-filter-grid">
           <div>
-            <label className="form-label">Modulo</label>
+            <label className="form-label">Módulo</label>
             <select
               className={`form-select ${fieldError(errors, "modulo_id") ? "is-invalid" : ""}`}
               value={values.modulo_id}
               onChange={(event) => onChange("modulo_id", event.target.value)}
             >
-              <option value="">Selecciona un modulo</option>
+              <option value="">Selecciona un módulo</option>
               {modulos.map((modulo) => (
                 <option key={modulo.id} value={modulo.id}>
                   {modulo.nombre}
@@ -83,7 +87,7 @@ function ProductoForm({
           </div>
 
           <div>
-            <label className="form-label">Categoria</label>
+            <label className="form-label">Categoría</label>
             <select
               className={`form-select ${fieldError(errors, "categoria_id") ? "is-invalid" : ""}`}
               value={values.categoria_id}
@@ -92,12 +96,12 @@ function ProductoForm({
             >
               <option value="">
                 {!hasSelectedModulo
-                  ? "Selecciona primero un modulo"
+                  ? "Selecciona primero un módulo"
                   : loadingCategorias
-                    ? "Cargando categorias..."
+                    ? "Cargando categorías..."
                     : categorias.length === 0
-                      ? "No hay categorias para este modulo"
-                      : "Selecciona una categoria"}
+                      ? "No hay categorías para este módulo"
+                      : "Selecciona una categoría"}
               </option>
               {categorias.map((categoria) => (
                 <option key={categoria.id} value={categoria.id}>
@@ -109,7 +113,7 @@ function ProductoForm({
           </div>
 
           <div>
-            <label className="form-label">Codigo</label>
+            <label className="form-label">Código</label>
             {isEdit ? (
               <input
                 className={`form-control ${fieldError(errors, "codigo") ? "is-invalid" : ""}`}
@@ -127,23 +131,26 @@ function ProductoForm({
                   className={`form-control ${fieldError(errors, "codigo") ? "is-invalid" : ""}`}
                   type="text"
                   inputMode="numeric"
-                  placeholder="001"
+                  placeholder={loadingCode ? "..." : "001"}
                   maxLength="3"
                   autoComplete="off"
                   value={codeSequence}
-                  onChange={(event) => onCodeSequenceChange(event.target.value)}
-                  onBlur={onCodeSequenceBlur}
-                  disabled={!codePrefix}
+                  readOnly
+                  disabled
                 />
               </div>
             )}
-            <small className="muted-text d-block mt-2">
-              {isEdit
-                ? "Formato recomendado: MOD-CAT-001."
-                : codePrefix
-                  ? `Prefijo generado automaticamente: ${codePrefix}. Solo agrega el correlativo numerico.`
-                  : "Selecciona primero modulo y categoria para generar el prefijo del codigo."}
-            </small>
+            {(isEdit || loadingCode || codeError || values.codigo) && (
+              <small className="muted-text d-block mt-2">
+                {isEdit
+                  ? "Formato recomendado: MOD-CAT-001."
+                  : loadingCode
+                    ? "Buscando el siguiente código disponible..."
+                    : codeError
+                      ? codeError
+                      : `Código automático: ${values.codigo}. Se confirmará al guardar.`}
+              </small>
+            )}
             <div className="invalid-feedback">{fieldError(errors, "codigo")}</div>
           </div>
 
@@ -157,26 +164,73 @@ function ProductoForm({
             <div className="invalid-feedback">{fieldError(errors, "nombre")}</div>
           </div>
 
-          <div>
-            <label className="form-label">Fotografia</label>
+          <div className="product-variants-field">
+            {!isEdit ? (
+              <label className="product-stock-mode">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  checked={values.maneja_variantes}
+                  onChange={(event) => onChange("maneja_variantes", event.target.checked)}
+                />
+                <span>
+                  <strong>Controlar cada diseño por separado</strong>
+                  <small>
+                    Actívalo para cases u otros productos donde cada foto representa una unidad diferente.
+                  </small>
+                </span>
+              </label>
+            ) : null}
+
+            {existingVariants.length > 0 ? (
+              <div className="product-existing-variants">
+                <div className="product-existing-variants__heading">
+                  <div>
+                    <span className="form-label">Diseños registrados</span>
+                    <small className="muted-text">Estas son las unidades disponibles actualmente.</small>
+                  </div>
+                  <strong>{existingVariants.length}</strong>
+                </div>
+                <div className="product-variants-preview" aria-label="Diseños registrados">
+                  {existingVariants.map((variante, index) => (
+                    <div className="product-variants-preview__item" key={variante.id}>
+                      <img src={variante.foto_url} alt={variante.nombre || `Diseño ${index + 1}`} />
+                      <span>{variante.nombre || `Diseño ${index + 1}`}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <label className="form-label">
+              {values.maneja_variantes
+                ? isEdit ? "Agregar fotos de nuevos diseños" : "Fotos de los diseños"
+                : isEdit ? "Cambiar foto del producto" : "Foto del producto"}
+            </label>
             <input
-              className={`form-control ${fieldError(errors, "foto") ? "is-invalid" : ""}`}
+              key={values.maneja_variantes ? "variant-photos" : "product-photo"}
+              className={`form-control ${fieldError(errors, values.maneja_variantes ? "fotos_variantes" : "foto") ? "is-invalid" : ""}`}
               type="file"
+              multiple={values.maneja_variantes}
               accept="image/png,image/jpeg,image/jpg,image/webp"
-              onChange={(event) => onFotoChange(event.target.files?.[0] ?? null)}
+              onChange={(event) => onVariantPhotosChange(event.target.files)}
             />
             <small className="muted-text d-block mt-2">
-              Formatos permitidos: JPG, PNG, WEBP. Tamano maximo: 3 MB.
+              {values.maneja_variantes
+                ? "Puedes elegir hasta 30 imágenes. Cada foto representa una unidad o diseño único."
+                : "Elige una foto de referencia. Esta imagen no modifica la cantidad en inventario."}
             </small>
-            <div className="invalid-feedback">{fieldError(errors, "foto")}</div>
-
-            {fotoPreview ? (
-              <div className="mt-3">
-                <img
-                  src={fotoPreview}
-                  alt="Vista previa del producto"
-                  style={{ maxWidth: "160px", borderRadius: "0.75rem", border: "1px solid rgba(15,20,18,0.12)" }}
-                />
+            <div className="invalid-feedback d-block">
+              {fieldError(errors, values.maneja_variantes ? "fotos_variantes" : "foto")}
+            </div>
+            {variantPreviews.length > 0 ? (
+              <div className="product-variants-preview" aria-label={values.maneja_variantes ? "Diseños seleccionados" : "Foto seleccionada"}>
+                {variantPreviews.map((preview, index) => (
+                  <div className="product-variants-preview__item" key={`${preview.slice(-24)}-${index}`}>
+                    <img src={preview} alt={values.maneja_variantes ? `Diseño ${index + 1}` : "Producto"} />
+                    <span>{values.maneja_variantes ? `Diseño ${index + 1}` : "Foto principal"}</span>
+                  </div>
+                ))}
               </div>
             ) : null}
           </div>
@@ -231,6 +285,7 @@ function ProductoForm({
                 type="button"
                 className="btn btn-light product-stock-input__button"
                 onClick={onStockInitialDecrement}
+                disabled={stockControlledByPhotos}
               >
                 -
               </button>
@@ -242,25 +297,29 @@ function ProductoForm({
                 autoComplete="off"
                 value={values.stock_inicial}
                 onChange={(event) => onStockInitialChange(event.target.value)}
+                readOnly={stockControlledByPhotos}
               />
               <button
                 type="button"
                 className="btn btn-light product-stock-input__button"
                 onClick={onStockInitialIncrement}
+                disabled={stockControlledByPhotos}
               >
                 +
               </button>
               <span className="input-group-text">unid.</span>
             </div>
             <small className="muted-text d-block mt-2">
-              Cantidad disponible al momento de crear el producto.
+              {stockControlledByPhotos
+                ? `Cada diseño representa una unidad. Stock calculado con las fotos: ${variantFilesCount}.`
+                : "Escribe la cantidad real de unidades disponibles; no depende de la foto."}
             </small>
             <div className="invalid-feedback">{fieldError(errors, "stock_inicial")}</div>
           </div>
         ) : null}
 
         <div>
-          <label className="form-label">Stock minimo</label>
+          <label className="form-label">Stock mínimo</label>
           <div className="input-group product-stock-input">
             <input
               className="form-control text-end"
@@ -307,7 +366,7 @@ function ProductoForm({
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Descripcion</label>
+            <label className="form-label">Descripción</label>
             <textarea
               className={`form-control ${fieldError(errors, "descripcion") ? "is-invalid" : ""}`}
               rows="4"
@@ -338,16 +397,9 @@ function ProductoForm({
       </form>
 
       {validationModal ? (
-        <div
-          className="product-form-modal"
-          role="alertdialog"
-          aria-modal="true"
-          aria-labelledby="product-form-modal-title"
-          onClick={closeValidationModal}
-        >
+        <AppModal overlayClassName="product-form-modal" ariaLabelledby="product-form-modal-title" role="alertdialog" onClose={closeValidationModal}>
           <div
             className="product-form-modal__card"
-            onClick={(event) => event.stopPropagation()}
           >
             <h3 id="product-form-modal-title">{validationModal.title}</h3>
             <p className="muted-text">{validationModal.message}</p>
@@ -361,7 +413,7 @@ function ProductoForm({
               </button>
             </div>
           </div>
-        </div>
+        </AppModal>
       ) : null}
     </>
   );

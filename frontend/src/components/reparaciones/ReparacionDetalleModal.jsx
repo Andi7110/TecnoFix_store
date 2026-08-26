@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 import ReparacionCostosPanel from "./ReparacionCostosPanel";
 import ReparacionForm from "./ReparacionForm";
 import ReparacionHistorial from "./ReparacionHistorial";
@@ -34,23 +35,6 @@ function ReparacionDetalleModal({ reparacionId, onClose, onUpdated }) {
   const isDelivered = form.values.estado_reparacion === "entregado";
   const readOnly = !isEditing;
 
-  useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
-
   function handleCostCreated() {
     form.reload();
     onUpdated?.("Costo de reparacion agregado.");
@@ -63,17 +47,16 @@ function ReparacionDetalleModal({ reparacionId, onClose, onUpdated }) {
   const advance = formatCurrency(form.values?.anticipo);
 
   return (
-    <div
+    <ModalOverlay
+      isOpen
+      isDismissable
       className="repair-detail-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Detalle de reparacion"
-      onClick={onClose}
+      onOpenChange={(isOpen) => !isOpen && onClose()}
     >
-      <div
-        className="repair-detail-modal__content"
-        onClick={(event) => event.stopPropagation()}
-      >
+      <Modal className="repair-detail-modal__content">
+        <Dialog className="repair-detail-modal__dialog" aria-labelledby="repair-detail-modal-title">
+          {() => (
+            <>
         <div className="repair-detail-modal__header">
           <div className="repair-detail-modal__eyebrow">
             <span className="repair-detail-modal__status">{statusLabel}</span>
@@ -82,7 +65,7 @@ function ReparacionDetalleModal({ reparacionId, onClose, onUpdated }) {
           <div className="repair-detail-modal__headline">
             <div>
               <p className="section-kicker">Taller</p>
-              <h3>{deviceName}</h3>
+              <h3 id="repair-detail-modal-title">{deviceName}</h3>
               <p className="muted-text">{customerName}</p>
             </div>
             <div className="repair-detail-modal__header-actions">
@@ -102,9 +85,6 @@ function ReparacionDetalleModal({ reparacionId, onClose, onUpdated }) {
                   Cancelar edicion
                 </button>
               )}
-              <button type="button" className="btn products-filter-actions__clear" onClick={onClose}>
-                Salir
-              </button>
             </div>
           </div>
 
@@ -159,9 +139,12 @@ function ReparacionDetalleModal({ reparacionId, onClose, onUpdated }) {
             />
             <ReparacionHistorial historiales={form.values.historiales ?? []} />
           </aside>
-        </section>
-      </div>
-    </div>
+              </section>
+            </>
+          )}
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 }
 

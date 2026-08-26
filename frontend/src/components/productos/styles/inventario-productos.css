@@ -83,6 +83,110 @@
   grid-column: 1 / -1;
 }
 
+.inventory-stock-filter {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.inventory-stock-filter__label {
+  color: var(--app-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.inventory-stock-filter__buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.75rem;
+  background: var(--app-field-bg);
+}
+
+.inventory-stock-filter__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.32rem;
+  min-height: 2rem;
+  padding: 0.34rem 0.68rem;
+  border: 1px solid transparent;
+  border-radius: 0.55rem;
+  color: var(--app-muted);
+  background: transparent;
+  font-size: 0.76rem;
+  font-weight: 700;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.inventory-stock-filter__button:hover {
+  color: var(--app-ink);
+  transform: translateY(-1px);
+}
+
+.inventory-stock-filter__button.is-active {
+  border-color: rgba(21, 128, 61, 0.2);
+  color: #15803d;
+  background: rgba(21, 128, 61, 0.1);
+}
+
+.inventory-stock-filter__button--empty.is-active {
+  border-color: rgba(220, 38, 38, 0.22);
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.inventory-stock-filter__button--critical.is-active {
+  border-color: rgba(217, 119, 6, 0.24);
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.11);
+}
+
+@media (max-width: 640px) {
+  .inventory-stock-filter {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .inventory-stock-filter__buttons {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .inventory-stock-filter__button {
+    padding-inline: 0.35rem;
+  }
+}
+
+:root[data-theme="dark"] .inventory-stock-filter__buttons {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+:root[data-theme="dark"] .inventory-stock-filter__button.is-active {
+  color: #39ff7a;
+  background: rgba(57, 255, 122, 0.1);
+  border-color: rgba(57, 255, 122, 0.22);
+}
+
+:root[data-theme="dark"] .inventory-stock-filter__button--empty.is-active {
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.1);
+  border-color: rgba(251, 113, 133, 0.22);
+}
+
+:root[data-theme="dark"] .inventory-stock-filter__button--critical.is-active {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.22);
+}
+
 /* Botonera Aplicar/Limpiar dentro de filtros. */
 .inventory-section__filters-action {
   display: flex;
@@ -295,24 +399,41 @@
 }
 
 .inventory-product-delete-btn {
+  appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2rem;
-  min-height: 2rem;
+  height: 2rem;
   padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0;
+  color: #dc2626 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  transition: color 150ms ease, transform 150ms ease, opacity 150ms ease;
 }
 
 .products-page--minimal .products-table__actions .inventory-product-delete-btn {
-  border-color: rgba(220, 53, 69, 0.28) !important;
-  color: #b4232f !important;
+  border: 0 !important;
+  color: #dc2626 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .products-page--minimal .products-table__actions .inventory-product-delete-btn:hover,
-.products-page--minimal .products-table__actions .inventory-product-delete-btn:focus {
-  background: rgba(220, 53, 69, 0.08) !important;
-  border-color: rgba(220, 53, 69, 0.42) !important;
-  color: #9f1d28 !important;
+.products-page--minimal .products-table__actions .inventory-product-delete-btn:focus-visible {
+  border: 0 !important;
+  color: #ef4444 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: scale(1.14);
+}
+
+.products-page--minimal .products-table__actions .inventory-product-delete-btn:focus-visible {
+  outline: 2px solid rgba(239, 68, 68, 0.38);
+  outline-offset: 2px;
 }
 
 .products-page--minimal .products-table__actions .inventory-product-delete-btn:disabled {
@@ -351,10 +472,11 @@
 
 .inventory-photo-modal__content {
   position: relative;
-  width: min(92vw, 980px);
-  max-height: 90vh;
+  width: min(88vw, 760px);
+  min-height: min(70vh, 34rem);
+  max-height: 86vh;
   background: #ffffff;
-  border-radius: 1rem;
+  border-radius: 1.15rem;
   border: 1px solid rgba(15, 20, 18, 0.12);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
   overflow: hidden;
@@ -372,16 +494,88 @@
 }
 
 .inventory-photo-modal__close {
-  flex: 0 0 auto;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #ffffff;
+  background: #dc2626;
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.28);
+  cursor: pointer;
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.inventory-photo-modal .inventory-photo-modal__content > button.inventory-photo-modal__close {
+  position: absolute !important;
+  top: 0.85rem !important;
+  right: 0.85rem !important;
+  left: auto !important;
+  width: 2.5rem !important;
+  min-width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  color: #111827 !important;
+  box-shadow: 0 7px 20px rgba(15, 23, 42, 0.16) !important;
+  overflow: visible !important;
+}
+
+.inventory-photo-modal .inventory-photo-modal__content > button.inventory-photo-modal__close:hover,
+.inventory-photo-modal .inventory-photo-modal__content > button.inventory-photo-modal__close:focus-visible {
+  border-color: rgba(21, 128, 61, 0.28) !important;
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+}
+
+.inventory-photo-modal__close:hover,
+.inventory-photo-modal__close:focus-visible {
+  color: #ffffff;
+  background: #b91c1c;
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.38);
+  transform: scale(1.06);
+}
+
+.inventory-photo-modal__close:focus-visible {
+  outline: 3px solid rgba(248, 113, 113, 0.35);
+  outline-offset: 2px;
 }
 
 .inventory-photo-modal__image {
   display: block;
   width: 100%;
-  max-height: calc(90vh - 70px);
+  min-height: min(70vh, 34rem);
+  max-height: calc(86vh - 2rem);
   object-fit: contain;
   background: #ffffff;
-  padding: 1rem;
+  padding: 2rem;
+}
+
+@media (max-width: 575.98px) {
+  .inventory-photo-modal {
+    padding: 0.75rem;
+  }
+
+  .inventory-photo-modal__content {
+    width: 100%;
+    min-height: min(60vh, 26rem);
+    max-height: 82vh;
+  }
+
+  .inventory-photo-modal__image {
+    min-height: min(60vh, 26rem);
+    max-height: calc(82vh - 1.5rem);
+    padding: 1rem;
+  }
 }
 
 /* Modo oscuro base de inventario: modal, filtros, textos, tabla y stock. */
@@ -493,15 +687,18 @@
 }
 
 :root[data-theme="dark"] .products-page--minimal .products-table__actions .inventory-product-delete-btn {
-  border-color: rgba(248, 81, 73, 0.32) !important;
-  color: #ffb4ad !important;
+  border: 0 !important;
+  color: #f85149 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 :root[data-theme="dark"] .products-page--minimal .products-table__actions .inventory-product-delete-btn:hover,
-:root[data-theme="dark"] .products-page--minimal .products-table__actions .inventory-product-delete-btn:focus {
-  background: rgba(248, 81, 73, 0.12) !important;
-  border-color: rgba(248, 81, 73, 0.5) !important;
-  color: #ffd1cc !important;
+:root[data-theme="dark"] .products-page--minimal .products-table__actions .inventory-product-delete-btn:focus-visible {
+  border: 0 !important;
+  color: #ff7b72 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 /* ==========================================================================
@@ -646,4 +843,67 @@
   .products-page--minimal .inventory-section__filters-action {
     width: 100%;
   }
+}
+
+/* Colores locales de las acciones principales del inventario. */
+.inventory-products-page .inventory-products-page__actions .products-page__barcode-btn {
+  --primary-color: #d1d5db;
+  --hover-color: #c7cdd3;
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+.inventory-products-page .inventory-products-page__actions .products-page__barcode-btn:hover,
+.inventory-products-page .inventory-products-page__actions .products-page__barcode-btn:focus {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+}
+
+.inventory-products-page .inventory-products-page__actions .products-page__create-btn {
+  --primary-color: #15803d;
+  --hover-color: #166534;
+  border-color: #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+  box-shadow: 0 9px 20px rgba(21, 128, 61, 0.22) !important;
+}
+
+.inventory-products-page .inventory-products-page__actions .products-page__create-btn:hover,
+.inventory-products-page .inventory-products-page__actions .products-page__create-btn:focus {
+  border-color: #166534 !important;
+  background: #166534 !important;
+  color: #ffffff !important;
+}
+
+/* Encabezado de tabla inspirado en el fondo oscuro del menu lateral. */
+.inventory-products-page .inventory-table-wrapper .inventory-table thead {
+  background: linear-gradient(180deg, #0b0b0d 0%, #111214 55%, #060707 100%);
+}
+
+.inventory-products-page .inventory-table-wrapper .inventory-table thead tr,
+.inventory-products-page .inventory-table-wrapper .inventory-table thead th {
+  background: transparent !important;
+}
+
+.inventory-products-page .inventory-table-wrapper .inventory-table thead th {
+  color: #ffffff !important;
+  border-bottom-color: rgba(57, 255, 122, 0.2);
+  text-shadow: none !important;
+}
+
+.inventory-products-page .inventory-section__filters-action .products-filter-actions__apply {
+  border-color: #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+  box-shadow: 0 9px 20px rgba(21, 128, 61, 0.2) !important;
+}
+
+.inventory-products-page .inventory-section__filters-action .products-filter-actions__apply:hover,
+.inventory-products-page .inventory-section__filters-action .products-filter-actions__apply:focus {
+  border-color: #166534 !important;
+  background: #166534 !important;
+  color: #ffffff !important;
 }

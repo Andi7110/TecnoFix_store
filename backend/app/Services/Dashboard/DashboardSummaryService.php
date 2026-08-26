@@ -32,7 +32,7 @@ class DashboardSummaryService
 
         $movimientosHoy = DB::table('movimientos_caja')
             ->selectRaw("
-                SUM(CASE WHEN tipo_movimiento = 'entrada' THEN monto ELSE 0 END) as total_entradas,
+                SUM(CASE WHEN tipo_movimiento = 'entrada' AND categoria_movimiento != 'saldo_inicial' THEN monto ELSE 0 END) as total_entradas,
                 SUM(CASE WHEN tipo_movimiento = 'salida' THEN monto ELSE 0 END) as total_salidas
             ")
             ->whereBetween('fecha_movimiento', [$todayStart, $todayEnd])
@@ -40,7 +40,7 @@ class DashboardSummaryService
 
         $movimientosAyer = DB::table('movimientos_caja')
             ->selectRaw("
-                SUM(CASE WHEN tipo_movimiento = 'entrada' THEN monto ELSE 0 END) as total_entradas,
+                SUM(CASE WHEN tipo_movimiento = 'entrada' AND categoria_movimiento != 'saldo_inicial' THEN monto ELSE 0 END) as total_entradas,
                 SUM(CASE WHEN tipo_movimiento = 'salida' THEN monto ELSE 0 END) as total_salidas
             ")
             ->whereBetween('fecha_movimiento', [$yesterdayStart, $yesterdayEnd])

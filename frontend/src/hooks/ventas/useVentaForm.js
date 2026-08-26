@@ -347,7 +347,7 @@ export function useVentaForm({ onSuccess }) {
     const seleccionados = new Set(items.map((item) => Number(item.producto_id)));
 
     return filteredProductos
-      .filter((producto) => !seleccionados.has(Number(producto.id)))
+      .filter((producto) => producto.maneja_variantes || !seleccionados.has(Number(producto.id)))
       .sort((first, second) => {
         const firstLowStock = Number(first.stock_bajo) ? 1 : 0;
         const secondLowStock = Number(second.stock_bajo) ? 1 : 0;
@@ -413,13 +413,34 @@ export function useVentaForm({ onSuccess }) {
     }));
   }
 
-  function addProducto(producto) {
+  function addProducto(producto, variante = null) {
+    if (producto.maneja_variantes && !variante) {
+      return;
+    }
+
     setItems((current) => {
       const existingItem = current.find(
         (item) => Number(item.producto_id) === Number(producto.id),
       );
 
       if (existingItem) {
+        if (producto.maneja_variantes) {
+          const alreadySelected = existingItem.variante_ids?.includes(Number(variante.id));
+
+          if (alreadySelected) {
+            return current;
+          }
+
+          return current.map((item) => Number(item.producto_id) === Number(producto.id)
+            ? {
+              ...item,
+              cantidad: Number(item.cantidad) + 1,
+              variante_ids: [...(item.variante_ids ?? []), Number(variante.id)],
+              variantes: [...(item.variantes ?? []), variante],
+            }
+            : item);
+        }
+
         return current.map((item) => {
           if (Number(item.producto_id) !== Number(producto.id)) {
             return item;
@@ -447,6 +468,9 @@ export function useVentaForm({ onSuccess }) {
           stock_disponible: Number(producto.stock ?? 0),
           precio_unitario: formatMoneyInput(producto.precio_venta),
           cantidad: 1,
+          maneja_variantes: Boolean(producto.maneja_variantes),
+          variante_ids: variante ? [Number(variante.id)] : [],
+          variantes: variante ? [variante] : [],
         },
       ];
     });
@@ -473,12 +497,18 @@ export function useVentaForm({ onSuccess }) {
     ));
 
     if (exactMatch) {
+      if (exactMatch.maneja_variantes) {
+        return;
+      }
       addProducto(exactMatch);
       setSearchTerm("");
       return;
     }
 
     if (filteredProductos.length === 1) {
+      if (filteredProductos[0].maneja_variantes) {
+        return;
+      }
       addProducto(filteredProductos[0]);
       setSearchTerm("");
     }
@@ -707,6 +737,7 @@ export function useVentaForm({ onSuccess }) {
         descripcion_item: item.nombre,
         cantidad: Number(item.cantidad),
         precio_unitario: Number(item.precio_unitario || 0),
+        variante_ids: item.variante_ids ?? [],
       })),
     };
 

@@ -8,7 +8,7 @@ import CrearVentaModal from "../components/ventas/CrearVentaModal";
 import UsuarioModal from "./usuarios/UsuarioModal";
 import { useAuth } from "../hooks/auth/useAuth";
 import { useDashboardSummary } from "../hooks/dashboard/useDashboardSummary";
-import { CalendarBlank, DeviceMobileCamera, Package, Pulse, ShoppingCartSimple, UserPlus } from "../icons/phosphor";
+import { Archive, ChartBar, DeviceMobileCamera, HandCoins, Package, ShoppingCartSimple, UserPlus, Wallet } from "../icons/phosphor";
 import { canAccessModule } from "../utils/accessControl";
 import { notifySuccess } from "../utils/toasts";
 
@@ -230,7 +230,6 @@ function Dashboard() {
 
   // useMemo evita recalcular alertas si el resumen no cambio.
   const alerts = useMemo(() => buildAlerts(summary, user), [summary, user]);
-  const generatedAt = summary.generated_at ? new Date(summary.generated_at).toLocaleString() : "-";
 
   function handleVentaCreated(venta) {
     reload();
@@ -257,7 +256,7 @@ function Dashboard() {
 
   return (
     <section className="products-page dashboard-page">
-      {/* Encabezado principal y estado operativo del dashboard. */}
+      {/* Encabezado principal del dashboard. */}
       <div className="products-page__header dashboard-page__header">
         <div>
           <p className="section-kicker">Inicio</p>
@@ -265,28 +264,6 @@ function Dashboard() {
           <p className="muted-text">
             Supervisa ventas, caja, inventario y taller desde una sola vista operativa.
           </p>
-        </div>
-
-        <div className="dashboard-command-center__inline-status">
-          <div className="dashboard-command-center__inline-item">
-            <span className="dashboard-command-center__icon" aria-hidden="true">
-              <Pulse size={18} weight="bold" />
-            </span>
-            <div>
-              <span className="muted-text">Estado</span>
-              <strong>En linea</strong>
-            </div>
-          </div>
-
-          <div className="dashboard-command-center__inline-item">
-            <span className="dashboard-command-center__icon" aria-hidden="true">
-              <CalendarBlank size={18} weight="bold" />
-            </span>
-            <div>
-              <span className="muted-text">Actualizado</span>
-              <strong>{generatedAt}</strong>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -341,6 +318,50 @@ function Dashboard() {
                     onClick={() => setIsCreateProductModalOpen(true)}
                     tone="product"
                     icon={<Package size={24} weight="duotone" />}
+                  />
+                </div>
+              ) : null}
+              {canAccessModule(user, "inventario") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Inventario"
+                    description="Consultar existencias y stock disponible"
+                    to="/productos/inventario"
+                    tone="inventory"
+                    icon={<Archive size={24} weight="duotone" />}
+                  />
+                </div>
+              ) : null}
+              {canAccessModule(user, "caja") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Caja"
+                    description="Revisar entradas, salidas y balance"
+                    to="/caja"
+                    tone="cash-link"
+                    icon={<Wallet size={24} weight="duotone" />}
+                  />
+                </div>
+              ) : null}
+              {canAccessModule(user, "caja") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Reportes"
+                    description="Consultar reportes mensuales de caja"
+                    to="/caja/reportes"
+                    tone="reports"
+                    icon={<ChartBar size={24} weight="duotone" />}
+                  />
+                </div>
+              ) : null}
+              {canAccessModule(user, "cuentas_cobrar") ? (
+                <div className="col-12 col-sm-6 col-xl-3">
+                  <QuickAction
+                    title="Cuentas por cobrar"
+                    description="Revisar saldos pendientes y abonos"
+                    to="/cuentas-por-cobrar"
+                    tone="receivables"
+                    icon={<HandCoins size={24} weight="duotone" />}
                   />
                 </div>
               ) : null}

@@ -7,6 +7,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            throw new RuntimeException('The movimientos_caja enum migration requires MySQL. Run the test suite with composer test:mysql.');
+        }
+
         DB::statement("
             ALTER TABLE movimientos_caja
             MODIFY categoria_movimiento ENUM(
@@ -25,6 +29,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            throw new RuntimeException('The movimientos_caja enum migration requires MySQL. Run the test suite with composer test:mysql.');
+        }
+
         DB::table('movimientos_caja')
             ->where('categoria_movimiento', 'cuenta_por_cobrar')
             ->update(['categoria_movimiento' => 'ingreso_manual']);

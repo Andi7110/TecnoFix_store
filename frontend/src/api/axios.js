@@ -5,20 +5,23 @@ import {
 } from "../components/interactions/globalLoadingEvents";
 
 const loopbackHosts = new Set(["127.0.0.1", "localhost"]);
+const loopbackUrlPattern = /^https?:\/\/(127\.0\.0\.1|localhost)(?=[:/]|$)/i;
 
-function getBrowserHostname() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return window.location.hostname;
+function stripTrailingSlash(url) {
+  return url.replace(/\/$/, "");
 }
 
-function normalizeLoopbackUrl(url, fallbackPort) {
-  const browserHostname = getBrowserHostname();
-
-  if (!browserHostname || !loopbackHosts.has(browserHostname)) {
+function normalizeUrl(url, fallbackPort) {
+  if (typeof window === "undefined") {
     return url ?? `http://127.0.0.1:${fallbackPort}`;
+  }
+
+  const browserHostname = window.location.hostname;
+
+  if (!loopbackHosts.has(browserHostname)) {
+    return !url || loopbackUrlPattern.test(url)
+      ? window.location.origin
+      : url;
   }
 
   if (!url) {
@@ -28,13 +31,16 @@ function normalizeLoopbackUrl(url, fallbackPort) {
   return url.replace(/\/\/(127\.0\.0\.1|localhost)(?=[:/]|$)/, `//${browserHostname}`);
 }
 
-export const backendUrl = normalizeLoopbackUrl(
-  import.meta.env.VITE_BACKEND_URL,
-  8000,
+export const backendUrl = stripTrailingSlash(
+  normalizeUrl(import.meta.env.VITE_BACKEND_URL, 8000),
 );
 
-const apiUrl = normalizeLoopbackUrl(import.meta.env.VITE_API_URL, 8000).endsWith("/api")
-  ? normalizeLoopbackUrl(import.meta.env.VITE_API_URL, 8000)
+const configuredApiUrl = stripTrailingSlash(
+  normalizeUrl(import.meta.env.VITE_API_URL, 8000),
+);
+
+const apiUrl = configuredApiUrl.endsWith("/api")
+  ? configuredApiUrl
   : `${backendUrl}/api`;
 
 const api = axios.create({

@@ -309,9 +309,9 @@ function DailyWorkspace({
           </select>
         </div>
         <div className="ventas-report-simple__actions">
-          <button type="submit" className="btn btn-primary">Generar</button>
-          <button type="button" className="btn btn-success" onClick={() => onPreviewReport("daily", dailyReport)} disabled={!dailyReport || dailyLoading}>Exportar PDF</button>
-          <button type="button" className="btn btn-outline-dark" onClick={onDailySave} disabled={!dailyReport || dailyLoading || dailySaving}>
+          <button type="submit" className="btn btn-primary report-action report-action--generate">Generar</button>
+          <button type="button" className="btn btn-success report-action report-action--export" onClick={() => onPreviewReport("daily", dailyReport)} disabled={!dailyReport || dailyLoading}>Exportar PDF</button>
+          <button type="button" className="btn btn-outline-dark report-action report-action--save" onClick={onDailySave} disabled={!dailyReport || dailyLoading || dailySaving}>
             {dailySaving ? "Guardando..." : "Guardar"}
           </button>
         </div>

@@ -17,6 +17,17 @@ class ProductoResource extends JsonResource
             'nombre' => $this->nombre,
             'descripcion' => $this->descripcion,
             'foto_url' => $this->foto_path ? route('productos.foto', ['path' => $this->foto_path]) : null,
+            'maneja_variantes' => (int) ($this->variantes_count ?? 0) > 0,
+            'variantes_disponibles_count' => $this->whenLoaded(
+                'variantesDisponibles',
+                fn (): int => $this->variantesDisponibles->count(),
+            ),
+            'variantes' => $this->whenLoaded('variantesDisponibles', fn () => $this->variantesDisponibles->map(fn ($variante): array => [
+                'id' => $variante->id,
+                'nombre' => $variante->nombre,
+                'foto_url' => route('productos.foto', ['path' => $variante->foto_path]),
+                'disponible' => $variante->disponible,
+            ])->values()),
             'precio_compra' => $this->precio_compra,
             'precio_venta' => $this->precio_venta,
             'stock' => $this->stock,

@@ -26,6 +26,7 @@ class IndexMovimientoCajaRequest extends FormRequest
                 'ajuste_caja',
                 'compra_productos',
                 'cuenta_por_cobrar',
+                'saldo_inicial',
             ])],
             'modulo_id' => ['nullable', 'integer', 'exists:modulos,id'],
             'fecha_desde' => ['nullable', 'date'],

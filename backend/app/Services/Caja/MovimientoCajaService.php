@@ -65,17 +65,24 @@ class MovimientoCajaService
         $this->filter->apply($query, $filters);
 
         $totals = $query
-            ->selectRaw('tipo_movimiento, SUM(monto) as total')
-            ->groupBy('tipo_movimiento')
-            ->pluck('total', 'tipo_movimiento');
+            ->selectRaw("COALESCE(SUM(CASE WHEN tipo_movimiento = 'entrada' THEN monto ELSE 0 END), 0) AS entradas_balance")
+            ->selectRaw("COALESCE(SUM(CASE WHEN tipo_movimiento = 'entrada' AND categoria_movimiento != 'saldo_inicial' THEN monto ELSE 0 END), 0) AS entradas_operativas")
+            ->selectRaw("COALESCE(SUM(CASE WHEN tipo_movimiento = 'salida' THEN monto ELSE 0 END), 0) AS salidas")
+            ->first();
 
-        $entradas = (float) ($totals['entrada'] ?? 0);
-        $salidas = (float) ($totals['salida'] ?? 0);
+        $entradasBalance = (float) ($totals->entradas_balance ?? 0);
+        $entradasOperativas = (float) ($totals->entradas_operativas ?? 0);
+        $salidas = (float) ($totals->salidas ?? 0);
+        $saldoInicial = (float) MovimientoCaja::query()
+            ->where('categoria_movimiento', 'saldo_inicial')
+            ->sum('monto');
 
         return [
-            'total_entradas' => round($entradas, 2),
+            'total_entradas' => round($entradasOperativas, 2),
             'total_salidas' => round($salidas, 2),
-            'balance' => round($entradas - $salidas, 2),
+            'balance' => round($entradasBalance - $salidas, 2),
+            'saldo_inicial' => round($saldoInicial, 2),
+            'saldo_inicial_registrado' => $saldoInicial > 0,
         ];
     }
 

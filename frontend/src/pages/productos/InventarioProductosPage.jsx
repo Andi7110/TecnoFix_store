@@ -14,6 +14,8 @@ const initialSectionFilters = {
   nombre: "",
   codigo: "",
   categoria_id: "",
+  agotado: "",
+  stock_critico: "",
 };
 
 function InventarioProductosPage() {
@@ -155,6 +157,18 @@ function InventarioProductosPage() {
     setPage(1);
   }
 
+  function applyStockStatus(draftFilters, setDraft, setApplied, setPage, status) {
+    const nextFilters = {
+      ...draftFilters,
+      agotado: status === "agotado" ? 1 : "",
+      stock_critico: status === "critico" ? 1 : "",
+    };
+
+    setDraft(nextFilters);
+    setApplied(nextFilters);
+    setPage(1);
+  }
+
   return (
     <section className="products-page inventory-products-page products-page--minimal">
       <div className="products-page__header products-page__header--minimal">
@@ -205,6 +219,13 @@ function InventarioProductosPage() {
         accesoriosFilters={accesoriosDraftFilters}
         onAccesoriosFilterChange={(name, value) => updateSectionFilters(setAccesoriosDraftFilters, name, value)}
         onAccesoriosFiltersApply={() => applySectionFilters(accesoriosDraftFilters, setAccesoriosFilters, setAccesoriosPage)}
+        onAccesoriosStockStatusChange={(status) => applyStockStatus(
+          accesoriosDraftFilters,
+          setAccesoriosDraftFilters,
+          setAccesoriosFilters,
+          setAccesoriosPage,
+          status,
+        )}
         onAccesoriosFiltersClear={() => clearSectionFilters(
           setAccesoriosDraftFilters,
           setAccesoriosFilters,
@@ -226,6 +247,13 @@ function InventarioProductosPage() {
         libreriaFilters={libreriaDraftFilters}
         onLibreriaFilterChange={(name, value) => updateSectionFilters(setLibreriaDraftFilters, name, value)}
         onLibreriaFiltersApply={() => applySectionFilters(libreriaDraftFilters, setLibreriaFilters, setLibreriaPage)}
+        onLibreriaStockStatusChange={(status) => applyStockStatus(
+          libreriaDraftFilters,
+          setLibreriaDraftFilters,
+          setLibreriaFilters,
+          setLibreriaPage,
+          status,
+        )}
         onLibreriaFiltersClear={() => clearSectionFilters(
           setLibreriaDraftFilters,
           setLibreriaFilters,

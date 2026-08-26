@@ -3,7 +3,11 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import { useAuth } from "../../hooks/auth/useAuth";
 import { getDashboardSummary } from "../../api/dashboard";
 import { getMenu } from "../../api/menu";
+import ProductoDetalleModal from "../productos/ProductoDetalleModal";
+import ReparacionDetalleModal from "../reparaciones/ReparacionDetalleModal";
+import GlobalSearch from "./GlobalSearch";
 import { canAccessModule } from "../../utils/accessControl";
+import { confirmDanger } from "../../utils/alerts";
 
 const THEME_MODE_KEY = "tecnofix-theme-mode";
 const NOTIFICATIONS_READ_KEY = "tecnofix-notifications-read";
@@ -99,14 +103,6 @@ function UsersIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M8.5 12a4 4 0 1 1 0-8a4 4 0 0 1 0 8Zm0 2c3.31 0 6 1.79 6 4v1H2v-1c0-2.21 2.69-4 6.5-4Zm8-4a3 3 0 1 1 0-6a3 3 0 0 1 0 6Zm.25 3c2.83 0 5.25 1.46 5.25 3.5V18h-4.5v-.5c0-1.66-.83-3.12-2.17-4.2c.46-.2.98-.3 1.42-.3Z" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M10.5 4a6.5 6.5 0 1 1 0 13a6.5 6.5 0 0 1 0-13Zm0 1.8a4.7 4.7 0 1 0 0 9.4a4.7 4.7 0 0 0 0-9.4Zm8.87 11.8 1.27 1.27l-1.27 1.27l-3.5-3.5 1.27-1.27 2.23 2.23Z" />
     </svg>
   );
 }
@@ -305,7 +301,6 @@ function AppLayout() {
 
     return window.localStorage.getItem(THEME_MODE_KEY) === "dark";
   });
-  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -314,6 +309,9 @@ function AppLayout() {
   const [notificationsLoading, setNotificationsLoading] = useState(true);
   const [notificationsError, setNotificationsError] = useState("");
   const [databaseMenu, setDatabaseMenu] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedRepairId, setSelectedRepairId] = useState(null);
+  const [searchResetToken, setSearchResetToken] = useState(0);
   const [readNotificationIds, setReadNotificationIds] = useState(() => {
     if (typeof window === "undefined") {
       return [];
@@ -329,6 +327,8 @@ function AppLayout() {
   const userMenuRef = useRef(null);
   const notificationsRef = useRef(null);
   const canViewDashboard = canAccessModule(user, "dashboard");
+  const canSearchProducts = canAccessModule(user, "inventario");
+  const canSearchRepairs = canAccessModule(user, "reparaciones");
 
   useEffect(() => {
     const mode = isDarkMode ? "dark" : "light";
@@ -539,15 +539,25 @@ function AppLayout() {
     { to: "/usuarios", label: "Usuarios", icon: <UsersIcon />, module: "usuarios" },
   ].filter((item) => item.visible ?? canAccessModule(user, item.module));
 
-  async function handleConfirmLogout() {
-    setIsLoggingOut(true);
+  async function handleLogout() {
     setIsUserMenuOpen(false);
+
+    const confirmed = await confirmDanger({
+      title: "Cerrar sesion",
+      text: "¿Estas seguro que deseas cerrar sesion?",
+      confirmButtonText: "Si, cerrar sesion",
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    setIsLoggingOut(true);
 
     try {
       await logout();
     } finally {
       setIsLoggingOut(false);
-      setIsLogoutConfirmOpen(false);
     }
   }
 
@@ -565,17 +575,21 @@ function AppLayout() {
 
           <nav className="app-nav">
             {navItems.map((item) => {
-              const groupSelected = pathname.startsWith(item.to)
-                || item.children?.some((child) => pathname.startsWith(child.to));
+              const activeChild = item.children?.find(
+                (child) => pathname === child.to || pathname.startsWith(`${child.to}/`),
+              );
+              const routeBelongsToGroup = item.end
+                ? pathname === item.to
+                : pathname === item.to || pathname.startsWith(`${item.to}/`);
+              const groupExpanded = routeBelongsToGroup || Boolean(activeChild);
+              const parentSelected = routeBelongsToGroup && !activeChild;
 
               return (
                 <div key={item.to} className="app-nav__group">
                   <NavLink
                     to={item.to}
                     end={item.end}
-                    className={({ isActive }) =>
-                      `app-nav__link ${isActive || groupSelected ? "is-active" : ""}`
-                    }
+                    className={() => `app-nav__link ${parentSelected ? "is-active" : ""}`}
                     title={item.label}
                   >
                     <span className="app-nav__iso-layer app-nav__iso-layer--one" aria-hidden="true" />
@@ -585,15 +599,13 @@ function AppLayout() {
                     <span className="app-nav__label app-nav__label--visible">{item.label}</span>
                   </NavLink>
 
-                  {item.children && groupSelected ? (
+                  {item.children && groupExpanded ? (
                     <div className="app-nav__sublinks">
                       {item.children.map((child) => (
                         <NavLink
                           key={child.to}
                           to={child.to}
-                          className={({ isActive }) =>
-                            `app-nav__sublink ${isActive ? "is-active" : ""}`
-                          }
+                          className={() => `app-nav__sublink ${activeChild?.to === child.to ? "is-active" : ""}`}
                           title={child.label}
                         >
                           <span className="app-nav__iso-layer app-nav__iso-layer--one" aria-hidden="true" />
@@ -629,16 +641,13 @@ function AppLayout() {
                 </button>
               ) : null}
 
-              <label className="app-topbar__search" aria-label="Busqueda global">
-                <span className="app-topbar__search-icon">
-                  <SearchIcon />
-                </span>
-                <input
-                  type="search"
-                  className="form-control"
-                  placeholder="Buscar productos, ventas o reparaciones..."
-                />
-              </label>
+              <GlobalSearch
+                canSearchProducts={canSearchProducts}
+                canSearchRepairs={canSearchRepairs}
+                onProductSelect={setSelectedProduct}
+                onRepairSelect={setSelectedRepairId}
+                resetToken={searchResetToken}
+              />
             </div>
 
             <div className="app-topbar__right">
@@ -675,6 +684,9 @@ function AppLayout() {
                   }}
                 >
                   <BellIcon />
+                  {notificationCount > 0 ? (
+                    <span className="app-topbar__alerts-badge">{notificationCount}</span>
+                  ) : null}
                 </button>
 
                 {isNotificationsOpen ? (
@@ -835,13 +847,11 @@ function AppLayout() {
                     <button
                       type="button"
                       className="app-user-menu__item app-user-menu__item--danger"
-                      onClick={() => {
-                        setIsUserMenuOpen(false);
-                        setIsLogoutConfirmOpen(true);
-                      }}
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
                       role="menuitem"
                     >
-                      Cerrar sesion
+                      {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
                     </button>
                   </div>
                 ) : null}
@@ -855,40 +865,24 @@ function AppLayout() {
         </main>
       </div>
 
-      {isLogoutConfirmOpen ? (
-        <div
-          className="app-confirm-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Confirmar cierre de sesion"
-          onClick={() => !isLoggingOut && setIsLogoutConfirmOpen(false)}
-        >
-          <div
-            className="app-confirm-modal__card"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h3>Confirmar cierre de sesion</h3>
-            <p className="muted-text mb-3">¿Estas seguro que deseas cerrar sesion?</p>
-            <div className="app-confirm-modal__actions">
-              <button
-                type="button"
-                className="btn btn-light"
-                onClick={() => setIsLogoutConfirmOpen(false)}
-                disabled={isLoggingOut}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={handleConfirmLogout}
-                disabled={isLoggingOut}
-              >
-                {isLoggingOut ? "Cerrando..." : "Si, cerrar sesion"}
-              </button>
-            </div>
-          </div>
-        </div>
+      {selectedProduct ? (
+        <ProductoDetalleModal
+          producto={selectedProduct}
+          onClose={() => {
+            setSelectedProduct(null);
+            setSearchResetToken((current) => current + 1);
+          }}
+        />
+      ) : null}
+
+      {selectedRepairId ? (
+        <ReparacionDetalleModal
+          reparacionId={selectedRepairId}
+          onClose={() => {
+            setSelectedRepairId(null);
+            setSearchResetToken((current) => current + 1);
+          }}
+        />
       ) : null}
     </div>
   );

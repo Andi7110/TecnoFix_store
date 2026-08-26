@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { createCostoReparacion, updateCostoReparacion } from "../../api/reparaciones";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
 import { displayDateTime, localDateTimeInput } from "../../utils/dateTime";
+import AppModal from "../common/AppModal";
 
 const COST_TYPES = [
   { value: "pieza", label: "Pieza" },
@@ -129,13 +130,13 @@ function CostForm({ initialValue, submitLabel, saving, errors, onSubmit, onCance
   );
 }
 
-function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreated, onLocalAdd, onLocalRemove }) {
+function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreated, onLocalAdd, onLocalRemove, launcherOnly = false }) {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [saving, setSaving] = useState(false);
-  const costos = values.costos ?? [];
+  const costos = useMemo(() => values.costos ?? [], [values.costos]);
   const costosTotal = useMemo(() => costos.reduce((total, cost) => total + Number(cost.monto ?? 0), 0), [costos]);
   const utilidad = Number(values.costo_reparacion ?? 0) - costosTotal;
   const isCreateMode = mode === "create";
@@ -151,6 +152,7 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
     setErrors({});
     setMessage("");
     onLocalAdd?.(cost);
+    setIsAdding(false);
   }
 
   async function updateRemoteCost(cost) {
@@ -210,11 +212,26 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
     : "surface-card repairs-costs-card";
 
   return (
-    <article className={contentClassName}>
+    <>
+      {launcherOnly && isCreateMode ? (
+        <button
+          type="button"
+          className="btn products-filter-actions__apply repair-cost-launcher"
+          onClick={() => {
+            setErrors({});
+            setIsAdding(true);
+          }}
+          aria-expanded={isAdding}
+        >
+          Agregar costo
+        </button>
+      ) : (
+        <article className={contentClassName}>
       <div className="repairs-costs-card__header">
         <div>
-          <p className="section-kicker">Inversion</p>
-          <h3>Costos de reparacion</h3>
+          <p className="section-kicker">{isCreateMode ? "Opcional" : "Inversion"}</p>
+          <h3>{isCreateMode ? "Costos internos" : "Costos de reparacion"}</h3>
+          {isCreateMode ? <p className="repairs-costs-card__description">Agrega piezas, insumos o servicios necesarios para realizar el trabajo.</p> : null}
         </div>
         <div className="repairs-costs-card__header-side">
           <div className="repairs-costs-card__totals">
@@ -240,6 +257,25 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
       {message ? <div className={Object.keys(errors).length ? "text-danger mt-2" : "text-success mt-2"}>{message}</div> : null}
 
       <div className="repairs-cost-list">
+        {isCreateMode ? (
+          <div className="repairs-cost-list__toolbar">
+            <div>
+              <strong>{costos.length > 0 ? `${costos.length} costo${costos.length === 1 ? "" : "s"} agregado${costos.length === 1 ? "" : "s"}` : "Costos de la reparación"}</strong>
+              <span>Registra únicamente los costos que ya conozcas.</span>
+            </div>
+            <button
+              type="button"
+              className="btn products-filter-actions__apply"
+              onClick={() => {
+                setErrors({});
+                setIsAdding(true);
+              }}
+              aria-expanded={isAdding}
+            >
+              Agregar costo
+            </button>
+          </div>
+        ) : null}
         {costos.length > 0 ? costos.map((cost) => (
           <article key={cost.id ?? cost.local_id} className="repairs-cost-list__item">
             <div>
@@ -260,17 +296,8 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
               ) : null}
             </div>
           </article>
-        )) : <p className="muted-text mb-0">Sin costos registrados.</p>}
+        )) : <p className="muted-text mb-0">Aún no has agregado costos internos.</p>}
       </div>
-
-      {isCreateMode ? (
-        <CostForm
-          key={`create-${costos.length}`}
-          submitLabel="Agregar costo"
-          errors={errors}
-          onSubmit={addLocalCost}
-        />
-      ) : null}
 
       {!isCreateMode && isAdding ? (
         <CostForm
@@ -300,7 +327,46 @@ function ReparacionCostosPanel({ mode = "detail", reparacionId, values, onCreate
           }}
         />
       ) : null}
-    </article>
+        </article>
+      )}
+
+      {isCreateMode && isAdding ? (
+        <AppModal
+          overlayClassName="repair-local-cost-modal"
+          ariaLabel="Agregar costo a la reparacion"
+          onClose={() => {
+            setIsAdding(false);
+            setErrors({});
+          }}
+        >
+          <div className="repair-local-cost-modal__content">
+            <div className="repair-local-cost-modal__header">
+              <div>
+                <p className="section-kicker">Costo interno</p>
+                <h3>Agregar costo</h3>
+                <p>Registra una pieza, insumo o servicio utilizado en la reparación.</p>
+              </div>
+              <button type="button" className="btn products-filter-actions__clear btn-sm" onClick={() => {
+                setIsAdding(false);
+                setErrors({});
+              }}>
+                Cerrar
+              </button>
+            </div>
+            <CostForm
+              key={`create-${costos.length}`}
+              submitLabel="Agregar costo"
+              errors={errors}
+              onSubmit={addLocalCost}
+              onCancel={() => {
+                setIsAdding(false);
+                setErrors({});
+              }}
+            />
+          </div>
+        </AppModal>
+      ) : null}
+    </>
   );
 }
 

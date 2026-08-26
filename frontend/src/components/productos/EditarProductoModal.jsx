@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { X } from "../../icons/phosphor";
+import AppModal from "../common/AppModal";
 import ProductoForm from "./ProductoForm";
 import { GlobalLoadingOverlay } from "../interactions/GlobalInteractions";
 import { useProductoForm } from "../../hooks/productos/useProductoForm";
@@ -13,23 +12,6 @@ function EditarProductoModal({ productoId, onClose, onUpdated }) {
     },
   });
 
-  useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
-
   if (!productoId) {
     return null;
   }
@@ -39,26 +21,10 @@ function EditarProductoModal({ productoId, onClose, onUpdated }) {
   }
 
   return (
-    <div
-      className="product-create-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Detalle de producto"
-      onClick={onClose}
-    >
+    <AppModal overlayClassName="product-create-modal" ariaLabel="Detalle de producto" onClose={onClose}>
       <div
         className="product-create-modal__content"
-        onClick={(event) => event.stopPropagation()}
       >
-        <button
-          type="button"
-          className="product-create-modal__close"
-          onClick={onClose}
-          aria-label="Cerrar detalle de producto"
-          title="Cerrar"
-        >
-          <X size={20} weight="bold" aria-hidden="true" />
-        </button>
         <div className="product-create-modal__body">
           <ProductoForm
             title="Detalle de producto"
@@ -68,7 +34,7 @@ function EditarProductoModal({ productoId, onClose, onUpdated }) {
           />
         </div>
       </div>
-    </div>
+    </AppModal>
   );
 }
 

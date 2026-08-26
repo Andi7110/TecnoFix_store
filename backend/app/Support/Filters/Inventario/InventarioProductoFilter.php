@@ -17,6 +17,8 @@ class InventarioProductoFilter extends QueryFilter
             'estado',
             'codigo',
             'nombre',
+            'agotado',
+            'stock_critico',
             'fecha_desde',
             'fecha_hasta',
         ];
@@ -54,12 +56,30 @@ class InventarioProductoFilter extends QueryFilter
 
     public function codigo(Builder $query, string $value): void
     {
-        $this->like($query, 'codigo', $value);
+        $query->whereHas('producto', fn (Builder $builder) => $builder->where('codigo', 'like', '%'.$value.'%'));
     }
 
     public function nombre(Builder $query, string $value): void
     {
-        $this->like($query, 'nombre', $value);
+        $query->whereHas('producto', fn (Builder $builder) => $builder->where('nombre', 'like', '%'.$value.'%'));
+    }
+
+    public function agotado(Builder $query, mixed $value): void
+    {
+        if ($this->toBoolean($value) !== true) {
+            return;
+        }
+
+        $query->whereHas('producto', fn (Builder $builder) => $builder->where('stock', '<=', 0));
+    }
+
+    public function stock_critico(Builder $query, mixed $value): void
+    {
+        if ($this->toBoolean($value) !== true) {
+            return;
+        }
+
+        $query->whereHas('producto', fn (Builder $builder) => $builder->where('stock', '=', 2));
     }
 
     public function fecha_desde(Builder $query, string $value): void

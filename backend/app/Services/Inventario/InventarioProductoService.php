@@ -16,11 +16,12 @@ class InventarioProductoService
     public function paginate(array $filters): LengthAwarePaginator
     {
         $perPage = $this->resolvePerPage($filters);
+        $hasStockStatusFilter = filter_var($filters['agotado'] ?? false, FILTER_VALIDATE_BOOLEAN)
+            || filter_var($filters['stock_critico'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         $query = InventarioProducto::query()
             ->whereHas('producto', fn ($builder) => $builder
-                ->where('estado', true)
-                ->where('stock', '>', 0))
+                ->where('estado', true))
             ->select([
                 'id',
                 'producto_id',
@@ -42,11 +43,15 @@ class InventarioProductoService
                 'updated_at',
             ])
             ->with([
-                'producto:id,stock,foto_path',
+                'producto:id,nombre,codigo,stock,foto_path',
                 'modulo:id,nombre',
                 'categoria:id,nombre',
                 'registradoPor:id,name,username,email',
             ]);
+
+        if (! $hasStockStatusFilter) {
+            $query->whereHas('producto', fn ($builder) => $builder->where('stock', '>', 0));
+        }
 
         $this->filter->apply($query, $filters);
 

@@ -15,8 +15,9 @@ export async function confirmDanger({
     focusCancel: true,
     buttonsStyling: false,
     customClass: {
-      confirmButton: "btn btn-danger",
-      cancelButton: "btn btn-light",
+      actions: "tf-alert-actions",
+      confirmButton: "btn btn-danger tf-alert-confirm-danger",
+      cancelButton: "btn btn-light tf-alert-cancel",
     },
     confirmButtonText,
     cancelButtonText,

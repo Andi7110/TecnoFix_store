@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::apiResource('modulos', ModuloController::class)->only(['index', 'store', 'show', 'update']);
         Route::apiResource('categorias', CategoriaController::class)->only(['index', 'store', 'show', 'update']);
         Route::get('productos/inventario', [InventarioProductoController::class, 'index'])->name('productos.inventario.index');
+        Route::get('productos/siguiente-codigo', [ProductoController::class, 'nextCode'])->name('productos.next-code');
         Route::get('productos/foto/{path}', [ProductoController::class, 'foto'])
             ->where('path', '.*')
             ->name('productos.foto');

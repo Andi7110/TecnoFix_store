@@ -20,6 +20,8 @@ class IndexInventarioProductoRequest extends FormRequest
             'estado' => ['nullable', 'boolean'],
             'codigo' => ['nullable', 'string', 'max:50'],
             'nombre' => ['nullable', 'string', 'max:150'],
+            'agotado' => ['nullable', 'boolean'],
+            'stock_critico' => ['nullable', 'boolean'],
             'fecha_desde' => ['nullable', 'date'],
             'fecha_hasta' => ['nullable', 'date', 'after_or_equal:fecha_desde'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],

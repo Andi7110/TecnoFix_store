@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Archive, CalendarBlank, CheckCircle, TrendDown, TrendUp, Wallet } from "../../icons/phosphor";
+import { Archive, CalendarBlank, ChartBar, CheckCircle, TrendDown, TrendUp, Wallet } from "../../icons/phosphor";
 import { useCajaReports } from "../../hooks/caja/useCajaReports";
 
 const MONTHS = [
@@ -17,6 +17,7 @@ const CATEGORY_LABELS = {
   ajuste_caja: "Ajustes de caja",
   compra_productos: "Compra de productos",
   cuenta_por_cobrar: "Cobros pendientes",
+  saldo_inicial: "Saldo inicial",
 };
 
 function money(value) {
@@ -65,6 +66,7 @@ function ReportContent({ report }) {
       </div>
 
       <div className="cash-report-metrics">
+        <MetricCard icon={<Wallet size={22} />} label="Saldo inicial" value={money(summary.saldo_inicial)} help="Base fuera del resultado operativo" />
         <MetricCard icon={<TrendUp size={22} />} label="Entradas" value={money(summary.entradas)} help="Dinero recibido en caja" tone="positive" />
         <MetricCard icon={<TrendDown size={22} />} label="Salidas" value={money(summary.salidas)} help="Dinero pagado desde caja" tone="negative" />
         <MetricCard icon={<Wallet size={22} />} label="Ventas" value={money(summary.ventas)} help={`${summary.ventas_count ?? 0} ventas registradas`} />
@@ -150,7 +152,10 @@ function CajaReportesPage() {
               <select className="form-select" value={reports.filters.anio} onChange={(event) => reports.updateFilter("anio", event.target.value)}>
                 {years.map((year) => <option key={year} value={year}>{year}</option>)}
               </select>
-              <button type="button" className="btn cash-report-action cash-report-action--generate" onClick={reports.generate}>Generar</button>
+              <button type="button" className="btn cash-report-action cash-report-action--generate" onClick={reports.generate}>
+                <ChartBar size={17} weight="bold" aria-hidden="true" />
+                <span>Generar</span>
+              </button>
               <button type="button" className="btn cash-report-action cash-report-action--close" onClick={reports.closeMonth} disabled={!reports.report || reports.loading || reports.closing || Boolean(reports.report?.cierre)}>
                 {reports.report?.cierre ? "Mes cerrado" : reports.closing ? "Guardando..." : "Guardar cierre"}
               </button>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Printer } from "../../icons/phosphor";
+import { Package, Plus, Printer } from "../../icons/phosphor";
 import AgregarStockModal from "../../components/productos/AgregarStockModal";
 import CrearProductoModal from "../../components/productos/CrearProductoModal";
 import EditarProductoModal from "../../components/productos/EditarProductoModal";
@@ -77,7 +77,7 @@ function ProductosPage() {
   }
 
   return (
-    <section className="products-page products-page--minimal">
+    <section className="products-page products-page--minimal products-catalog-page">
       <div className="products-page__header products-page__header--minimal">
         <div>
           <p className="section-kicker">Productos</p>
@@ -98,7 +98,8 @@ function ProductosPage() {
             <span>Codigos de barra</span>
           </button>
           <Link to="/productos/inventario" className="btn products-page__inventory-btn">
-            Inventario
+            <Package size={18} weight="bold" aria-hidden="true" />
+            <span>Inventario</span>
           </Link>
           <button
             type="button"

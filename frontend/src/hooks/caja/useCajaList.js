@@ -9,6 +9,8 @@ export function useCajaList(filters) {
     total_entradas: 0,
     total_salidas: 0,
     balance: 0,
+    saldo_inicial: 0,
+    saldo_inicial_registrado: false,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,6 +34,8 @@ export function useCajaList(filters) {
               total_entradas: 0,
               total_salidas: 0,
               balance: 0,
+              saldo_inicial: 0,
+              saldo_inicial_registrado: false,
             }
           );
         }

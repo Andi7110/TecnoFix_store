@@ -1,4 +1,22 @@
-# React + Vite
+# TecnoFix frontend
+
+## Environment modes
+
+- **Local development:** copy `.env.example` to `.env.local`. The documented
+  defaults use `127.0.0.1` for Vite and Laravel.
+- **Temporary test tunnel:** keep its values in `.env.local` (never commit that
+  file). Set `VITE_DEV_HOST`, add the exact tunnel hostname to
+  `VITE_DEV_ALLOWED_HOSTS`, and set `VITE_DEV_PROXY_ORIGIN` when Laravel must
+  receive the local frontend origin. `/api` and `/sanctum` are proxied to
+  `VITE_DEV_PROXY_TARGET`.
+- **Production:** set `VITE_BACKEND_URL` and `VITE_API_URL` in the deployment
+  environment. If they are omitted on a non-local host, Axios uses the browser's
+  current origin. Development-server tunnel settings are not production
+  defaults.
+
+Do not add temporary tunnel domains to tracked files.
+
+## Vite notes
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

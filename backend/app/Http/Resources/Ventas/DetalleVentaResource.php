@@ -25,6 +25,11 @@ class DetalleVentaResource extends JsonResource
                 'nombre' => $this->producto->nombre,
                 'unidad_medida' => $this->producto->unidad_medida,
             ] : null),
+            'variantes' => $this->whenLoaded('variantes', fn () => $this->variantes->map(fn ($variante): array => [
+                'id' => $variante->id,
+                'nombre' => $variante->nombre,
+                'foto_url' => route('productos.foto', ['path' => $variante->foto_path]),
+            ])->values()),
         ];
     }
 }

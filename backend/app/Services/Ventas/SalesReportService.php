@@ -13,7 +13,7 @@ class SalesReportService
 {
     private const OPERATING_EXPENSE_CATEGORIES = ['gasto', 'costo_fijo'];
     private const OTHER_INCOME_CATEGORIES = ['reparacion', 'ingreso_manual'];
-    private const EXCLUDED_CASH_CATEGORIES = ['retiro', 'ajuste_caja', 'compra_productos', 'cuenta_por_cobrar'];
+    private const EXCLUDED_CASH_CATEGORIES = ['retiro', 'ajuste_caja', 'compra_productos', 'cuenta_por_cobrar', 'saldo_inicial'];
 
     public function getDailyReport(array $filters): array
     {
@@ -257,7 +257,7 @@ class SalesReportService
     {
         $rows = $this->cashBaseQuery($start, $end, $moduleId)
             ->selectRaw("
-                COALESCE(SUM(CASE WHEN tipo_movimiento = 'entrada' THEN monto ELSE 0 END), 0) as entradas,
+                COALESCE(SUM(CASE WHEN tipo_movimiento = 'entrada' AND categoria_movimiento != 'saldo_inicial' THEN monto ELSE 0 END), 0) as entradas,
                 COALESCE(SUM(CASE WHEN tipo_movimiento = 'salida' THEN monto ELSE 0 END), 0) as salidas
             ")
             ->first();

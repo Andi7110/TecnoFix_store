@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { MagnifyingGlassPlus, Trash, WarningCircle } from "../../icons/phosphor";
+import { MagnifyingGlassPlus, Package, Trash, WarningCircle } from "../../icons/phosphor";
 import ProductosPagination from "./ProductosPagination";
+import AppModal from "../common/AppModal";
 
 function formatCurrency(value) {
   const numeric = Number(value ?? 0);
@@ -41,6 +42,7 @@ function InventarioProductosTable({
   onAccesoriosFilterChange,
   onAccesoriosFiltersApply,
   onAccesoriosFiltersClear,
+  onAccesoriosStockStatusChange,
   onProductoDelete,
   onDetalleClick,
   deletingProductoId,
@@ -55,6 +57,7 @@ function InventarioProductosTable({
   onLibreriaFilterChange,
   onLibreriaFiltersApply,
   onLibreriaFiltersClear,
+  onLibreriaStockStatusChange,
 }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
@@ -187,13 +190,13 @@ function InventarioProductosTable({
             {canDeleteProducts ? (
               <button
                 type="button"
-                className="btn btn-sm inventory-product-delete-btn table-delete-icon-btn"
+                className="inventory-product-delete-btn"
                 onClick={() => onProductoDelete?.(registro)}
                 disabled={!registro.estado || Number(deletingProductoId) === Number(registro.producto_id ?? registro.id)}
                 title={registro.estado ? "Eliminar producto" : "Producto inactivo"}
                 aria-label={`Eliminar ${registro.nombre}`}
               >
-                <Trash size={15} weight="bold" aria-hidden="true" />
+                <Trash size={19} weight="bold" aria-hidden="true" />
               </button>
             ) : null}
           </div>
@@ -215,9 +218,11 @@ function InventarioProductosTable({
     onFilterChange,
     onFiltersApply,
     onFiltersClear,
+    onStockStatusChange,
     emptyMessage,
   }) {
     const categorias = resolveCategorias(items);
+    const stockStatus = filters.agotado ? "agotado" : filters.stock_critico ? "critico" : "todos";
 
     return (
       <section
@@ -239,6 +244,37 @@ function InventarioProductosTable({
             <span className="inventory-section__filter-title">
               Filtro {title}
             </span>
+          </div>
+          <div className="inventory-stock-filter" role="group" aria-label={`Estado de stock en ${title}`}>
+            <span className="inventory-stock-filter__label">Estado de stock</span>
+            <div className="inventory-stock-filter__buttons">
+              <button
+                type="button"
+                className={`inventory-stock-filter__button ${stockStatus === "todos" ? "is-active" : ""}`}
+                aria-pressed={stockStatus === "todos"}
+                onClick={() => onStockStatusChange("todos")}
+              >
+                Todos
+              </button>
+              <button
+                type="button"
+                className={`inventory-stock-filter__button inventory-stock-filter__button--empty ${stockStatus === "agotado" ? "is-active" : ""}`}
+                aria-pressed={stockStatus === "agotado"}
+                onClick={() => onStockStatusChange("agotado")}
+              >
+                <Package size={15} weight="duotone" aria-hidden="true" />
+                Agotados
+              </button>
+              <button
+                type="button"
+                className={`inventory-stock-filter__button inventory-stock-filter__button--critical ${stockStatus === "critico" ? "is-active" : ""}`}
+                aria-pressed={stockStatus === "critico"}
+                onClick={() => onStockStatusChange("critico")}
+              >
+                <WarningCircle size={15} weight="duotone" aria-hidden="true" />
+                Stock critico
+              </button>
+            </div>
           </div>
           <div>
             <label className="form-label">Nombre</label>
@@ -331,6 +367,7 @@ function InventarioProductosTable({
         onFilterChange: onAccesoriosFilterChange,
         onFiltersApply: onAccesoriosFiltersApply,
         onFiltersClear: onAccesoriosFiltersClear,
+        onStockStatusChange: onAccesoriosStockStatusChange,
         emptyMessage: "No hay productos registrados en Accesorios.",
       })}
       {renderTableSection({
@@ -346,34 +383,22 @@ function InventarioProductosTable({
         onFilterChange: onLibreriaFilterChange,
         onFiltersApply: onLibreriaFiltersApply,
         onFiltersClear: onLibreriaFiltersClear,
+        onStockStatusChange: onLibreriaStockStatusChange,
         emptyMessage: "No hay productos registrados en Libreria.",
       })}
 
       {selectedPhoto ? (
-        <div
-          className="inventory-photo-modal"
-          role="dialog"
-          aria-modal="true"
-          onClick={closePhoto}
-        >
+        <AppModal overlayClassName="inventory-photo-modal" ariaLabel={`Fotografia de ${selectedPhoto.name}`} onClose={closePhoto}>
           <div
             className="inventory-photo-modal__content"
-            onClick={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              className="btn btn-light btn-sm inventory-photo-modal__close"
-              onClick={closePhoto}
-            >
-              Cerrar
-            </button>
             <img
               src={selectedPhoto.url}
               alt={selectedPhoto.name}
               className="inventory-photo-modal__image"
             />
           </div>
-        </div>
+        </AppModal>
       ) : null}
     </>
   );
