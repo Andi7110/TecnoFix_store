@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { X } from "../../icons/phosphor";
+import { useMemo, useState } from "react";
 import { createUsuario, updateUsuario } from "../../api/usuarios";
 import { ACCESS_MODULES, USER_ROLES } from "../../utils/accessControl";
 import { notifyError, notifySuccess } from "../../utils/toasts";
+import AppModal from "../../components/common/AppModal";
 
 const EMPTY_FORM = {
   name: "",
@@ -31,23 +31,6 @@ function UsuarioModal({ usuario, onClose, onSaved }) {
   } : { ...EMPTY_FORM });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
 
   const selectedModules = useMemo(
     () => form.role === "admin" ? ACCESS_MODULES.map((module) => module.value) : form.allowed_modules,
@@ -124,16 +107,11 @@ function UsuarioModal({ usuario, onClose, onSaved }) {
   }
 
   return (
-    <div className="user-admin-modal" role="dialog" aria-modal="true" aria-label={isEditing ? "Editar usuario" : "Agregar nuevo usuario"} onClick={onClose}>
-      <form className="user-admin-modal__card" onSubmit={handleSubmit} onClick={(event) => event.stopPropagation()}>
-        <button type="button" className="user-admin-modal__close" onClick={onClose} aria-label="Cerrar registro de usuario" title="Cerrar">
-          <X size={20} weight="bold" aria-hidden="true" />
-        </button>
-
+    <AppModal overlayClassName="user-admin-modal" ariaLabel={isEditing ? "Editar usuario" : "Agregar nuevo usuario"} onClose={onClose} isDismissable={!saving}>
+      <form className="user-admin-modal__card" onSubmit={handleSubmit}>
         <header className="user-admin-modal__header">
           <div>
-            <p className="section-kicker">Administracion</p>
-            <h3>{isEditing ? "Editar usuario" : "Agregar nuevo usuario"}</h3>
+            <h2>{isEditing ? "Editar usuario" : "Agregar nuevo usuario"}</h2>
             <p>Configura sus datos de acceso, rol y permisos desde un solo lugar.</p>
           </div>
         </header>
@@ -157,13 +135,13 @@ function UsuarioModal({ usuario, onClose, onSaved }) {
               </label>
 
               <label>
-                <span className="form-label">Correo electronico</span>
+                <span className="form-label">Correo electrónico</span>
                 <input type="email" className={`form-control ${errorFor(errors, "email") ? "is-invalid" : ""}`} value={form.email} onChange={(event) => updateField("email", event.target.value)} />
                 {errorFor(errors, "email") ? <div className="invalid-feedback">{errorFor(errors, "email")}</div> : null}
               </label>
 
               <label>
-                <span className="form-label">{isEditing ? "Nueva contrasena" : "Contrasena"}</span>
+                <span className="form-label">{isEditing ? "Nueva contraseña" : "Contraseña"}</span>
                 <input type="password" className={`form-control ${errorFor(errors, "password") ? "is-invalid" : ""}`} value={form.password} onChange={(event) => updateField("password", event.target.value)} placeholder={isEditing ? "Dejar vacio para no cambiar" : "Minimo 8 caracteres"} />
                 {errorFor(errors, "password") ? <div className="invalid-feedback">{errorFor(errors, "password")}</div> : null}
               </label>
@@ -188,8 +166,8 @@ function UsuarioModal({ usuario, onClose, onSaved }) {
           <section className="user-admin-modules">
             <div className="user-admin-modules__header">
               <p className="section-kicker">Accesos</p>
-              <h4>Modulos permitidos</h4>
-              <p>Selecciona las areas que este usuario puede consultar y utilizar.</p>
+              <h4>Módulos permitidos</h4>
+              <p>Selecciona las áreas que este usuario puede consultar y utilizar.</p>
             </div>
 
             <div className="user-admin-modules__grid">
@@ -205,7 +183,7 @@ function UsuarioModal({ usuario, onClose, onSaved }) {
                 </label>
               ))}
             </div>
-            <p className="user-admin-modules__note">El administrador conserva acceso completo a todos los modulos.</p>
+            <p className="user-admin-modules__note">El administrador conserva acceso completo a todos los módulos.</p>
           </section>
         </div>
 
@@ -221,7 +199,7 @@ function UsuarioModal({ usuario, onClose, onSaved }) {
           </button>
         </div>
       </form>
-    </div>
+    </AppModal>
   );
 }
 

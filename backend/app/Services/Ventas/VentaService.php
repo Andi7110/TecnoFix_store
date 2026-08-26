@@ -50,6 +50,7 @@ class VentaService
         return $venta->load([
             'modulo:id,nombre,estado',
             'detalles.producto:id,codigo,nombre,unidad_medida',
+            'detalles.variantes:id,detalle_venta_id,nombre,foto_path',
         ])->loadCount('detalles');
     }
 

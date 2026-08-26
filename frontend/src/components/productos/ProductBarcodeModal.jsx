@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
-import { Printer, X } from "../../icons/phosphor";
+import { Printer } from "../../icons/phosphor";
 import BarcodePreviewModal from "../reportes/BarcodePreviewModal";
+import AppModal from "../common/AppModal";
 
 function ProductBarcodeModal({
   isOpen,
@@ -72,11 +72,10 @@ function ProductBarcodeModal({
     setPreviewItems(items);
   }
 
-  return createPortal(
+  return (
     <>
     {!previewItems ? (
-      <div className="barcode-modal" role="dialog" aria-modal="true" aria-labelledby="barcode-modal-title">
-        <div className="barcode-modal__backdrop" onClick={onClose} aria-hidden="true" />
+      <AppModal overlayClassName="barcode-modal" ariaLabelledby="barcode-modal-title" onClose={onClose}>
         <div className="barcode-modal__card surface-card">
           <div className="barcode-modal__header">
             <div>
@@ -87,14 +86,6 @@ function ProductBarcodeModal({
               </p>
             </div>
 
-            <button
-              type="button"
-              className="barcode-modal__close"
-              onClick={onClose}
-              aria-label="Cerrar"
-            >
-              <X size={18} weight="bold" aria-hidden="true" />
-            </button>
           </div>
 
           <div className="barcode-modal__toolbar">
@@ -175,7 +166,7 @@ function ProductBarcodeModal({
             </button>
           </div>
         </div>
-      </div>
+      </AppModal>
     ) : null}
 
     {previewItems ? (
@@ -184,8 +175,7 @@ function ProductBarcodeModal({
         onClose={() => setPreviewItems(null)}
       />
     ) : null}
-    </>,
-    document.body,
+    </>
   );
 }
 

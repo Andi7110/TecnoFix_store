@@ -3,6 +3,7 @@ import { CheckCircle, CurrencyDollar, HandCoins, Info, Receipt, Users } from "..
 import { createAbonoCuentaPorCobrar, listCuentasPorCobrar } from "../../api/cuentasPorCobrar";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import { notifyError, notifySuccess } from "../../utils/toasts";
+import AppModal from "../../components/common/AppModal";
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -276,8 +277,8 @@ function CuentasPorCobrarPage() {
       ) : null}
 
       {selectedCuenta ? (
-        <div className="cuentas-abono-modal" role="dialog" aria-modal="true" aria-labelledby="abono-title" onClick={() => !saving && closeAbono()}>
-          <form className="cuentas-abono-modal__card" onSubmit={submitAbono} onClick={(event) => event.stopPropagation()}>
+        <AppModal overlayClassName="cuentas-abono-modal" ariaLabelledby="abono-title" onClose={closeAbono} isDismissable={!saving}>
+          <form className="cuentas-abono-modal__card" onSubmit={submitAbono}>
             <div className="cuentas-abono-modal__header">
               <span className="cuentas-abono-modal__icon"><HandCoins size={25} weight="bold" /></span>
               <div>
@@ -348,7 +349,7 @@ function CuentasPorCobrarPage() {
               </button>
             </div>
           </form>
-        </div>
+        </AppModal>
       ) : null}
     </section>
   );

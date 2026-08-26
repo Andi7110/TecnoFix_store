@@ -7,9 +7,11 @@ use App\Models\CuentaPorCobrar;
 use App\Actions\Inventario\RegistrarMovimientoInventarioAction;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
+use App\Models\ProductoVariante;
 use App\Models\Venta;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class RegistrarVentaAction
 {
@@ -51,7 +53,7 @@ class RegistrarVentaAction
             ]);
 
             foreach ($ventaCalculada['items'] as $item) {
-                DetalleVenta::query()->create([
+                $detalle = DetalleVenta::query()->create([
                     'venta_id' => $venta->id,
                     'producto_id' => $item['producto_id'],
                     'descripcion_item' => $item['descripcion_item'],
@@ -61,6 +63,35 @@ class RegistrarVentaAction
                     'subtotal' => $item['subtotal'],
                     'ganancia_item' => $item['ganancia_item'],
                 ]);
+
+                $varianteIds = collect($item['variante_ids'] ?? [])->unique()->values();
+
+                if ($varianteIds->isNotEmpty()) {
+                    $variantes = ProductoVariante::query()
+                        ->whereIn('id', $varianteIds)
+                        ->lockForUpdate()
+                        ->get();
+
+                    $seleccionInvalida = $variantes->count() !== $varianteIds->count()
+                        || $variantes->contains(fn (ProductoVariante $variante): bool =>
+                            (int) $variante->producto_id !== (int) $item['producto_id'] || ! $variante->disponible
+                        );
+
+                    if ($seleccionInvalida) {
+                        throw ValidationException::withMessages([
+                            'items' => 'Uno de los diseños elegidos ya no está disponible. Actualiza la venta e intenta nuevamente.',
+                        ]);
+                    }
+
+                    ProductoVariante::query()
+                        ->whereIn('id', $varianteIds)
+                        ->update([
+                            'detalle_venta_id' => $detalle->id,
+                            'disponible' => false,
+                            'vendida_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                }
 
                 if (! $item['producto']) {
                     continue;
@@ -84,6 +115,7 @@ class RegistrarVentaAction
             return $venta->load([
                 'modulo:id,nombre,estado',
                 'detalles.producto:id,codigo,nombre,unidad_medida',
+                'detalles.variantes:id,detalle_venta_id,nombre,foto_path',
             ]);
         });
     }

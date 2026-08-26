@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getReparacion } from "../../api/reparaciones";
 import ReparacionCostosPanel from "./ReparacionCostosPanel";
+import AppModal from "../common/AppModal";
 
 function ReparacionCostosModal({ reparacion, onClose, onUpdated }) {
   const [detail, setDetail] = useState(null);
@@ -43,39 +44,15 @@ function ReparacionCostosModal({ reparacion, onClose, onUpdated }) {
     };
   }, [reparacion?.id, reloadToken]);
 
-  useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
-
   function handleUpdated() {
     setReloadToken((current) => current + 1);
     onUpdated?.();
   }
 
   return (
-    <div
-      className="repair-cost-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Agregar costo de reparacion"
-      onClick={onClose}
-    >
+    <AppModal overlayClassName="repair-cost-modal" ariaLabel="Agregar costo de reparacion" onClose={onClose}>
       <div
         className="repair-cost-modal__content"
-        onClick={(event) => event.stopPropagation()}
       >
         <div className="repair-cost-modal__header">
           <div>
@@ -104,7 +81,7 @@ function ReparacionCostosModal({ reparacion, onClose, onUpdated }) {
           />
         ) : null}
       </div>
-    </div>
+    </AppModal>
   );
 }
 

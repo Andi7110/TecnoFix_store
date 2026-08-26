@@ -35,6 +35,7 @@ class CalcularTotalesVentaAction
                 'costo_unitario' => $costoUnitario,
                 'subtotal' => $subtotalItem,
                 'ganancia_item' => $gananciaItem,
+                'variante_ids' => collect($item['variante_ids'] ?? [])->map(fn ($id): int => (int) $id)->values()->all(),
             ];
 
             $subtotalVenta += $subtotalItem;

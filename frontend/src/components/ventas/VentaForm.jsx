@@ -1,6 +1,6 @@
-import { Check, Copy, CreditCard, ShareNetwork, X } from "../../icons/phosphor";
+import { Check, Copy, CreditCard, ShareNetwork } from "../../icons/phosphor";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import AppModal from "../common/AppModal";
 
 function fieldError(errors, name) {
   return errors?.[name]?.[0];
@@ -72,6 +72,7 @@ function VentaForm({
 }) {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [selectedProductPhoto, setSelectedProductPhoto] = useState(null);
+  const [selectedVariantProduct, setSelectedVariantProduct] = useState(null);
   const [transferActionMessage, setTransferActionMessage] = useState("");
   const [isPendingDebtModalOpen, setIsPendingDebtModalOpen] = useState(false);
   const [pendingDebt, setPendingDebt] = useState({
@@ -115,6 +116,22 @@ function VentaForm({
   }
 
   function handleQuickSearchSubmit(rawValue = searchTerm) {
+    const normalizedValue = String(rawValue ?? "").trim().toLocaleLowerCase("es");
+    const exactProduct = productos.find((producto) => (
+      String(producto.codigo ?? "").trim().toLocaleLowerCase("es") === normalizedValue
+      || String(producto.nombre ?? "").trim().toLocaleLowerCase("es") === normalizedValue
+    ));
+    const variantProduct = exactProduct?.maneja_variantes
+      ? exactProduct
+      : productos.length === 1 && productos[0]?.maneja_variantes
+        ? productos[0]
+        : null;
+
+    if (variantProduct) {
+      setSelectedVariantProduct(variantProduct);
+      return;
+    }
+
     onSearchSubmit(rawValue);
     focusSearchInput();
   }
@@ -180,7 +197,21 @@ function VentaForm({
     }
 
     event.preventDefault();
+    handleAddProduct(producto);
+  }
+
+  function handleAddProduct(producto) {
+    if (producto?.maneja_variantes) {
+      setSelectedVariantProduct(producto);
+      return;
+    }
+
     onAddProducto(producto);
+  }
+
+  function handleVariantSelect(variante) {
+    onAddProducto(selectedVariantProduct, variante);
+    setSelectedVariantProduct(null);
   }
 
   useEffect(() => {
@@ -190,21 +221,6 @@ function VentaForm({
 
     focusSearchInput();
   }, [values.modulo_id]);
-
-  useEffect(() => {
-    if (!selectedProductPhoto) {
-      return undefined;
-    }
-
-    function handleKeyDown(event) {
-      if (event.key === "Escape") {
-        closeProductPhoto();
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedProductPhoto]);
 
   useEffect(() => {
     if (!values.modulo_id) {
@@ -494,7 +510,7 @@ function VentaForm({
                   className="venta-form__product-card"
                   role="button"
                   tabIndex={0}
-                  onClick={() => onAddProducto(producto)}
+                  onClick={() => handleAddProduct(producto)}
                   onKeyDown={(event) => handleProductCardKeyDown(event, producto)}
                 >
                   <div className="venta-form__product-main">
@@ -505,11 +521,17 @@ function VentaForm({
                           className="venta-form__product-photo-button"
                           onClick={(event) => {
                             event.stopPropagation();
-                            openProductPhoto(producto);
+                            if (producto.maneja_variantes) {
+                              handleAddProduct(producto);
+                            } else {
+                              openProductPhoto(producto);
+                            }
                           }}
                           onKeyDown={(event) => event.stopPropagation()}
-                          aria-label={`Ver imagen de ${producto.nombre}`}
-                          title="Ver imagen"
+                          aria-label={producto.maneja_variantes
+                            ? `Elegir diseño de ${producto.nombre}`
+                            : `Ver imagen de ${producto.nombre}`}
+                          title={producto.maneja_variantes ? "Elegir diseño" : "Ver imagen"}
                         >
                           <img
                             src={producto.foto_url}
@@ -527,6 +549,11 @@ function VentaForm({
                       <small className="muted-text">
                         {producto.categoria?.nombre ?? "Sin categoria"}
                       </small>
+                      {producto.maneja_variantes ? (
+                        <small className="venta-form__variants-count">
+                          {producto.variantes_disponibles_count} diseños para elegir
+                        </small>
+                      ) : null}
                     </div>
                   </div>
                   <div className="venta-form__product-meta">
@@ -575,6 +602,21 @@ function VentaForm({
                         <td>
                           <div className="product-name">{item.nombre}</div>
                           <div className="product-code">{item.codigo}</div>
+                          {item.variantes?.length ? (
+                            <div className="venta-cart-variants">
+                              {item.variantes.map((variante) => (
+                                <button
+                                  type="button"
+                                  key={variante.id}
+                                  className="venta-cart-variants__thumb"
+                                  onClick={() => setSelectedProductPhoto({ url: variante.foto_url, name: variante.nombre })}
+                                  title={variante.nombre}
+                                >
+                                  <img src={variante.foto_url} alt={variante.nombre} />
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
                         </td>
                         <td>
                           <span className={`inventory-stock-badge ${Number(item.stock_disponible) === 2 ? "ventas-stock-warning" : ""}`}>
@@ -587,6 +629,8 @@ function VentaForm({
                             value={item.cantidad}
                             inputMode="numeric"
                             onChange={(event) => onUpdateItem(item.producto_id, "cantidad", event.target.value)}
+                            readOnly={item.maneja_variantes}
+                            title={item.maneja_variantes ? "La cantidad corresponde a los diseños elegidos" : undefined}
                           />
                         </td>
                         <td>
@@ -844,6 +888,9 @@ function VentaForm({
           ) : null}
 
           <div className="venta-pos-sidebar__actions">
+            <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
+              Cancelar
+            </button>
             <button
               type="submit"
               className="btn products-filter-actions__apply venta-pos-sidebar__submit"
@@ -851,38 +898,56 @@ function VentaForm({
             >
               {saving ? "Registrando..." : "Registrar venta"}
             </button>
-            <button type="button" className="btn products-filter-actions__clear" onClick={onCancel}>
-              Cancelar
-            </button>
           </div>
         </aside>
       </div>
 
-      {selectedProductPhoto && typeof document !== "undefined" ? createPortal((
-        <div
-          className="venta-product-photo-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Imagen del producto"
-          onClick={closeProductPhoto}
+      {selectedVariantProduct ? (
+        <AppModal
+          overlayClassName="venta-variant-modal"
+          ariaLabel={`Elegir diseño de ${selectedVariantProduct.nombre}`}
+          onClose={() => setSelectedVariantProduct(null)}
         >
+          <div className="venta-variant-modal__card">
+            <div className="venta-product-photo-modal__header">
+              <div>
+                <p className="section-kicker">Selecciona la unidad exacta</p>
+                <h3>{selectedVariantProduct.nombre}</h3>
+                <p className="muted-text mb-0">El diseño elegido se descontará del inventario al registrar la venta.</p>
+              </div>
+            </div>
+            <div className="venta-variant-modal__grid">
+              {(selectedVariantProduct.variantes ?? []).map((variante) => {
+                const alreadySelected = items.some((item) => item.variante_ids?.includes(Number(variante.id)));
+
+                return (
+                  <button
+                    type="button"
+                    key={variante.id}
+                    className="venta-variant-option"
+                    disabled={alreadySelected}
+                    onClick={() => handleVariantSelect(variante)}
+                  >
+                    <img src={variante.foto_url} alt={variante.nombre} />
+                    <span>{alreadySelected ? "Ya agregado" : variante.nombre}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </AppModal>
+      ) : null}
+
+      {selectedProductPhoto ? (
+        <AppModal overlayClassName="venta-product-photo-modal" ariaLabel="Imagen del producto" onClose={closeProductPhoto}>
           <div
             className="venta-product-photo-modal__card"
-            onClick={(event) => event.stopPropagation()}
           >
             <div className="venta-product-photo-modal__header">
               <div>
                 <p className="section-kicker">Producto</p>
                 <h3>{selectedProductPhoto.name}</h3>
               </div>
-              <button
-                type="button"
-                className="btn venta-product-photo-modal__close"
-                onClick={closeProductPhoto}
-                aria-label="Cerrar imagen del producto"
-              >
-                <X size={18} weight="bold" aria-hidden="true" />
-              </button>
             </div>
 
             <div className="venta-product-photo-modal__image-wrap">
@@ -893,30 +958,17 @@ function VentaForm({
               />
             </div>
           </div>
-        </div>
-      ), document.body) : null}
+        </AppModal>
+      ) : null}
 
-      {isPendingDebtModalOpen && typeof document !== "undefined" ? createPortal((
-        <div
-          className="venta-pending-debt-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Confirmar saldo pendiente"
-        >
+      {isPendingDebtModalOpen ? (
+        <AppModal overlayClassName="venta-pending-debt-modal" ariaLabel="Confirmar saldo pendiente" onClose={() => setIsPendingDebtModalOpen(false)} isDismissable={!saving}>
           <div className="venta-pending-debt-modal__card">
             <div className="venta-pending-debt-modal__header">
               <div>
                 <p className="section-kicker">Saldo pendiente</p>
                 <h3 className="mb-0">Guardar venta con deuda</h3>
               </div>
-              <button
-                type="button"
-                className="btn venta-transfer-modal__close"
-                onClick={() => setIsPendingDebtModalOpen(false)}
-                aria-label="Cerrar"
-              >
-                <X size={18} weight="bold" aria-hidden="true" />
-              </button>
             </div>
 
             <p className="venta-pending-debt-modal__message">
@@ -985,20 +1037,13 @@ function VentaForm({
               </button>
             </div>
           </div>
-        </div>
-      ), document.body) : null}
+        </AppModal>
+      ) : null}
 
-      {isTransferModalOpen && typeof document !== "undefined" ? createPortal((
-        <div
-          className="venta-transfer-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Cuentas para transferencia"
-          onClick={() => setIsTransferModalOpen(false)}
-        >
+      {isTransferModalOpen ? (
+        <AppModal overlayClassName="venta-transfer-modal" ariaLabel="Cuentas para transferencia" onClose={() => setIsTransferModalOpen(false)}>
           <div
             className="venta-transfer-modal__card"
-            onClick={(event) => event.stopPropagation()}
           >
             <div className="venta-transfer-modal__header">
               <div>
@@ -1008,14 +1053,6 @@ function VentaForm({
                   Comparte estos datos con el cliente y actualizalos cuando cambie la cuenta de cobro.
                 </p>
               </div>
-              <button
-                type="button"
-                className="btn venta-transfer-modal__close"
-                onClick={() => setIsTransferModalOpen(false)}
-                aria-label="Cerrar ventana de cuentas"
-              >
-                <X size={18} weight="bold" aria-hidden="true" />
-              </button>
               <div className="venta-transfer-modal__actions">
                 <button
                   type="button"
@@ -1174,8 +1211,8 @@ function VentaForm({
               Estos datos se guardan en este equipo para reutilizarlos en las siguientes ventas.
             </div>
           </div>
-        </div>
-      ), document.body) : null}
+        </AppModal>
+      ) : null}
     </form>
   );
 }

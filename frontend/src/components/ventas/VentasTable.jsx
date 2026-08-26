@@ -75,14 +75,6 @@ function VentasTable({
     return <VentasTableSkeleton />;
   }
 
-  if (ventas.length === 0) {
-    return (
-      <div className="surface-card">
-        <p className="empty-state">No hay ventas que coincidan con los filtros.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="surface-card ventas-table-wrapper">
       <div className="table-responsive">
@@ -99,7 +91,13 @@ function VentasTable({
             </tr>
           </thead>
           <tbody>
-            {ventas.map((venta) => (
+            {ventas.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="empty-state text-center">
+                  No hay ventas que coincidan con los filtros.
+                </td>
+              </tr>
+            ) : ventas.map((venta) => (
               <tr key={venta.id}>
                 <td>
                   <div className="product-name">{venta.numero_venta}</div>

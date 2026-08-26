@@ -1,3 +1,28 @@
+# TecnoFix backend
+
+## Database tests
+
+MySQL is the reference database for production and for the complete integration
+test suite. The schema uses MySQL features such as `ENUM` and `FULLTEXT`, so the
+suite must not be run against SQLite.
+
+1. Start a local MySQL server.
+2. Configure the MySQL host, port, username and password through the normal
+   local `.env` file or process environment. The account must be allowed to
+   create and drop disposable databases.
+3. Run `composer test` (or `composer test:mysql`).
+
+The test runner creates a uniquely named database with the reserved
+`tecnofix_test_` prefix, runs `migrate:fresh --seed`, checks migration status,
+simulates applying the new guarded migrations to an existing schema while
+preserving a sentinel row, runs the complete test suite, and drops the database
+in a `finally` block. It refuses protected or manually named databases.
+
+Do not point the test runner at `tecnofix_store`, `tecnofix_store_pruebas`, or a
+shared database. Direct `php artisan test`/PHPUnit execution is intentionally
+rejected; use the managed Composer command so database lifecycle and safety
+checks cannot be bypassed.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

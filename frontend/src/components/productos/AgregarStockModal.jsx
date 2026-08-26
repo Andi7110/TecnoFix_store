@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { createMovimientoInventario } from "../../api/productos";
+import { createMovimientoInventario, updateProducto } from "../../api/productos";
 import { localDateTimeInput } from "../../utils/dateTime";
+import AppModal from "../common/AppModal";
 
 const stockSchema = yup.object({
   cantidad: yup
@@ -22,6 +23,7 @@ function AgregarStockModal({ producto, onClose, onUpdated }) {
     handleSubmit,
     register,
     setError,
+    setValue,
   } = useForm({
     defaultValues: {
       cantidad: "",
@@ -30,23 +32,8 @@ function AgregarStockModal({ producto, onClose, onUpdated }) {
     },
   });
   const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.key === "Escape" && !isSubmitting) {
-        onClose();
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose, isSubmitting]);
+  const [variantFiles, setVariantFiles] = useState([]);
+  const [variantPreviews, setVariantPreviews] = useState([]);
 
   function fieldError(name) {
     return errors?.[name]?.message;
@@ -66,6 +53,24 @@ function AgregarStockModal({ producto, onClose, onUpdated }) {
 
     try {
       const validatedValues = await stockSchema.validate(values, { abortEarly: false });
+      if (producto.maneja_variantes && variantFiles.length !== validatedValues.cantidad) {
+        setError("cantidad", {
+          type: "manual",
+          message: "Agrega una foto por cada diseño comprado.",
+        });
+        return;
+      }
+
+      if (producto.maneja_variantes) {
+        const updatedProduct = await updateProducto(producto.id, {
+          fotos_variantes: variantFiles,
+        });
+
+        onUpdated?.(updatedProduct);
+        onClose();
+        return;
+      }
+
       const movimiento = await createMovimientoInventario({
         producto_id: producto.id,
         tipo_movimiento: "entrada",
@@ -105,18 +110,24 @@ function AgregarStockModal({ producto, onClose, onUpdated }) {
     }
   }
 
+  function handleVariantPhotos(files) {
+    const nextFiles = Array.from(files ?? []).slice(0, 30);
+    setVariantFiles(nextFiles);
+    setValue("cantidad", nextFiles.length || "", { shouldValidate: true });
+
+    Promise.all(nextFiles.map((file) => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(file);
+    }))).then(setVariantPreviews);
+  }
+
   return (
-    <div
-      className="product-stock-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Agregar stock"
-      onClick={() => !isSubmitting && onClose()}
-    >
+    <AppModal overlayClassName="product-stock-modal" ariaLabel="Agregar stock" onClose={onClose} isDismissable={!isSubmitting}>
       <form
         className="product-stock-modal__card"
         onSubmit={handleSubmit(submit)}
-        onClick={(event) => event.stopPropagation()}
       >
         <div className="product-stock-modal__header">
           <div>
@@ -135,6 +146,28 @@ function AgregarStockModal({ producto, onClose, onUpdated }) {
         {errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null}
 
         <div className="product-stock-modal__grid">
+          {producto.maneja_variantes ? (
+            <label className="form-label product-stock-modal__variants">
+              Fotos de los nuevos diseños
+              <input
+                type="file"
+                multiple
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                className="form-control"
+                onChange={(event) => handleVariantPhotos(event.target.files)}
+                autoFocus
+              />
+              <small className="muted-text">Cada foto agrega una unidad disponible.</small>
+              {variantPreviews.length ? (
+                <div className="product-stock-modal__previews">
+                  {variantPreviews.map((preview, index) => (
+                    <img key={`${preview.slice(-20)}-${index}`} src={preview} alt={`Nuevo diseño ${index + 1}`} />
+                  ))}
+                </div>
+              ) : null}
+            </label>
+          ) : null}
+
           <label className="form-label">
             Cantidad comprada
             <input
@@ -143,7 +176,8 @@ function AgregarStockModal({ producto, onClose, onUpdated }) {
               step="1"
               className={`form-control ${fieldError("cantidad") ? "is-invalid" : ""}`}
               {...register("cantidad")}
-              autoFocus
+              autoFocus={!producto.maneja_variantes}
+              readOnly={producto.maneja_variantes}
             />
             <div className="invalid-feedback">{fieldError("cantidad")}</div>
           </label>
@@ -190,7 +224,7 @@ function AgregarStockModal({ producto, onClose, onUpdated }) {
           </button>
         </div>
       </form>
-    </div>
+    </AppModal>
   );
 }
 

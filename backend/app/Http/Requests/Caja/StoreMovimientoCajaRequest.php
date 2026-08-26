@@ -9,7 +9,11 @@ class StoreMovimientoCajaRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        if ($this->input('categoria_movimiento') !== 'saldo_inicial') {
+            return true;
+        }
+
+        return $this->user()?->isAdmin() === true;
     }
 
     public function rules(): array
@@ -27,6 +31,7 @@ class StoreMovimientoCajaRequest extends FormRequest
                 'ajuste_caja',
                 'compra_productos',
                 'cuenta_por_cobrar',
+                'saldo_inicial',
             ])],
             'concepto' => ['required', 'string', 'max:255'],
             'monto' => ['required', 'numeric', 'min:0.01'],

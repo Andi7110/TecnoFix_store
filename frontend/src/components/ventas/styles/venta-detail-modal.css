@@ -70,6 +70,36 @@
   color: var(--app-ink);
 }
 
+.venta-detail-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+}
+
+.venta-detail-variants figure {
+  width: 72px;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.7rem;
+  background: var(--app-surface);
+}
+
+.venta-detail-variants img {
+  width: 100%;
+  height: 58px;
+  display: block;
+  object-fit: cover;
+}
+
+.venta-detail-variants figcaption {
+  padding: 0.25rem;
+  color: var(--app-muted);
+  font-size: 0.62rem;
+  text-align: center;
+}
+
 /* Ajustes de contraste del modal y sus cards en modo oscuro. */
 :root[data-theme="dark"] .venta-form__product-card,
 :root[data-theme="dark"] .venta-pos-suggestion,

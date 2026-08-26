@@ -153,9 +153,7 @@
   color: #15803d !important;
 }
 
-/* Botones verdes principales, incluyendo Bootstrap y botones propios del sistema. */
-.btn.btn-primary,
-.btn.btn-success,
+/* Botones verdes propios de cada modulo. */
 .products-page__create-btn,
 .products-filter-actions__apply,
 .inventory-products-page__action-btn--primary,
@@ -170,10 +168,6 @@
   box-shadow: none !important;
 }
 
-.btn.btn-primary:hover,
-.btn.btn-primary:focus,
-.btn.btn-success:hover,
-.btn.btn-success:focus,
 .products-page__create-btn:hover,
 .products-page__create-btn:focus,
 .products-filter-actions__apply:hover,
@@ -196,8 +190,6 @@
   box-shadow: none !important;
 }
 
-.btn.btn-primary:disabled,
-.btn.btn-success:disabled,
 .products-page__create-btn:disabled,
 .products-filter-actions__apply:disabled,
 .inventory-products-page__action-btn--primary:disabled,
@@ -720,6 +712,968 @@
   letter-spacing: 0.08em !important;
 }
 
+/* Las modales de React Aria se renderizan fuera de #root. */
+.repair-create-modal .repair-create-page .repair-wizard__form .repair-date-input,
+.repair-create-modal .repair-create-page .repair-wizard__form .product-money-input {
+  width: 100%;
+  min-height: 2.7rem;
+  display: flex !important;
+  align-items: stretch !important;
+  flex-wrap: nowrap !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid var(--app-surface-border) !important;
+  border-radius: 0.72rem !important;
+  background: var(--app-field-bg) !important;
+  box-shadow: none;
+}
+
+.repair-create-modal .repair-create-page .repair-wizard__form .repair-date-input:focus-within,
+.repair-create-modal .repair-create-page .repair-wizard__form .product-money-input:focus-within {
+  border-color: rgba(30, 168, 82, 0.55) !important;
+  box-shadow: 0 0 0 0.18rem rgba(30, 168, 82, 0.1) !important;
+}
+
+.repair-create-modal .repair-create-page .repair-wizard__form .repair-date-input > .input-group-text,
+.repair-create-modal .repair-create-page .repair-wizard__form .product-money-input > .input-group-text {
+  min-width: 2.75rem;
+  min-height: 100%;
+  display: grid !important;
+  place-items: center;
+  flex: 0 0 2.75rem;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-right: 1px solid var(--app-surface-border) !important;
+  border-radius: 0 !important;
+  background: rgba(30, 168, 82, 0.08) !important;
+  color: #14532d !important;
+}
+
+.repair-create-modal .repair-create-page .repair-wizard__form .repair-date-input > .form-control,
+.repair-create-modal .repair-create-page .repair-wizard__form .product-money-input > .form-control {
+  min-width: 0;
+  min-height: 100%;
+  flex: 1 1 auto;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
 :root[data-theme="dark"] #root .user-admin-modal .user-admin-form__grid .form-label {
   color: #aabdb5 !important;
+}
+
+/* Cierre consistente para todas las modales del sistema. */
+#root button[class*="modal__close"] {
+  border-color: #dc2626 !important;
+  background: #dc2626 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.24) !important;
+}
+
+#root button[class*="modal__close"]:hover,
+#root button[class*="modal__close"]:focus,
+#root button[class*="modal__close"]:focus-visible {
+  border-color: #991b1b !important;
+  background: #b91c1c !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
+}
+
+/* Paleta local de acciones: cada vista conserva su propia jerarquia visual. */
+#root .products-catalog-page .products-page__barcode-btn,
+#root .ventas-page:not(.ventas-reportes-page) .venta-page__reports-button,
+#root .ventas-reportes-page .products-page__header-actions .products-page__inventory-btn,
+#root .repairs-page:not(.repairs-reportes-page) .repairs-page__reports-btn,
+#root .repairs-reportes-page .products-page__header-actions .products-page__inventory-btn,
+#root .ventas-reportes-page .report-action--export,
+#root .repairs-reportes-page .report-action--export {
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  background-image: none !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+#root .products-catalog-page .products-page__barcode-btn:hover,
+#root .ventas-page:not(.ventas-reportes-page) .venta-page__reports-button:hover,
+#root .ventas-reportes-page .products-page__header-actions .products-page__inventory-btn:hover,
+#root .repairs-page:not(.repairs-reportes-page) .repairs-page__reports-btn:hover,
+#root .repairs-reportes-page .products-page__header-actions .products-page__inventory-btn:hover,
+#root .ventas-reportes-page .report-action--export:hover,
+#root .repairs-reportes-page .report-action--export:hover {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+}
+
+#root .products-catalog-page .products-page__create-btn,
+#root .ventas-page:not(.ventas-reportes-page) .venta-page__new-button,
+#root .repairs-page:not(.repairs-reportes-page) .repairs-page__create-btn,
+#root .ventas-reportes-page .report-action--generate,
+#root .repairs-reportes-page .report-action--generate {
+  border-color: #15803d !important;
+  background: #15803d !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+#root .products-catalog-page .products-page__create-btn:hover,
+#root .ventas-page:not(.ventas-reportes-page) .venta-page__new-button:hover,
+#root .repairs-page:not(.repairs-reportes-page) .repairs-page__create-btn:hover,
+#root .ventas-reportes-page .report-action--generate:hover,
+#root .repairs-reportes-page .report-action--generate:hover {
+  border-color: #166534 !important;
+  background: #166534 !important;
+  color: #ffffff !important;
+}
+
+#root .products-catalog-page .products-page__inventory-btn,
+#root .ventas-reportes-page .report-action--save,
+#root .repairs-reportes-page .report-action--save {
+  border-color: #7c3aed !important;
+  background: #7c3aed !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+#root .products-catalog-page .products-page__inventory-btn:hover,
+#root .ventas-reportes-page .report-action--save:hover,
+#root .repairs-reportes-page .report-action--save:hover {
+  border-color: #6d28d9 !important;
+  background: #6d28d9 !important;
+  color: #ffffff !important;
+}
+
+/* Encabezados oscuros y legibles en las tablas operativas y de reportes. */
+#root .products-catalog-page .products-table-wrapper table thead,
+#root .ventas-page:not(.ventas-reportes-page) .ventas-table-wrapper .ventas-table thead,
+#root .repairs-page:not(.repairs-reportes-page) .repairs-table-card .repairs-table thead,
+#root .ventas-reportes-page .ventas-report-simple__table thead,
+#root .repairs-reportes-page .ventas-report-simple__table thead {
+  background: linear-gradient(180deg, #0b0b0d 0%, #111214 55%, #060707 100%) !important;
+}
+
+#root .products-catalog-page .products-table-wrapper table thead tr,
+#root .products-catalog-page .products-table-wrapper table thead th,
+#root .ventas-page:not(.ventas-reportes-page) .ventas-table-wrapper .ventas-table thead tr,
+#root .ventas-page:not(.ventas-reportes-page) .ventas-table-wrapper .ventas-table thead th,
+#root .repairs-page:not(.repairs-reportes-page) .repairs-table-card .repairs-table thead tr,
+#root .repairs-page:not(.repairs-reportes-page) .repairs-table-card .repairs-table thead th,
+#root .ventas-reportes-page .ventas-report-simple__table thead tr,
+#root .ventas-reportes-page .ventas-report-simple__table thead th,
+#root .repairs-reportes-page .ventas-report-simple__table thead tr,
+#root .repairs-reportes-page .ventas-report-simple__table thead th {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+/* Reportes usa la misma tipografia contenida de Inventario, sin pesos excesivos. */
+#root .ventas-reportes-page .ventas-report-simple,
+#root .repairs-reportes-page .ventas-report-simple {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+}
+
+#root .ventas-reportes-page .ventas-report-simple :is(p, span, label, td),
+#root .repairs-reportes-page .ventas-report-simple :is(p, span, label, td) {
+  font-weight: 400 !important;
+}
+
+#root .ventas-reportes-page .ventas-report-simple :is(h2, h3, h4, th, strong),
+#root .repairs-reportes-page .ventas-report-simple :is(h2, h3, h4, th, strong) {
+  font-weight: 500 !important;
+}
+
+.repair-create-modal .repair-wizard__header h2 {
+  color: #ffffff !important;
+  font-weight: 750 !important;
+  text-shadow: none !important;
+}
+
+/* Modal de usuarios alineada con el flujo visual de reparaciones. */
+.user-admin-modal {
+  padding: clamp(0.4rem, 1.2vw, 1rem) !important;
+  background: rgba(8, 15, 12, 0.68) !important;
+  backdrop-filter: blur(8px);
+}
+
+.user-admin-modal .user-admin-modal__card {
+  width: min(96vw, 1180px) !important;
+  height: auto !important;
+  max-height: 95dvh !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(30, 168, 82, 0.22) !important;
+  border-radius: 10px !important;
+  background: var(--app-surface) !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  box-shadow: 0 26px 70px rgba(3, 15, 9, 0.3) !important;
+}
+
+.user-admin-modal .user-admin-modal__header {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 1.25rem 4rem 1.1rem 1.4rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: #ffffff !important;
+  background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.14), transparent 24%), linear-gradient(125deg, #126b3a 0%, #168447 56%, #0f766e 100%) !important;
+}
+
+.user-admin-modal .user-admin-modal__header::before {
+  display: none !important;
+}
+
+.user-admin-modal .user-admin-modal__header h2 {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: clamp(1.45rem, 2.4vw, 2rem) !important;
+  font-weight: 750 !important;
+  line-height: 1.15;
+  letter-spacing: 0 !important;
+}
+
+.user-admin-modal .user-admin-modal__header p {
+  margin: 0.3rem 0 0 !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.9rem !important;
+}
+
+.user-admin-modal .alert {
+  margin: 0.9rem 1.25rem 0;
+}
+
+.user-admin-modal .user-admin-modal__body {
+  min-height: 0;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.35fr) minmax(330px, 0.8fr) !important;
+  gap: 1rem !important;
+  padding: 1.15rem 1.25rem !important;
+  overflow-y: auto !important;
+}
+
+.user-admin-modal .user-admin-form,
+.user-admin-modal .user-admin-modules {
+  min-width: 0;
+  border: 1px solid var(--app-surface-border) !important;
+  border-radius: 9px !important;
+  background: var(--app-surface) !important;
+  box-shadow: none !important;
+}
+
+.user-admin-modal .user-admin-form {
+  padding: 1.1rem !important;
+  overflow: visible !important;
+}
+
+.user-admin-modal .user-admin-form legend {
+  margin: 0 0 1rem !important;
+  padding: 0 0 0.75rem !important;
+  border-bottom: 1px solid var(--app-surface-border);
+  color: var(--app-ink) !important;
+  font-size: 1.05rem !important;
+  font-weight: 750 !important;
+}
+
+.user-admin-modal .user-admin-form__grid {
+  gap: 0.9rem 0.85rem !important;
+}
+
+.user-admin-modal .user-admin-form__grid .form-label {
+  min-height: 0 !important;
+  display: block !important;
+  margin: 0 0 0.35rem !important;
+  color: var(--app-ink) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+}
+
+.user-admin-modal .user-admin-form__grid .form-control,
+.user-admin-modal .user-admin-form__grid .form-select,
+.user-admin-modal .user-admin-switch {
+  min-height: 2.7rem !important;
+  border: 1px solid var(--app-surface-border) !important;
+  border-radius: 9px !important;
+  background-color: var(--app-field-bg) !important;
+  color: var(--app-ink) !important;
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  box-shadow: none !important;
+}
+
+.user-admin-modal .user-admin-form__grid .form-control:focus,
+.user-admin-modal .user-admin-form__grid .form-select:focus {
+  border-color: rgba(30, 168, 82, 0.55) !important;
+  box-shadow: 0 0 0 0.2rem rgba(30, 168, 82, 0.1) !important;
+}
+
+.user-admin-modal .user-admin-switch {
+  padding: 0.55rem 0.75rem !important;
+  gap: 0.55rem;
+}
+
+.user-admin-modal .user-admin-switch span {
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
+.user-admin-modal .user-admin-modules {
+  gap: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.user-admin-modal .user-admin-modules__header {
+  padding: 1rem 1.1rem !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #167a40 0%, #0f5132 100%) !important;
+}
+
+.user-admin-modal .user-admin-modules__header .section-kicker {
+  margin: 0 0 0.28rem !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.1em !important;
+}
+
+.user-admin-modal .user-admin-modules__header h4 {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: 1.15rem !important;
+  font-weight: 750 !important;
+}
+
+.user-admin-modal .user-admin-modules__header p:last-child {
+  margin: 0.3rem 0 0 !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.78rem !important;
+}
+
+.user-admin-modal .user-admin-modules__grid {
+  gap: 0.5rem !important;
+  padding: 0.85rem 0.9rem 0 !important;
+}
+
+.user-admin-modal .user-admin-module {
+  min-height: 2.55rem;
+  padding: 0.55rem 0.65rem !important;
+  border-color: var(--app-surface-border) !important;
+  border-radius: 7px !important;
+  background: var(--app-field-bg) !important;
+  color: var(--app-ink) !important;
+  font-size: 0.76rem !important;
+  font-weight: 650 !important;
+}
+
+.user-admin-modal .user-admin-module.is-selected {
+  border-color: rgba(30, 168, 82, 0.38) !important;
+  background: rgba(30, 168, 82, 0.09) !important;
+  color: #166534 !important;
+}
+
+.user-admin-modal .user-admin-modules__note {
+  margin: 0.75rem 0.9rem 0.9rem !important;
+  color: var(--app-muted) !important;
+  font-size: 0.72rem !important;
+}
+
+.user-admin-modal .user-admin-modal__actions {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.7rem !important;
+  margin: 0 !important;
+  padding: 0.9rem 1.25rem !important;
+  border-top: 1px solid var(--app-surface-border) !important;
+  background: color-mix(in srgb, var(--app-surface) 95%, #1ea852 5%) !important;
+}
+
+.user-admin-modal .user-admin-modal__actions .btn {
+  width: auto !important;
+  min-width: 145px !important;
+  min-height: 2.65rem !important;
+  height: auto !important;
+  padding: 0.55rem 1rem !important;
+  border-radius: 7px !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+}
+
+@media (max-width: 900px) {
+  .user-admin-modal .user-admin-modal__body {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .user-admin-modal {
+    padding: 0 !important;
+  }
+
+  .user-admin-modal .user-admin-modal__card {
+    width: 100vw !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  .user-admin-modal .user-admin-modal__header {
+    padding: 1rem 3.4rem 0.9rem 1rem !important;
+  }
+
+  .user-admin-modal .user-admin-modal__body {
+    padding: 0.85rem !important;
+  }
+
+  .user-admin-modal .user-admin-form__grid,
+  .user-admin-modal .user-admin-modules__grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .user-admin-modal .user-admin-modal__actions {
+    padding: 0.75rem 0.85rem !important;
+  }
+
+  .user-admin-modal .user-admin-modal__actions .btn {
+    min-width: 0 !important;
+    flex: 1 1 0;
+  }
+}
+
+:root[data-theme="dark"] .user-admin-modal .user-admin-modal__actions {
+  background: #101a15 !important;
+}
+
+:root[data-theme="dark"] .user-admin-modal .user-admin-module.is-selected {
+  color: #86efac !important;
+}
+
+/* Formulario de productos alineado con usuarios y reparaciones. */
+.product-create-modal {
+  padding: clamp(0.4rem, 1.2vw, 1rem) !important;
+  background: rgba(8, 15, 12, 0.68) !important;
+  backdrop-filter: blur(8px);
+}
+
+.product-create-modal .product-create-modal__content {
+  width: min(96vw, 1180px) !important;
+  max-height: 95dvh !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(30, 168, 82, 0.22) !important;
+  border-radius: 10px !important;
+  background: var(--app-surface) !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  box-shadow: 0 26px 70px rgba(3, 15, 9, 0.3) !important;
+}
+
+.product-create-modal .product-create-modal__body {
+  max-height: 95dvh !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  border-radius: inherit;
+  background: var(--app-surface) !important;
+}
+
+.product-create-modal .product-form.surface-card {
+  height: 95dvh;
+  max-height: 95dvh;
+  display: flex !important;
+  flex-direction: column;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--app-surface) !important;
+  font-family: inherit !important;
+}
+
+.product-create-modal .product-form > .section-heading {
+  flex: 0 0 auto;
+  min-height: 0 !important;
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  padding: 1.25rem 1.4rem 1.1rem !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.14), transparent 24%), linear-gradient(125deg, #126b3a 0%, #168447 56%, #0f766e 100%) !important;
+}
+
+.product-create-modal .product-form > .section-heading h2 {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: clamp(1.45rem, 2.4vw, 2rem) !important;
+  font-weight: 750 !important;
+  line-height: 1.15;
+  letter-spacing: 0 !important;
+}
+
+.product-create-modal .product-form > .section-heading .muted-text {
+  margin: 0.3rem 0 0 !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4;
+}
+
+.product-create-modal .product-form__stock-box {
+  min-width: 115px;
+  padding: 0.65rem 0.8rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.product-create-modal .product-form__stock-box .muted-text,
+.product-create-modal .product-form__stock-box strong {
+  color: #ffffff !important;
+}
+
+.product-create-modal .product-form > .alert {
+  flex: 0 0 auto;
+  margin: 0.9rem 1.25rem 0;
+}
+
+.product-create-modal .product-form__scroll-area {
+  min-height: 0;
+  flex: 1 1 auto;
+  padding: 1.15rem 1.25rem !important;
+  overflow-y: auto !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.product-create-modal .product-form__scroll-area::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.product-create-modal .products-filter-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: start;
+  gap: 1rem 0.85rem !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 9px;
+  background: var(--app-surface);
+}
+
+.product-create-modal .product-form .form-label {
+  min-height: 0 !important;
+  display: block !important;
+  margin: 0 0 0.35rem !important;
+  color: var(--app-ink) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+}
+
+.product-create-modal .product-form .form-control,
+.product-create-modal .product-form .form-select {
+  min-height: 2.7rem !important;
+  border: 1px solid var(--app-surface-border) !important;
+  border-radius: 9px !important;
+  background-color: var(--app-field-bg) !important;
+  color: var(--app-ink) !important;
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  box-shadow: none !important;
+}
+
+.product-create-modal .product-form .form-control:focus,
+.product-create-modal .product-form .form-select:focus {
+  border-color: rgba(30, 168, 82, 0.55) !important;
+  box-shadow: 0 0 0 0.2rem rgba(30, 168, 82, 0.1) !important;
+}
+
+.product-create-modal .product-form small.muted-text {
+  margin-top: 0.35rem !important;
+  color: var(--app-muted) !important;
+  font-size: 0.7rem !important;
+  line-height: 1.35;
+}
+
+.product-create-modal .product-form .input-group {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 9px;
+  background: var(--app-field-bg);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.product-create-modal .product-form .input-group:focus-within {
+  border-color: rgba(30, 168, 82, 0.55);
+  box-shadow: 0 0 0 0.2rem rgba(30, 168, 82, 0.1);
+}
+
+.product-create-modal .product-form .input-group > .form-control,
+.product-create-modal .product-form .input-group > .form-select,
+.product-create-modal .product-form .input-group > .input-group-text,
+.product-create-modal .product-form .input-group > .btn {
+  min-height: 2.7rem !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.product-create-modal .product-form .input-group > .form-control,
+.product-create-modal .product-form .input-group > .form-select {
+  min-width: 0;
+  background: transparent !important;
+}
+
+.product-create-modal .product-form .input-group > .input-group-text,
+.product-create-modal .product-form .input-group > .btn {
+  border-right: 1px solid var(--app-surface-border) !important;
+  background: rgba(30, 168, 82, 0.08) !important;
+  color: #166534 !important;
+}
+
+.product-create-modal .product-form .input-group > .input-group-text:last-child,
+.product-create-modal .product-form .input-group > .btn:last-child {
+  border-right: 0 !important;
+  border-left: 1px solid var(--app-surface-border) !important;
+}
+
+.product-create-modal .product-form input[type="file"].form-control {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.product-create-modal .product-form input[type="file"].form-control::file-selector-button {
+  min-height: 2.7rem;
+  margin: 0 0.75rem 0 0;
+  padding: 0 0.85rem;
+  border: 0;
+  border-right: 1px solid var(--app-surface-border);
+  background: rgba(30, 168, 82, 0.09);
+  color: #166534;
+  font-family: inherit;
+  font-weight: 700;
+}
+
+.product-create-modal .product-form__scroll-area > .mb-3 {
+  margin: 0.9rem 0 0 !important;
+  padding: 1rem !important;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 9px;
+  background: var(--app-surface);
+}
+
+.product-create-modal .product-form textarea.form-control {
+  min-height: 5rem !important;
+  resize: vertical;
+}
+
+.product-create-modal .product-form > .products-filter-actions {
+  flex: 0 0 auto;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.7rem !important;
+  margin: 0 !important;
+  padding: 0.9rem 1.25rem !important;
+  border-top: 1px solid var(--app-surface-border) !important;
+  background: color-mix(in srgb, var(--app-surface) 95%, #1ea852 5%) !important;
+}
+
+.product-create-modal .product-form > .products-filter-actions .btn {
+  width: auto !important;
+  min-width: 145px !important;
+  min-height: 2.65rem !important;
+  padding: 0.55rem 1rem !important;
+  border-radius: 7px !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+}
+
+.product-create-modal .product-form__submit {
+  border-color: #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+}
+
+.product-create-modal .product-form__submit:hover,
+.product-create-modal .product-form__submit:focus {
+  border-color: #116b33 !important;
+  background: #116b33 !important;
+}
+
+@media (max-width: 1000px) {
+  .product-create-modal .products-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .product-create-modal {
+    padding: 0 !important;
+  }
+
+  .product-create-modal .product-create-modal__content {
+    width: 100vw !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  .product-create-modal .product-create-modal__body,
+  .product-create-modal .product-form.surface-card {
+    max-height: 100dvh !important;
+  }
+
+  .product-create-modal .product-form > .section-heading {
+    padding: 1rem !important;
+  }
+
+  .product-create-modal .product-form__scroll-area {
+    padding: 0.85rem !important;
+  }
+
+  .product-create-modal .products-filter-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0.85rem !important;
+  }
+
+  .product-create-modal .product-form > .products-filter-actions {
+    padding: 0.75rem 0.85rem !important;
+  }
+
+  .product-create-modal .product-form > .products-filter-actions .btn {
+    min-width: 0 !important;
+    flex: 1 1 0;
+  }
+}
+
+:root[data-theme="dark"] .product-create-modal .product-form > .products-filter-actions {
+  background: #101a15 !important;
+}
+
+/* Caja registradora: mismo encabezado verde que el resto de formularios. */
+.venta-create-modal .ventas-create-page .venta-pos-hero {
+  border-color: rgba(21, 128, 61, 0.38) !important;
+  background:
+    radial-gradient(circle at 86% 10%, rgba(255, 255, 255, 0.14), transparent 25%),
+    linear-gradient(125deg, #126b3a 0%, #168447 56%, #0f766e 100%) !important;
+}
+
+.venta-create-modal .ventas-create-page .venta-pos-hero::before {
+  background: rgba(255, 255, 255, 0.72) !important;
+}
+
+.venta-create-modal .ventas-create-page .venta-pos-hero h2,
+.venta-create-modal .ventas-create-page .venta-pos-hero .section-kicker,
+.venta-create-modal .ventas-create-page .venta-pos-hero > div:first-child .muted-text {
+  color: #ffffff !important;
+}
+
+.venta-create-modal .ventas-create-page .venta-pos-hero > div:first-child .muted-text {
+  opacity: 0.82;
+}
+
+.venta-create-modal .ventas-create-page .venta-pos-hero__stat {
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.venta-create-modal .ventas-create-page .venta-pos-hero__stat .muted-text {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+.venta-create-modal .ventas-create-page .venta-pos-hero__stat strong {
+  color: #ffffff !important;
+}
+
+/* Tipografia compartida entre usuarios, ventas y registro de reparaciones. */
+.venta-create-modal .venta-create-modal__content,
+.repair-create-modal .repair-create-modal__content {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+.venta-create-modal .venta-create-modal__content :is(input, select, textarea, button),
+.repair-create-modal .repair-create-modal__content :is(input, select, textarea, button) {
+  font-family: inherit !important;
+}
+
+.venta-create-modal .ventas-create-page .form-label,
+.repair-create-modal .repair-create-page .form-label {
+  min-height: 0 !important;
+  display: block !important;
+  margin: 0 0 0.35rem !important;
+  color: var(--app-ink) !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+}
+
+.venta-create-modal .ventas-create-page .venta-pos-hero h2,
+.repair-create-modal .repair-create-page .repair-wizard__header h2 {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-weight: 750 !important;
+  letter-spacing: 0 !important;
+}
+
+:root[data-theme="dark"] .venta-create-modal .ventas-create-page .form-label,
+:root[data-theme="dark"] .repair-create-modal .repair-create-page .form-label {
+  color: #eff8f3 !important;
+}
+
+/* Acceso a Inventario: mismo tono neutro que Codigos de barra. */
+#root .products-catalog-page .products-page__inventory-btn {
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  background-image: none !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+#root .products-catalog-page .products-page__inventory-btn:hover,
+#root .products-catalog-page .products-page__inventory-btn:focus {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+
+#root .products-catalog-page .products-page__inventory-btn:focus-visible {
+  outline: 3px solid rgba(100, 116, 139, 0.22);
+  outline-offset: 2px;
+}
+
+/* Accion principal del catalogo: verde estandar del sistema. */
+#root .products-catalog-page .products-page__create-btn {
+  border-color: #15803d !important;
+  background: #15803d !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+#root .products-catalog-page .products-page__create-btn:hover,
+#root .products-catalog-page .products-page__create-btn:focus {
+  border-color: #166534 !important;
+  background: #166534 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+#root .products-catalog-page .products-page__create-btn:focus-visible {
+  outline: 3px solid rgba(21, 128, 61, 0.22);
+  outline-offset: 2px;
+}
+
+/* Caja: accesos del encabezado como acciones secundarias neutras. */
+#root .cash-page .cash-page__header-actions .btn,
+#root .cash-page .cash-page__header-actions .btn:disabled {
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  background-image: none !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+#root .cash-page .cash-page__header-actions .btn:not(:disabled):hover,
+#root .cash-page .cash-page__header-actions .btn:not(:disabled):focus {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+}
+
+/* Reportes de Caja: generar secundario y guardar como accion principal. */
+#root .cash-reports-page .cash-report-action--generate {
+  border-color: #c7cdd3 !important;
+  background: #d1d5db !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+#root .cash-reports-page .cash-report-action--generate:hover,
+#root .cash-reports-page .cash-report-action--generate:focus {
+  border-color: #b8c0c8 !important;
+  background: #c7cdd3 !important;
+  color: #111827 !important;
+}
+
+#root .cash-reports-page .cash-report-action--close {
+  border-color: #15803d !important;
+  background: #15803d !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+#root .cash-reports-page .cash-report-action--close:hover,
+#root .cash-reports-page .cash-report-action--close:focus {
+  border-color: #166534 !important;
+  background: #166534 !important;
+  color: #ffffff !important;
+}
+
+/* Selector de modalidad de inventario dentro de Crear producto. */
+.product-create-modal .product-stock-mode {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin: 0 0 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(21, 128, 61, 0.22);
+  border-radius: 8px;
+  background: rgba(21, 128, 61, 0.055);
+  color: var(--app-ink);
+  cursor: pointer;
+}
+
+.product-create-modal .product-stock-mode .form-check-input {
+  flex: 0 0 auto;
+  margin: 0.16rem 0 0;
+}
+
+.product-create-modal .product-stock-mode > span {
+  min-width: 0;
+  display: grid;
+  gap: 0.16rem;
+}
+
+.product-create-modal .product-stock-mode strong {
+  color: var(--app-ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.product-create-modal .product-stock-mode small {
+  color: var(--app-muted);
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+:root[data-theme="dark"] .product-create-modal .product-stock-mode {
+  border-color: rgba(57, 255, 122, 0.2);
+  background: rgba(57, 255, 122, 0.07);
 }

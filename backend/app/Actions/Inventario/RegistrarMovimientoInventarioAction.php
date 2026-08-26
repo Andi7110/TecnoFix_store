@@ -32,6 +32,18 @@ class RegistrarMovimientoInventarioAction
 
             if ($tipoMovimiento === 'entrada') {
                 $stockNuevo = $stockAnterior + $cantidad;
+
+                if ($producto->variantes()->exists()) {
+                    $variantesDisponibles = $producto->variantes()
+                        ->where('disponible', true)
+                        ->count();
+
+                    if ($variantesDisponibles < $stockNuevo) {
+                        throw ValidationException::withMessages([
+                            'cantidad' => 'Este producto usa diseños individuales. Agrega una foto por cada nueva unidad.',
+                        ]);
+                    }
+                }
             } else {
                 if ($cantidad > $stockAnterior) {
                     throw ValidationException::withMessages([

@@ -235,7 +235,7 @@ function validateValues(values) {
   return nextErrors;
 }
 
-export function useReparacionForm({ reparacionId, onSuccess }) {
+export function useReparacionForm({ reparacionId, onSuccess, onValidationError }) {
   const isEdit = Boolean(reparacionId);
   const [values, setValues] = useState(initialValues);
   const [modulos, setModulos] = useState([]);
@@ -367,6 +367,7 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      onValidationError?.(validationErrors);
       return;
     }
 
@@ -384,6 +385,7 @@ export function useReparacionForm({ reparacionId, onSuccess }) {
 
       if (validationErrors) {
         setErrors(validationErrors);
+        onValidationError?.(validationErrors);
       } else {
         const message = "No se pudo guardar la reparacion.";
         setErrorMessage(message);

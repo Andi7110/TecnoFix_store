@@ -15,6 +15,12 @@ export async function getMovimientoCaja(movimientoId) {
   return response.data.data;
 }
 
+export async function createMovimientoCaja(payload) {
+  const response = await api.post("/caja/movimientos", payload);
+
+  return response.data.data;
+}
+
 export async function getMonthlyCajaReport(params = {}) {
   const response = await api.get("/caja/reportes/mensual", {
     params: cleanQueryParams(params),

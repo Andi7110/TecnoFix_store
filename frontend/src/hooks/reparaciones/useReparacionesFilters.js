@@ -3,9 +3,6 @@ import { useState } from "react";
 const initialFilters = {
   estado: "",
   cliente: "",
-  telefono: "",
-  marca: "",
-  modelo: "",
   saldo: "",
   fecha_desde: "",
   fecha_hasta: "",

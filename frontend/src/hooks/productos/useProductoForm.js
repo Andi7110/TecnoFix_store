@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   createProducto,
+  getNextProductoCode,
   getProducto,
   updateProducto,
 } from "../../api/productos";
@@ -29,11 +30,12 @@ const initialForm = {
   stock_inicial: "",
   stock_minimo: "2",
   unidad_medida: "unidad",
+  maneja_variantes: false,
   estado: true,
   stock: 0,
 };
 
-function buildPayload(values, isEdit, codePrefix, codeSequence, fotoFile) {
+function buildPayload(values, isEdit, codePrefix, codeSequence, variantFiles) {
   const codigo = !isEdit && codePrefix
     ? buildProductCode(codePrefix, codeSequence, { padSequence: true })
     : values.codigo.trim();
@@ -50,12 +52,19 @@ function buildPayload(values, isEdit, codePrefix, codeSequence, fotoFile) {
     unidad_medida: values.unidad_medida.trim(),
   };
 
-  if (fotoFile) {
-    payload.foto = fotoFile;
+  if (variantFiles.length > 0) {
+    if (values.maneja_variantes) {
+      payload.fotos_variantes = variantFiles;
+    } else {
+      payload.foto = variantFiles[0];
+    }
   }
 
   if (!isEdit) {
-    payload.stock_inicial = values.stock_inicial === "" ? 0 : Number(values.stock_inicial);
+    payload.codigo_automatico = true;
+    payload.stock_inicial = values.maneja_variantes && variantFiles.length > 0
+      ? variantFiles.length
+      : values.stock_inicial === "" ? 0 : Number(values.stock_inicial);
     payload.estado = Boolean(values.estado);
   }
 
@@ -75,6 +84,7 @@ function mapProductoToForm(producto) {
     stock_inicial: "",
     stock_minimo: String(producto.stock_minimo ?? 0),
     unidad_medida: producto.unidad_medida ?? "unidad",
+    maneja_variantes: Boolean(producto.maneja_variantes),
     estado: Boolean(producto.estado),
     stock: Number(producto.stock ?? 0),
   };
@@ -88,8 +98,11 @@ export function useProductoForm({ productoId, onSuccess }) {
   const [validationModal, setValidationModal] = useState(null);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
-  const [fotoFile, setFotoFile] = useState(null);
-  const [fotoPreview, setFotoPreview] = useState("");
+  const [loadingCode, setLoadingCode] = useState(false);
+  const [codeError, setCodeError] = useState("");
+  const [variantFiles, setVariantFiles] = useState([]);
+  const [variantPreviews, setVariantPreviews] = useState([]);
+  const [existingVariants, setExistingVariants] = useState([]);
 
   const { modulos, categorias, loading: loadingCatalogos, loadingCategorias } =
     useProductoCatalogos(values.modulo_id, true);
@@ -130,8 +143,7 @@ export function useProductoForm({ productoId, onSuccess }) {
         if (!ignore) {
           const mappedProducto = mapProductoToForm(producto);
           setValues(mappedProducto);
-          setFotoFile(null);
-          setFotoPreview(mappedProducto.foto_url || "");
+          setExistingVariants(Array.isArray(producto.variantes) ? producto.variantes : []);
         }
       } catch {
         if (!ignore) {
@@ -153,33 +165,82 @@ export function useProductoForm({ productoId, onSuccess }) {
     };
   }, [isEdit, productoId]);
 
-  function updateFoto(file) {
-    setFotoFile(file ?? null);
+  useEffect(() => {
+    if (isEdit || !values.modulo_id || !values.categoria_id) {
+      setLoadingCode(false);
+      setCodeError("");
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    setLoadingCode(true);
+    setCodeError("");
+    setValues((current) => ({ ...current, codigo: "" }));
+
+    getNextProductoCode(values.modulo_id, values.categoria_id, { signal: controller.signal })
+      .then((codeData) => {
+        setValues((current) => ({
+          ...current,
+          codigo: codeData?.codigo ?? "",
+        }));
+      })
+      .catch((requestError) => {
+        if (requestError?.code === "ERR_CANCELED" || requestError?.name === "CanceledError") {
+          return;
+        }
+
+        setCodeError("No se pudo consultar el correlativo. Se asignará automáticamente al guardar.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoadingCode(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [isEdit, values.categoria_id, values.modulo_id]);
+
+  function updateVariantPhotos(files) {
+    const fileLimit = values.maneja_variantes ? 30 : 1;
+    const nextFiles = Array.from(files ?? []).slice(0, fileLimit);
+    setVariantFiles(nextFiles);
     setErrors((current) => ({
       ...current,
       foto: undefined,
+      fotos_variantes: undefined,
     }));
 
-    if (!file) {
-      setFotoPreview(values.foto_url || "");
-      return;
-    }
+    Promise.all(nextFiles.map((file) => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(file);
+    }))).then(setVariantPreviews);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFotoPreview(String(reader.result ?? ""));
-    };
-    reader.readAsDataURL(file);
+    if (!isEdit && values.maneja_variantes) {
+      setValues((current) => ({
+        ...current,
+        stock_inicial: String(nextFiles.length),
+      }));
+    }
   }
 
   function updateField(name, value) {
     const nextValue = name === "codigo" ? normalizeProductCodeInput(value) : value;
+
+    if (name === "maneja_variantes") {
+      setVariantFiles([]);
+      setVariantPreviews([]);
+    }
 
     setValues((current) => ({
       ...current,
       [name]: nextValue,
       ...(name === "modulo_id" ? { categoria_id: "", codigo: "" } : {}),
       ...(name === "categoria_id" ? { codigo: "" } : {}),
+      ...(name === "maneja_variantes" && nextValue
+        ? { stock_inicial: "0" }
+        : {}),
     }));
 
     setErrors((current) => ({
@@ -284,6 +345,14 @@ export function useProductoForm({ productoId, onSuccess }) {
     const precioCompra = Number(values.precio_compra || 0);
     const precioVenta = Number(values.precio_venta || 0);
 
+    if (!isEdit && values.maneja_variantes && variantFiles.length === 0) {
+      const message = "Agrega al menos una foto para registrar el inventario por diseños.";
+      setErrors({ fotos_variantes: [message] });
+      openValidationModal("Faltan los diseños", message);
+      setSaving(false);
+      return;
+    }
+
     if (precioVenta < precioCompra) {
       setErrors({
         precio_venta: [
@@ -299,7 +368,7 @@ export function useProductoForm({ productoId, onSuccess }) {
     }
 
     try {
-      const payload = buildPayload(values, isEdit, codePrefix, codeSequence, fotoFile);
+      const payload = buildPayload(values, isEdit, codePrefix, codeSequence, variantFiles);
       const producto = isEdit
         ? await updateProducto(productoId, payload)
         : await createProducto(payload);
@@ -365,6 +434,8 @@ export function useProductoForm({ productoId, onSuccess }) {
     validationModal,
     loading,
     saving,
+    loadingCode,
+    codeError,
     modulos,
     categorias,
     loadingCatalogos,
@@ -372,10 +443,12 @@ export function useProductoForm({ productoId, onSuccess }) {
     isEdit,
     codePrefix,
     codeSequence,
-    fotoPreview,
+    variantPreviews,
+    existingVariants,
+    variantFilesCount: variantFiles.length,
     fixedStockMinimo: 2,
     onChange: updateField,
-    onFotoChange: updateFoto,
+    onVariantPhotosChange: updateVariantPhotos,
     onCodeSequenceChange: updateCodeSequence,
     onCodeSequenceBlur: formatCodeSequence,
     onPriceChange: updatePriceField,

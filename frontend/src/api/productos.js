@@ -23,6 +23,15 @@ function toProductoFormData(payload, methodOverride = null) {
       return;
     }
 
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item !== undefined && item !== null) {
+          formData.append(`${key}[]`, item);
+        }
+      });
+      return;
+    }
+
     if (typeof value === "boolean") {
       formData.append(key, value ? "1" : "0");
       return;
@@ -38,9 +47,10 @@ function toProductoFormData(payload, methodOverride = null) {
   return formData;
 }
 
-export async function getProductosPaginados(params = {}) {
+export async function getProductosPaginados(params = {}, options = {}) {
   const response = await api.get("/inventario/productos", {
     params: cleanQueryParams(params),
+    signal: options.signal,
   });
 
   return response.data;
@@ -52,9 +62,21 @@ export async function getProducto(productoId) {
   return response.data.data;
 }
 
+export async function getNextProductoCode(moduloId, categoriaId, options = {}) {
+  const response = await api.get("/inventario/productos/siguiente-codigo", {
+    params: {
+      modulo_id: moduloId,
+      categoria_id: categoriaId,
+    },
+    signal: options.signal,
+  });
+
+  return response.data.data;
+}
+
 export async function createProducto(payload) {
-  const hasFoto = isFileValue(payload?.foto);
-  const response = hasFoto
+  const hasFotos = isFileValue(payload?.foto) || payload?.fotos_variantes?.some(isFileValue);
+  const response = hasFotos
     ? await api.post("/inventario/productos", toProductoFormData(payload))
     : await api.post("/inventario/productos", payload);
 
@@ -62,8 +84,8 @@ export async function createProducto(payload) {
 }
 
 export async function updateProducto(productoId, payload) {
-  const hasFoto = isFileValue(payload?.foto);
-  const response = hasFoto
+  const hasFotos = isFileValue(payload?.foto) || payload?.fotos_variantes?.some(isFileValue);
+  const response = hasFotos
     ? await api.post(
       `/inventario/productos/${productoId}`,
       toProductoFormData(payload, "PUT"),

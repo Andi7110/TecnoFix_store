@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Calculator, Info, Package, Plus, Receipt, TrendDown, TrendUp, X } from "../../icons/phosphor";
+import { Calculator, Info, Package, Plus, Receipt, TrendDown, TrendUp } from "../../icons/phosphor";
 import { createCompraInventario, createCosto, listCostos } from "../../api/costos";
 import { listModulos } from "../../api/inventarioCatalogos";
 import { listProductos } from "../../api/productos";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import { notifyError, notifySuccess } from "../../utils/toasts";
+import AppModal from "../../components/common/AppModal";
 
 const today = new Date().toISOString().slice(0, 10);
 const monthStart = `${today.slice(0, 7)}-01`;
@@ -388,9 +389,8 @@ function CostosPage() {
       </div>
 
       {expenseModalOpen ? (
-      <div className="costs-entry-modal" role="dialog" aria-modal="true" aria-labelledby="expense-form-title" onClick={() => !saving && setExpenseModalOpen(false)}>
-        <div className="costs-entry-modal__panel" onClick={(event) => event.stopPropagation()}>
-          <button type="button" className="costs-entry-modal__close" aria-label="Cerrar formulario" onClick={() => setExpenseModalOpen(false)} disabled={saving}><X size={20} weight="bold" /></button>
+      <AppModal overlayClassName="costs-entry-modal" ariaLabelledby="expense-form-title" onClose={() => setExpenseModalOpen(false)} isDismissable={!saving}>
+        <div className="costs-entry-modal__panel">
       <div className="costs-layout">
         <form className="surface-card costs-form" onSubmit={(event) => event.preventDefault()}>
           <div className="costs-form__heading">
@@ -521,15 +521,14 @@ function CostosPage() {
           </button>
         </form>
 
-      </div>
         </div>
-      </div>
+        </div>
+      </AppModal>
       ) : null}
 
       {purchaseModalOpen ? (
-        <div className="costs-entry-modal" role="dialog" aria-modal="true" aria-labelledby="purchase-form-title" onClick={() => !purchaseSaving && setPurchaseModalOpen(false)}>
-          <div className="costs-entry-modal__panel costs-entry-modal__panel--purchase" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="costs-entry-modal__close" aria-label="Cerrar formulario" onClick={() => setPurchaseModalOpen(false)} disabled={purchaseSaving}><X size={20} weight="bold" /></button>
+        <AppModal overlayClassName="costs-entry-modal" ariaLabelledby="purchase-form-title" onClose={() => setPurchaseModalOpen(false)} isDismissable={!purchaseSaving}>
+          <div className="costs-entry-modal__panel costs-entry-modal__panel--purchase">
             <form className="surface-card purchase-form" onSubmit={(event) => { event.preventDefault(); confirmPurchase(); }}>
               <div className="costs-form__heading">
                 <span className="costs-form__step"><Package size={20} weight="bold" /></span>
@@ -602,7 +601,7 @@ function CostosPage() {
               </footer>
             </form>
           </div>
-        </div>
+        </AppModal>
       ) : null}
 
       <section className="surface-card costs-table-shell">
@@ -682,8 +681,8 @@ function CostosPage() {
       <ProductosPagination meta={meta} onPageChange={changePage} />
 
       {reviewOpen ? (
-        <div className="costs-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="cost-confirm-title" onClick={() => !saving && setReviewOpen(false)}>
-          <div className="costs-confirm-modal__card" onClick={(event) => event.stopPropagation()}>
+        <AppModal overlayClassName="costs-confirm-modal" ariaLabelledby="cost-confirm-title" onClose={() => setReviewOpen(false)} isDismissable={!saving}>
+          <div className="costs-confirm-modal__card">
             <header className="costs-confirm-modal__header">
               <span className="costs-confirm-modal__icon"><Receipt size={24} weight="bold" /></span>
               <div>
@@ -720,7 +719,7 @@ function CostosPage() {
               </button>
             </footer>
           </div>
-        </div>
+        </AppModal>
       ) : null}
     </section>
   );

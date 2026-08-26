@@ -288,9 +288,6 @@ form .btn[type="button"]:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):n
   white-space: nowrap !important;
 }
 
-form button[type="submit"].btn:not(.btn-sm),
-form .btn.btn-primary:not(.btn-sm),
-form .btn.btn-success:not(.btn-sm),
 form .products-filter-actions__apply:not(.btn-sm),
 form .product-form__submit,
 form .auth-form__submit {
@@ -299,15 +296,9 @@ form .auth-form__submit {
   color: #ffffff !important;
 }
 
-form button[type="submit"].btn:not(.btn-sm):hover,
-form .btn.btn-primary:not(.btn-sm):hover,
-form .btn.btn-success:not(.btn-sm):hover,
 form .products-filter-actions__apply:not(.btn-sm):hover,
 form .product-form__submit:hover,
 form .auth-form__submit:hover,
-form button[type="submit"].btn:not(.btn-sm):focus,
-form .btn.btn-primary:not(.btn-sm):focus,
-form .btn.btn-success:not(.btn-sm):focus,
 form .products-filter-actions__apply:not(.btn-sm):focus,
 form .product-form__submit:focus,
 form .auth-form__submit:focus {
@@ -319,8 +310,7 @@ form .auth-form__submit:focus {
 
 form .products-filter-actions__clear:not(.btn-sm),
 form .product-form__cancel,
-form .btn.btn-light:not(.btn-sm),
-form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button) {
+form .btn.btn-light:not(.btn-sm) {
   border-color: #c7cdd3 !important;
   background: #d1d5db !important;
   color: #1f2937 !important;
@@ -330,20 +320,15 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 form .products-filter-actions__clear:not(.btn-sm):hover,
 form .product-form__cancel:hover,
 form .btn.btn-light:not(.btn-sm):hover,
-form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):hover,
 form .products-filter-actions__clear:not(.btn-sm):focus,
 form .product-form__cancel:focus,
-form .btn.btn-light:not(.btn-sm):focus,
-form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):focus {
+form .btn.btn-light:not(.btn-sm):focus {
   border-color: #b8c0c8 !important;
   background: #c7cdd3 !important;
   color: #111827 !important;
   box-shadow: none !important;
 }
 
-form button[type="submit"].btn:not(.btn-sm):disabled,
-form .btn.btn-primary:not(.btn-sm):disabled,
-form .btn.btn-success:not(.btn-sm):disabled,
 form .products-filter-actions__apply:not(.btn-sm):disabled,
 form .product-form__submit:disabled,
 form .auth-form__submit:disabled {
@@ -356,8 +341,7 @@ form .auth-form__submit:disabled {
 
 form .products-filter-actions__clear:not(.btn-sm):disabled,
 form .product-form__cancel:disabled,
-form .btn.btn-light:not(.btn-sm):disabled,
-form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):disabled {
+form .btn.btn-light:not(.btn-sm):disabled {
   border-color: #d1d5db !important;
   background: #e5e7eb !important;
   color: #6b7280 !important;
@@ -545,17 +529,6 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
   box-shadow: none !important;
 }
 
-:root[data-theme="dark"] form button.btn:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):disabled,
-:root[data-theme="dark"] form .btn[type="submit"]:not(.btn-sm):disabled,
-:root[data-theme="dark"] form .btn[type="button"]:not(.btn-sm):not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):disabled {
-  border-color: #7abf92 !important;
-  background: #7abf92 !important;
-  color: rgba(255, 255, 255, 0.92) !important;
-}
-
-:root[data-theme="dark"] form button[type="submit"].btn:not(.btn-sm),
-:root[data-theme="dark"] form button.btn.btn-primary:not(.btn-sm),
-:root[data-theme="dark"] form button.btn.btn-success:not(.btn-sm),
 :root[data-theme="dark"] form button.btn.products-filter-actions__apply:not(.btn-sm),
 :root[data-theme="dark"] form button.btn.product-form__submit,
 :root[data-theme="dark"] form button.btn.auth-form__submit,
@@ -571,15 +544,9 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
   box-shadow: none !important;
 }
 
-:root[data-theme="dark"] form button[type="submit"].btn:not(.btn-sm):hover,
-:root[data-theme="dark"] form button.btn.btn-primary:not(.btn-sm):hover,
-:root[data-theme="dark"] form button.btn.btn-success:not(.btn-sm):hover,
 :root[data-theme="dark"] form button.btn.products-filter-actions__apply:not(.btn-sm):hover,
 :root[data-theme="dark"] form button.btn.product-form__submit:hover,
 :root[data-theme="dark"] form button.btn.auth-form__submit:hover,
-:root[data-theme="dark"] form button[type="submit"].btn:not(.btn-sm):focus,
-:root[data-theme="dark"] form button.btn.btn-primary:not(.btn-sm):focus,
-:root[data-theme="dark"] form button.btn.btn-success:not(.btn-sm):focus,
 :root[data-theme="dark"] form button.btn.products-filter-actions__apply:not(.btn-sm):focus,
 :root[data-theme="dark"] form button.btn.product-form__submit:focus,
 :root[data-theme="dark"] form button.btn.auth-form__submit:focus,
@@ -602,7 +569,6 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 :root[data-theme="dark"] form button.btn.products-filter-actions__clear:not(.btn-sm),
 :root[data-theme="dark"] form button.btn.product-form__cancel,
 :root[data-theme="dark"] form button.btn.btn-light:not(.btn-sm),
-:root[data-theme="dark"] form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button),
 :root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__clear,
 :root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__clear,
 :root[data-theme="dark"] .repair-create-modal .products-filter-actions__clear,
@@ -617,11 +583,9 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 :root[data-theme="dark"] form button.btn.products-filter-actions__clear:not(.btn-sm):hover,
 :root[data-theme="dark"] form button.btn.product-form__cancel:hover,
 :root[data-theme="dark"] form button.btn.btn-light:not(.btn-sm):hover,
-:root[data-theme="dark"] form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):hover,
 :root[data-theme="dark"] form button.btn.products-filter-actions__clear:not(.btn-sm):focus,
 :root[data-theme="dark"] form button.btn.product-form__cancel:focus,
 :root[data-theme="dark"] form button.btn.btn-light:not(.btn-sm):focus,
-:root[data-theme="dark"] form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):not(.products-filter-actions__apply):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):focus,
 :root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__clear:hover,
 :root[data-theme="dark"] .repair-create-page .repair-form .products-filter-actions__clear:focus,
 :root[data-theme="dark"] .repair-delivery-modal .products-filter-actions__clear:hover,
@@ -637,28 +601,16 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 }
 
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh) {
-  --tf-button-base: #111111;
-  --tf-button-fill: #ffffff;
-  --tf-button-text: #ffffff;
-  --tf-button-hover-text: #111111;
   position: relative !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   overflow: hidden !important;
-  border: 0 !important;
   border-radius: 0.72rem !important;
-  background:
-    linear-gradient(to left, var(--tf-button-fill), var(--tf-button-fill)) right / 0% 100% no-repeat,
-    var(--tf-button-base) !important;
-  color: var(--tf-button-text) !important;
   font-family: inherit !important;
   font-weight: 500 !important;
   letter-spacing: 0.02em;
-  box-shadow: 0 6px 20px rgba(17, 17, 17, 0.16) !important;
   transition:
-    background-size 0.4s ease-in-out,
-    color 0.3s ease-in-out,
     transform 0.2s ease,
     box-shadow 0.2s ease !important;
 }
@@ -704,17 +656,11 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh):hover,
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh):focus {
-  background-size: 100% 100%, auto !important;
-  color: var(--tf-button-hover-text) !important;
-  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.22) !important;
   animation: tf-button-scale-up 0.3s ease-in-out;
 }
 
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh):disabled,
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh)[aria-disabled="true"] {
-  background: #9ca3af !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-  box-shadow: none !important;
   animation: none;
 }
 
@@ -844,17 +790,11 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 
 /* Boton global tipo flecha: estilo base solicitado para acciones del sistema. */
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh) {
-  --primary-color: var(--app-primary, #15803d);
-  --secondary-color: #ffffff;
-  --hover-color: #111111;
   --arrow-width: 10px;
   --arrow-stroke: 2px;
   box-sizing: border-box !important;
-  border: 0 !important;
   border-radius: 20px !important;
-  color: var(--secondary-color) !important;
   padding: 0.72rem 1.25rem !important;
-  background: var(--primary-color) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -862,7 +802,6 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
   font-weight: 650 !important;
   line-height: 1.1 !important;
   letter-spacing: 0 !important;
-  box-shadow: 0 10px 22px rgba(21, 128, 61, 0.22) !important;
   transition:
     background-color 0.2s ease,
     transform 0.2s ease,
@@ -903,10 +842,7 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh):hover,
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh):focus {
-  background-color: var(--hover-color) !important;
-  color: var(--secondary-color) !important;
   transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(17, 17, 17, 0.22) !important;
 }
 
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh):hover::after,
@@ -991,13 +927,9 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 
 /* Sistema final de botones: paleta contrastada y consistente. */
 .btn:not(.btn-close):not(.MuiIconButton-root):not(.auth-form__password-toggle):not(.product-stock-input__button):not(.venta-transfer-modal__close):not(.venta-transfer-modal__icon-button):not(.app-user-menu__trigger):not(.app-topbar__back):not(.app-notifications__refresh) {
-  --primary-color: #1e293b;
-  --secondary-color: #ffffff;
-  --hover-color: #020617;
   border-radius: 8px !important;
   padding: 0.68rem 1.05rem !important;
   font-weight: 600 !important;
-  box-shadow: 0 9px 18px rgba(15, 23, 42, 0.16) !important;
 }
 
 .btn.btn-primary,
@@ -1007,10 +939,14 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 .btn.repairs-page__create-btn,
 .btn.cash-page__create-btn,
 .btn.inventory-products-page__action-btn--primary,
-.btn.product-form__submit,
-.btn.auth-form__submit {
+.btn.product-form__submit {
   --primary-color: #2563eb;
   --hover-color: #0f172a;
+}
+
+.btn.auth-form__submit {
+  --primary-color: #15803d !important;
+  --hover-color: #116b33 !important;
 }
 
 .btn.products-page__create-btn,
@@ -1038,6 +974,15 @@ form button[type="button"].btn:not(.btn-sm):not(.btn-primary):not(.btn-success):
 .btn.inventory-product-delete-btn {
   --primary-color: #dc2626;
   --hover-color: #7f1d1d;
+}
+
+.swal2-actions.tf-alert-actions {
+  gap: 0.75rem;
+}
+
+.swal2-confirm.btn.tf-alert-confirm-danger {
+  --primary-color: #dc2626 !important;
+  --hover-color: #7f1d1d !important;
 }
 
 .btn.btn-warning,

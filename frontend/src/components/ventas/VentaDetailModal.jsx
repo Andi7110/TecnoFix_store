@@ -1,4 +1,5 @@
 import { GlobalLoadingOverlay } from "../interactions/GlobalInteractions";
+import AppModal from "../common/AppModal";
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-SV", {
@@ -44,15 +45,9 @@ function VentaDetailModal({
   }
 
   return (
-    <div
-      className="venta-detail-modal"
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-    >
+    <AppModal overlayClassName="venta-detail-modal" ariaLabel="Detalle de venta" onClose={onClose}>
       <div
         className="venta-detail-modal__card"
-        onClick={(event) => event.stopPropagation()}
       >
         <div className="venta-detail-modal__header">
           <div>
@@ -117,6 +112,16 @@ function VentaDetailModal({
                         <div className="product-code">
                           {detalle.producto?.codigo ?? "Sin codigo"}
                         </div>
+                        {detalle.variantes?.length ? (
+                          <div className="venta-detail-variants">
+                            {detalle.variantes.map((variante) => (
+                              <figure key={variante.id}>
+                                <img src={variante.foto_url} alt={variante.nombre} />
+                                <figcaption>{variante.nombre}</figcaption>
+                              </figure>
+                            ))}
+                          </div>
+                        ) : null}
                       </td>
                       <td>{Number(detalle.cantidad ?? 0)}</td>
                       <td>{formatCurrency(detalle.precio_unitario)}</td>
@@ -151,7 +156,7 @@ function VentaDetailModal({
           </>
         ) : null}
       </div>
-    </div>
+    </AppModal>
   );
 }
 

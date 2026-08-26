@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Inventario;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Inventario\Producto\IndexProductoRequest;
+use App\Http\Requests\Inventario\Producto\NextProductoCodeRequest;
 use App\Http\Requests\Inventario\Producto\StoreProductoRequest;
 use App\Http\Requests\Inventario\Producto\UpdateEstadoProductoRequest;
 use App\Http\Requests\Inventario\Producto\UpdateProductoRequest;
@@ -27,6 +28,18 @@ class ProductoController extends Controller
         return ProductoResource::collection(
             $this->productoService->paginate($request->validated())
         );
+    }
+
+    public function nextCode(NextProductoCodeRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        return response()->json([
+            'data' => $this->productoService->nextCode(
+                (int) $data['modulo_id'],
+                (int) $data['categoria_id'],
+            ),
+        ]);
     }
 
     public function store(StoreProductoRequest $request): ProductoResource

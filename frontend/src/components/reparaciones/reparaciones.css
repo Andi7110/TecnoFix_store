@@ -361,6 +361,8 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  background: rgba(2, 6, 23, 0.58);
+  backdrop-filter: blur(4px);
 }
 
 .repair-delivery-modal__backdrop {
@@ -977,9 +979,21 @@
 
 /* Grid de campos del filtro. */
 .repairs-page.products-page--minimal .repairs-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 1.05fr 1.35fr 1.15fr 1fr 1fr;
   gap: 0.85rem;
   margin-top: 0;
+}
+
+@media (max-width: 1100px) {
+  .repairs-page.products-page--minimal .repairs-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .repairs-page.products-page--minimal .repairs-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .repairs-page.products-page--minimal .repairs-filters .form-label {
@@ -2147,6 +2161,849 @@
 }
 
 /* Costos posteriores de reparacion. */
+.repair-create-modal__content.repair-create-page {
+  width: min(96vw, 1180px);
+}
+
+.repair-wizard {
+  overflow: hidden;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 10px;
+  background: var(--app-surface);
+}
+
+.repair-wizard__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.3rem 4rem 1.15rem 1.4rem;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.14), transparent 24%),
+    linear-gradient(125deg, #126b3a 0%, #168447 56%, #0f766e 100%);
+}
+
+.repair-wizard__header .section-kicker,
+.repair-wizard__header h2,
+.repair-wizard__header p {
+  margin: 0;
+  color: #fff !important;
+}
+
+.repair-wizard__header .section-kicker {
+  margin-bottom: 0.25rem;
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+}
+
+.repair-wizard__header h2 {
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  font-weight: 750;
+}
+
+.repair-wizard__header p:last-child {
+  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.9rem;
+}
+
+.repair-wizard__progress-label {
+  flex: 0 0 auto;
+  padding: 0.42rem 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.repair-wizard__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 0 1.4rem;
+  border-bottom: 1px solid var(--app-surface-border);
+  background: color-mix(in srgb, var(--app-surface) 92%, #1ea852 8%);
+}
+
+.repair-wizard__step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 0.7rem;
+  border: 0;
+  background: transparent;
+  color: var(--app-muted);
+  text-align: left;
+}
+
+.repair-wizard__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0.3rem;
+  width: min(22%, 4rem);
+  height: 1px;
+  background: var(--app-surface-border);
+}
+
+.repair-wizard__step:disabled {
+  opacity: 0.68;
+}
+
+.repair-wizard__step--complete {
+  cursor: pointer;
+}
+
+.repair-wizard__step--active {
+  color: #167a40;
+}
+
+.repair-wizard__step--active::before {
+  content: "";
+  position: absolute;
+  right: 0.7rem;
+  bottom: -1px;
+  left: 0.7rem;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: #1ea852;
+}
+
+.repair-wizard__step-icon {
+  width: 2.45rem;
+  height: 2.45rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 50%;
+  background: var(--app-surface);
+}
+
+.repair-wizard__step--active .repair-wizard__step-icon {
+  border-color: rgba(30, 168, 82, 0.3);
+  background: rgba(30, 168, 82, 0.12);
+}
+
+.repair-wizard__step--complete .repair-wizard__step-icon {
+  border-color: #1ea852;
+  background: #1ea852;
+  color: #fff;
+}
+
+.repair-wizard__step strong,
+.repair-wizard__step small {
+  display: block;
+}
+
+.repair-wizard__step strong {
+  color: inherit;
+  font-size: 0.9rem;
+}
+
+.repair-wizard__step small {
+  margin-top: 0.08rem;
+  font-size: 0.72rem;
+}
+
+.repair-wizard__content {
+  min-height: 355px;
+  padding: 1.25rem 1.4rem;
+}
+
+.repair-wizard__content--service {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.8fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.repair-wizard__panel {
+  animation: repair-wizard-enter 180ms ease-out;
+}
+
+@keyframes repair-wizard-enter {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.repair-wizard__section-heading {
+  margin-bottom: 1.05rem;
+}
+
+.repair-wizard__section-heading > span {
+  color: #188847;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.repair-wizard__section-heading h3 {
+  margin: 0.18rem 0 0.2rem;
+  color: var(--app-ink);
+  font-size: 1.2rem;
+  font-weight: 750;
+}
+
+.repair-wizard__section-heading p {
+  margin: 0;
+  color: var(--app-muted);
+  font-size: 0.83rem;
+}
+
+.repair-wizard__section-heading--service {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.repair-cost-launcher {
+  min-width: 145px;
+  min-height: 2.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.repair-wizard__form .form-label {
+  margin-bottom: 0.35rem;
+  color: var(--app-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.repair-wizard__form .form-label span {
+  color: #dc2626;
+}
+
+.repair-wizard__form .form-control,
+.repair-wizard__form .form-select {
+  min-height: 2.7rem;
+  border-color: var(--app-surface-border);
+  border-radius: 7px;
+  background: var(--app-field-bg);
+  color: var(--app-ink);
+  box-shadow: none;
+}
+
+.repair-wizard__form textarea.form-control {
+  min-height: 5rem;
+}
+
+.repair-wizard__form .form-control:focus,
+.repair-wizard__form .form-select:focus {
+  border-color: rgba(30, 168, 82, 0.55);
+  box-shadow: 0 0 0 0.2rem rgba(30, 168, 82, 0.1);
+}
+
+.repair-wizard__form .input-group-text {
+  border-color: var(--app-surface-border);
+  background: rgba(30, 168, 82, 0.08);
+  color: #167a40;
+}
+
+.repair-wizard__form small.muted-text {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+}
+
+.repair-wizard__summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(30, 168, 82, 0.18);
+  border-radius: 8px;
+  background: rgba(30, 168, 82, 0.055);
+}
+
+.repair-wizard__summary div {
+  min-width: 0;
+}
+
+.repair-wizard__summary span,
+.repair-wizard__summary strong {
+  display: block;
+}
+
+.repair-wizard__summary span {
+  margin-bottom: 0.08rem;
+  color: var(--app-muted);
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.repair-wizard__summary strong {
+  overflow: hidden;
+  color: var(--app-ink);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repair-wizard__submit-note {
+  margin: 0.7rem 0 0;
+  color: var(--app-muted);
+  font-size: 0.76rem;
+}
+
+.repair-wizard__costs .repairs-costs-card--create {
+  border-radius: 8px;
+}
+
+.repair-wizard__costs .repairs-costs-card__header {
+  padding: 0.85rem;
+}
+
+.repair-wizard__costs .repairs-costs-card__header h3 {
+  font-size: 1rem;
+}
+
+.repair-wizard__costs .repairs-costs-card__totals {
+  gap: 0.3rem;
+}
+
+.repair-wizard__costs .repairs-costs-card__totals span {
+  padding: 0.25rem 0.4rem;
+  font-size: 0.68rem;
+}
+
+.repair-wizard__message {
+  margin: 0 1.4rem 0.85rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  border-radius: 7px;
+  background: rgba(220, 38, 38, 0.07);
+  color: #b91c1c;
+  font-size: 0.82rem;
+}
+
+.repair-wizard__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1.4rem;
+  border-top: 1px solid var(--app-surface-border);
+  background: color-mix(in srgb, var(--app-surface) 95%, #1ea852 5%);
+}
+
+.repair-wizard__actions .btn {
+  min-width: 130px;
+  min-height: 2.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  border-radius: 7px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .repair-wizard__content--service {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .repair-wizard__header {
+    padding: 1rem 3.5rem 0.9rem 1rem;
+  }
+
+  .repair-wizard__header p:last-child,
+  .repair-wizard__progress-label,
+  .repair-wizard__step small,
+  .repair-wizard__step:not(:last-child)::after {
+    display: none;
+  }
+
+  .repair-wizard__steps {
+    padding: 0 0.35rem;
+  }
+
+  .repair-wizard__step {
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.72rem 0.25rem;
+  }
+
+  .repair-wizard__step-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .repair-wizard__step strong {
+    font-size: 0.76rem;
+  }
+
+  .repair-wizard__content {
+    min-height: auto;
+    padding: 1rem;
+  }
+
+  .repair-wizard__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .repair-wizard__section-heading--service {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .repair-cost-launcher {
+    width: 100%;
+  }
+
+  .repair-wizard__actions {
+    padding: 0.75rem 1rem;
+  }
+
+  .repair-wizard__actions .btn {
+    min-width: 0;
+  }
+}
+
+:root[data-theme="dark"] .repair-wizard__steps,
+:root[data-theme="dark"] .repair-wizard__actions {
+  background: #101a15;
+}
+
+:root[data-theme="dark"] .repair-wizard__step--active {
+  color: #55d886;
+}
+
+:root[data-theme="dark"] .repair-wizard__form .input-group-text,
+:root[data-theme="dark"] .repair-wizard__summary {
+  background: rgba(67, 211, 121, 0.08);
+}
+
+:root[data-theme="dark"] .repair-wizard__section-heading > span {
+  color: #55d886;
+}
+
+.repair-local-cost-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(5, 12, 9, 0.64);
+  backdrop-filter: blur(6px);
+}
+
+.repair-local-cost-modal__content {
+  width: min(42rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: 1.15rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 11px;
+  background: var(--app-surface);
+  box-shadow: 0 24px 65px rgba(3, 15, 9, 0.32);
+}
+
+.repair-local-cost-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--app-surface-border);
+}
+
+.repair-local-cost-modal__header .section-kicker,
+.repair-local-cost-modal__header h3,
+.repair-local-cost-modal__header p {
+  margin: 0;
+}
+
+.repair-local-cost-modal__header .section-kicker {
+  color: #188847;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.repair-local-cost-modal__header h3 {
+  margin-top: 0.15rem;
+  color: var(--app-ink);
+  font-size: 1.25rem;
+}
+
+.repair-local-cost-modal__header p:last-child {
+  margin-top: 0.2rem;
+  color: var(--app-muted);
+  font-size: 0.78rem;
+}
+
+.repair-local-cost-modal .repairs-cost-form {
+  margin: 0;
+  padding: 0;
+}
+
+.repair-local-cost-modal .repairs-cost-form .row {
+  row-gap: 0.8rem;
+}
+
+.repair-local-cost-modal .form-label {
+  margin-bottom: 0.3rem;
+  color: var(--app-ink);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.repair-local-cost-modal .form-control,
+.repair-local-cost-modal .form-select,
+.repair-local-cost-modal .input-group-text {
+  min-height: 2.55rem;
+  border-color: var(--app-surface-border);
+  background-color: var(--app-field-bg);
+  color: var(--app-ink);
+}
+
+.repair-local-cost-modal .repairs-cost-form__actions {
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--app-surface-border);
+}
+
+.repair-local-cost-modal .repairs-cost-form__actions .btn {
+  min-width: 125px;
+  min-height: 2.5rem;
+  border-radius: 7px;
+}
+
+@media (max-width: 575px) {
+  .repair-local-cost-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .repair-local-cost-modal__content {
+    width: 100%;
+    max-height: 92dvh;
+    padding: 1rem;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .repair-local-cost-modal__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .repair-local-cost-modal__header .btn {
+    align-self: flex-end;
+  }
+}
+
+:root[data-theme="dark"] .repair-local-cost-modal__content {
+  background: #0d1511;
+  border-color: rgba(57, 255, 122, 0.18);
+}
+
+/* Fechas y montos se comportan como un único control visual. */
+#root .repair-create-modal .repair-wizard__form .repair-date-input,
+#root .repair-create-modal .repair-wizard__form .product-money-input,
+.repair-local-cost-modal .repairs-cost-form .input-group {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 9px;
+  background: var(--app-field-bg);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+#root .repair-create-modal .repair-wizard__form .repair-date-input:focus-within,
+#root .repair-create-modal .repair-wizard__form .product-money-input:focus-within,
+.repair-local-cost-modal .repairs-cost-form .input-group:focus-within {
+  border-color: rgba(30, 168, 82, 0.58);
+  box-shadow: 0 0 0 0.2rem rgba(30, 168, 82, 0.1);
+}
+
+#root .repair-create-modal .repair-wizard__form .repair-date-input > .input-group-text,
+#root .repair-create-modal .repair-wizard__form .product-money-input > .input-group-text,
+.repair-local-cost-modal .repairs-cost-form .input-group > .input-group-text {
+  min-width: 2.75rem;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 0 !important;
+  border-right: 1px solid var(--app-surface-border) !important;
+  border-radius: 0 !important;
+  background: rgba(30, 168, 82, 0.08);
+}
+
+#root .repair-create-modal .repair-wizard__form .repair-date-input > .form-control,
+#root .repair-create-modal .repair-wizard__form .product-money-input > .form-control,
+.repair-local-cost-modal .repairs-cost-form .input-group > .form-control {
+  min-width: 0;
+  flex: 1 1 auto;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+#root .repair-create-modal .repair-wizard__form .repair-date-input > .form-control:focus,
+#root .repair-create-modal .repair-wizard__form .product-money-input > .form-control:focus,
+.repair-local-cost-modal .repairs-cost-form .input-group > .form-control:focus {
+  outline: 0;
+}
+
+/* Paso 3: la información principal precede a los costos opcionales. */
+.repair-wizard__content--service {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.15rem;
+}
+
+.repair-wizard__content--service .repair-wizard__panel {
+  padding: 1.1rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 9px;
+  background: var(--app-surface);
+}
+
+.repair-wizard__content--service .repair-wizard__section-heading {
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--app-surface-border);
+}
+
+.repair-wizard__content--service .repair-wizard__summary {
+  grid-template-columns: 1fr 1fr 2fr 1fr;
+  align-items: center;
+}
+
+.repair-wizard__costs {
+  min-width: 0;
+}
+
+.repair-wizard__costs .repairs-costs-card--create {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.32fr) minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: 9px;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-costs-card__header {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  min-height: 100%;
+  align-content: start;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 1.15rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 0;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-costs-card__header h3 {
+  font-size: 1.25rem;
+}
+
+.repair-wizard__costs .repairs-costs-card__description {
+  max-width: 22rem;
+  margin: 0.35rem 0 0;
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.repair-wizard__costs .repairs-costs-card__header-side {
+  width: 100%;
+  justify-content: stretch;
+}
+
+.repair-wizard__costs .repairs-costs-card__totals {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+}
+
+.repair-wizard__costs .repairs-costs-card__totals span {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.42rem 0.55rem;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-list {
+  grid-column: 2;
+  margin: 0;
+  padding: 0.8rem 1rem 0;
+}
+
+.repair-wizard__costs .repairs-cost-list__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--app-surface-border);
+}
+
+.repair-wizard__costs .repairs-cost-list__toolbar strong,
+.repair-wizard__costs .repairs-cost-list__toolbar span {
+  display: block;
+}
+
+.repair-wizard__costs .repairs-cost-list__toolbar strong {
+  color: var(--app-ink);
+  font-size: 0.86rem;
+}
+
+.repair-wizard__costs .repairs-cost-list__toolbar span {
+  margin-top: 0.12rem;
+  color: var(--app-muted);
+  font-size: 0.72rem;
+}
+
+.repair-wizard__costs .repairs-cost-list__toolbar .btn {
+  min-width: 145px;
+  min-height: 2.4rem;
+  border-radius: 7px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form {
+  grid-column: 2;
+  margin: 0;
+  padding: 0.75rem 1rem 1rem;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row {
+  gap: 0.75rem;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > :nth-child(1) {
+  grid-column: span 3;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > :nth-child(2) {
+  grid-column: span 5;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > :nth-child(3) {
+  grid-column: span 4;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > :nth-child(4),
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > :nth-child(5),
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > :nth-child(6) {
+  grid-column: span 4;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > :nth-child(7) {
+  grid-column: 1 / -1;
+}
+
+.repair-wizard__costs .repairs-costs-card--create .repairs-cost-form textarea {
+  min-height: 3.6rem;
+}
+
+.repair-wizard__costs .repairs-cost-form__actions {
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+}
+
+.repair-wizard__costs .repairs-cost-form__actions .btn-primary {
+  min-width: 230px;
+}
+
+@media (max-width: 920px) {
+  .repair-wizard__content--service .repair-wizard__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .repair-wizard__costs .repairs-costs-card--create {
+    grid-template-columns: 1fr;
+  }
+
+  .repair-wizard__costs .repairs-costs-card--create .repairs-costs-card__header,
+  .repair-wizard__costs .repairs-costs-card--create .repairs-cost-list,
+  .repair-wizard__costs .repairs-costs-card--create .repairs-cost-form {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .repair-wizard__costs .repairs-costs-card--create .repairs-costs-card__header {
+    min-height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .repair-wizard__costs .repairs-costs-card__header-side {
+    width: auto;
+    min-width: 210px;
+  }
+}
+
+@media (max-width: 640px) {
+  .repair-wizard__content--service .repair-wizard__panel {
+    padding: 0.85rem;
+  }
+
+  .repair-wizard__content--service .repair-wizard__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .repair-wizard__costs .repairs-costs-card--create .repairs-costs-card__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .repair-wizard__costs .repairs-costs-card__header-side {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .repair-wizard__costs .repairs-cost-list__toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .repair-wizard__costs .repairs-cost-list__toolbar .btn {
+    width: 100%;
+  }
+
+  .repair-wizard__costs .repairs-costs-card--create .repairs-cost-form .row > [class*="col-"] {
+    grid-column: 1 / -1;
+  }
+
+  .repair-wizard__costs .repairs-cost-form__actions .btn-primary {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 .repairs-costs-card__header-side {
   display: flex;
   align-items: center;
@@ -2627,7 +3484,16 @@
   backdrop-filter: blur(5px);
 }
 
+.repair-detail-modal[data-entering] {
+  animation: professional-modal-fade 180ms ease-out both;
+}
+
+.repair-detail-modal[data-entering] .repair-detail-modal__content {
+  animation: professional-modal-rise 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .repair-detail-modal__content {
+  position: relative;
   width: min(88rem, calc(100vw - 2rem));
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
@@ -2640,10 +3506,49 @@
   box-shadow: 0 24px 60px rgba(24, 12, 40, 0.28);
 }
 
+.repair-detail-modal__dialog {
+  outline: none;
+}
+
+.repair-detail-modal__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.45rem;
+  height: 2.45rem;
+  padding: 0;
+  border: 1px solid rgba(15, 20, 18, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--app-ink);
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.repair-detail-modal__close:hover,
+.repair-detail-modal__close[data-hovered] {
+  border-color: rgba(21, 128, 61, 0.3);
+  background: #f0fdf4;
+  color: #15803d;
+  box-shadow: 0 7px 18px rgba(21, 128, 61, 0.14);
+  transform: translateY(-1px);
+}
+
+.repair-detail-modal__close:focus-visible,
+.repair-detail-modal__close[data-focus-visible] {
+  outline: 3px solid rgba(34, 197, 94, 0.22);
+  outline-offset: 2px;
+}
+
 .repair-detail-modal__header {
   display: grid;
   gap: 0.95rem;
-  padding: 1.15rem 1.15rem 1rem;
+  padding: 1.15rem 4.5rem 1rem 1.15rem;
   border-bottom: 1px solid rgba(15, 20, 18, 0.08);
 }
 
@@ -2838,6 +3743,19 @@
     0 0 0 1px rgba(57, 255, 122, 0.08);
 }
 
+:root[data-theme="dark"] .repair-detail-modal__close {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(20, 28, 25, 0.96);
+  color: #eff8f3;
+}
+
+:root[data-theme="dark"] .repair-detail-modal__close:hover,
+:root[data-theme="dark"] .repair-detail-modal__close[data-hovered] {
+  border-color: rgba(57, 255, 122, 0.28);
+  background: rgba(57, 255, 122, 0.1);
+  color: #86efac;
+}
+
 :root[data-theme="dark"] .repair-detail-modal__header h3 {
   color: #eff8f3;
 }
@@ -2900,6 +3818,11 @@
 }
 
 @media (max-width: 575.98px) {
+  .repair-detail-modal__header {
+    padding-right: 1.15rem;
+    padding-top: 4.2rem;
+  }
+
   .repair-detail-modal__headline,
   .repair-detail-modal__header-actions {
     flex-direction: column;

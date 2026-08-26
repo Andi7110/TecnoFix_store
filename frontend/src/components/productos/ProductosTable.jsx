@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MagnifyingGlassPlus, WarningCircle } from "../../icons/phosphor";
+import AppModal from "../common/AppModal";
 
 const moneyFormatter = new Intl.NumberFormat("es-SV", {
   style: "currency",
@@ -74,14 +75,6 @@ function ProductosTable({
     return <ProductsTableSkeleton />;
   }
 
-  if (productos.length === 0) {
-    return (
-      <div className="surface-card">
-        <p className="empty-state">No hay productos que coincidan con los filtros.</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="surface-card products-table-wrapper inventory-table-wrapper">
@@ -99,7 +92,13 @@ function ProductosTable({
               </tr>
             </thead>
             <tbody>
-              {productos.map((producto) => (
+              {productos.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="empty-state text-center">
+                    No hay productos que coincidan con los filtros.
+                  </td>
+                </tr>
+              ) : productos.map((producto) => (
                 <tr key={producto.id}>
                   <td>
                     {producto.foto_url ? (
@@ -172,30 +171,17 @@ function ProductosTable({
       </div>
 
       {selectedPhoto ? (
-        <div
-          className="inventory-photo-modal"
-          role="dialog"
-          aria-modal="true"
-          onClick={closePhoto}
-        >
+        <AppModal overlayClassName="inventory-photo-modal" ariaLabel={`Fotografia de ${selectedPhoto.name}`} onClose={closePhoto}>
           <div
             className="inventory-photo-modal__content"
-            onClick={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              className="btn btn-light btn-sm inventory-photo-modal__close"
-              onClick={closePhoto}
-            >
-              Cerrar
-            </button>
             <img
               src={selectedPhoto.url}
               alt={selectedPhoto.name}
               className="inventory-photo-modal__image"
             />
           </div>
-        </div>
+        </AppModal>
       ) : null}
     </>
   );

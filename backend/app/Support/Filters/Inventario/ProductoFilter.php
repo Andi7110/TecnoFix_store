@@ -10,6 +10,7 @@ class ProductoFilter extends QueryFilter
     protected function filters(): array
     {
         return [
+            'q',
             'modulo_id',
             'categoria_id',
             'estado',
@@ -22,6 +23,54 @@ class ProductoFilter extends QueryFilter
             'precio_min',
             'precio_max',
         ];
+    }
+
+    public function q(Builder $query, string $value): void
+    {
+        $search = trim($value);
+
+        if ($search === '') {
+            return;
+        }
+
+        $terms = array_slice(preg_split('/\s+/', $search) ?: [], 0, 6);
+
+        foreach ($terms as $term) {
+            $booleanTerm = $this->toBooleanFullTextTerm($term);
+
+            $query->where(function (Builder $builder) use ($term, $booleanTerm): void {
+                if ($booleanTerm !== null) {
+                    $builder->whereFullText(
+                        ['nombre', 'codigo'],
+                        $booleanTerm,
+                        ['mode' => 'boolean'],
+                    );
+
+                    return;
+                }
+
+                $builder
+                    ->where('nombre', 'like', '%'.$term.'%')
+                    ->orWhere('codigo', 'like', '%'.$term.'%');
+            });
+        }
+    }
+
+    private function toBooleanFullTextTerm(string $term): ?string
+    {
+        $tokens = array_values(array_filter(
+            preg_split('/[^\pL\pN]+/u', $term) ?: [],
+            fn (string $token): bool => mb_strlen($token) >= 3,
+        ));
+
+        if ($tokens === []) {
+            return null;
+        }
+
+        return implode(' ', array_map(
+            fn (string $token): string => '+'.$token.'*',
+            $tokens,
+        ));
     }
 
     public function modulo_id(Builder $query, int|string $value): void

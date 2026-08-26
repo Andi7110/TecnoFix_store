@@ -35,33 +35,6 @@ function ReparacionesFilters({ values, onChange, onSubmit, onClear }) {
         </div>
 
         <div>
-          <label className="form-label">Telefono</label>
-          <input
-            className="form-control"
-            value={values.telefono}
-            onChange={(event) => onChange("telefono", event.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="form-label">Marca</label>
-          <input
-            className="form-control"
-            value={values.marca}
-            onChange={(event) => onChange("marca", event.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="form-label">Modelo</label>
-          <input
-            className="form-control"
-            value={values.modelo}
-            onChange={(event) => onChange("modelo", event.target.value)}
-          />
-        </div>
-
-        <div>
           <label className="form-label">Saldo</label>
           <select
             className="form-select"

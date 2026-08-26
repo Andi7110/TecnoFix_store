@@ -73,7 +73,7 @@ function LoginForm({
             className="auth-card__eyebrow"
             sx={{ color: "#d4d4d4", fontFamily: "inherit" }}
           >
-            Bienvenido
+            Bienvenido a TecnoFix
           </Typography>
           <Typography className="auth-card__title" component="h1">
             Login
@@ -108,7 +108,7 @@ function LoginForm({
 
           <Box className="auth-form__field">
             <Typography component="label" htmlFor="password" className="auth-form__label">
-              Contrasena
+              Contraseña
             </Typography>
             <TextField
               id="password"
@@ -175,7 +175,7 @@ function LoginForm({
 const fieldStyles = {
   "& .MuiOutlinedInput-root": {
     color: "#f5f5f5",
-    backgroundColor: "#181818",
+    backgroundColor: "#020202",
     borderRadius: "0.75rem",
     "& fieldset": {
       borderColor: "#2c2c2c",

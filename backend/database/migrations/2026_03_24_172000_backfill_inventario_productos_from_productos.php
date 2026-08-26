@@ -50,9 +50,9 @@ return new class extends Migration
                 p.stock_minimo,
                 p.unidad_medida,
                 p.estado,
-                COALESCE(p.created_at, NOW()),
-                NOW(),
-                NOW()
+                COALESCE(p.created_at, CURRENT_TIMESTAMP),
+                CURRENT_TIMESTAMP,
+                CURRENT_TIMESTAMP
             FROM productos p
             WHERE NOT EXISTS (
                 SELECT 1

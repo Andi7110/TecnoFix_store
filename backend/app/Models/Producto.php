@@ -137,4 +137,14 @@ class Producto extends Model
     {
         return $this->hasMany(DetalleVenta::class);
     }
+
+    public function variantes(): HasMany
+    {
+        return $this->hasMany(ProductoVariante::class);
+    }
+
+    public function variantesDisponibles(): HasMany
+    {
+        return $this->variantes()->where('disponible', true)->orderBy('id');
+    }
 }

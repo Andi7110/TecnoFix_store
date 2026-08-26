@@ -1,9 +1,10 @@
 import api from "./axios";
 import { cleanQueryParams } from "./queryParams";
 
-export async function getReparacionesPaginadas(params = {}) {
+export async function getReparacionesPaginadas(params = {}, options = {}) {
   const response = await api.get("/reparaciones", {
     params: cleanQueryParams(params),
+    signal: options.signal,
   });
 
   return response.data;

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
 import { localDateTimeInput } from "../../utils/dateTime";
+import AppModal from "../common/AppModal";
 
 function money(value) {
   return Number(value ?? 0).toFixed(2);
@@ -120,8 +121,7 @@ function EntregarReparacionModal({
   }
 
   return (
-    <div className="repair-delivery-modal" role="dialog" aria-modal="true" aria-labelledby="repair-delivery-title">
-      <div className="repair-delivery-modal__backdrop" onClick={saving ? undefined : onCancel} />
+    <AppModal overlayClassName="repair-delivery-modal" ariaLabelledby="repair-delivery-title" onClose={onCancel} isDismissable={!saving}>
       <form className="repair-delivery-modal__panel" onSubmit={handleSubmit}>
         <div className="section-heading">
           <div>
@@ -262,7 +262,7 @@ function EntregarReparacionModal({
           </button>
         </div>
       </form>
-    </div>
+    </AppModal>
   );
 }
 

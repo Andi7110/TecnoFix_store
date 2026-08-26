@@ -79,14 +79,6 @@ function ReparacionesTable({
     return <ReparacionesTableSkeleton />;
   }
 
-  if (reparaciones.length === 0) {
-    return (
-      <div className="surface-card">
-        <p className="empty-state">No hay reparaciones para mostrar.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="surface-card products-table-wrapper inventory-table-wrapper repairs-table-card">
       <div className="table-responsive">
@@ -103,7 +95,13 @@ function ReparacionesTable({
             </tr>
           </thead>
           <tbody>
-            {reparaciones.map((reparacion) => {
+            {reparaciones.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="empty-state text-center">
+                  No hay reparaciones para mostrar.
+                </td>
+              </tr>
+            ) : reparaciones.map((reparacion) => {
               const isEntregado = reparacion.estado_reparacion === "entregado";
               const isSaving = statusSavingId === reparacion.id;
               const estadosDisponibles = ESTADOS_REPARACION.filter((estado) => (

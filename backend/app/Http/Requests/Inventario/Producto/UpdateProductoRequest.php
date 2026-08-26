@@ -28,6 +28,8 @@ class UpdateProductoRequest extends FormRequest
             'nombre' => ['sometimes', 'string', 'max:150'],
             'descripcion' => ['nullable', 'string'],
             'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'fotos_variantes' => ['nullable', 'array', 'max:30'],
+            'fotos_variantes.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'precio_compra' => ['sometimes', 'numeric', 'min:0'],
             'precio_venta' => ['sometimes', 'numeric', 'min:0'],
             'unidad_medida' => ['sometimes', 'string', 'max:50'],
