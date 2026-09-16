@@ -648,9 +648,9 @@
 .product-create-modal .product-form .section-heading .section-kicker {
   margin: 0 0 0.45rem;
   color: #15803d;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 800;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
@@ -668,6 +668,7 @@
   max-width: 46rem;
   margin: 0.55rem 0 0;
   color: #64736c;
+  font-size: 0.88rem;
 }
 
 .product-create-modal .product-form .products-filter-grid {
@@ -677,13 +678,20 @@
   align-items: start;
   margin: 0;
   padding: 1rem;
-  border: 1px solid #e1e8e4;
+  border: 1px solid rgba(22, 163, 74, 0.14);
   border-radius: 7px;
-  background: #ffffff;
+  background: transparent;
 }
 
 .product-create-modal .product-form .products-filter-grid > div {
   min-width: 0;
+}
+
+.product-create-modal .product-form .form-label {
+  color: var(--app-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .product-create-modal .product-form .form-control,
@@ -692,6 +700,7 @@
   border-color: #d4ddd8;
   border-radius: 6px;
   background: #ffffff;
+  font-size: 1rem;
 }
 
 .product-create-modal .product-form .form-control:focus,
@@ -710,6 +719,7 @@
   color: #166534;
   background: #edf8f1;
   border-right-color: #d4ddd8;
+  font-size: 1rem;
 }
 
 .product-create-modal .product-form .input-group {
@@ -749,12 +759,13 @@
 .product-create-modal .product-form .input-group > .input-group-text {
   color: #166534;
   background: #edf8f1;
+  font-size: 1rem;
 }
 
 .product-create-modal .product-form small.muted-text {
   margin-top: 0.4rem !important;
   color: #6b7871 !important;
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   line-height: 1.35;
 }
 
@@ -774,14 +785,16 @@
   position: static;
   z-index: auto;
   display: grid;
-  grid-template-columns: minmax(120px, 0.72fr) minmax(0, 1fr);
+  grid-template-columns: minmax(120px, 152px) minmax(152px, 152px);
+  justify-content: end;
   gap: 0.65rem;
   flex: 0 0 auto;
-  width: min(100%, 390px);
-  margin: 0.85rem 0 0 auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  width: 100%;
+  margin: 0.85rem 0 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 7px;
+  background: #ffffff;
   box-shadow: none;
 }
 
@@ -792,6 +805,7 @@
   max-height: 44px !important;
   padding: 0.5rem 0.75rem !important;
   border-radius: 6px !important;
+  font-size: 1rem !important;
   font-weight: 700 !important;
   line-height: 1.2 !important;
 }
@@ -864,5 +878,6 @@
 }
 
 :root[data-theme="dark"] .product-create-modal .product-form .products-filter-actions {
-  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #0d1117;
 }

@@ -29,6 +29,14 @@ export async function getMonthlyCajaReport(params = {}) {
   return response.data.data;
 }
 
+export async function getBalanceGeneralCajaReport(params = {}) {
+  const response = await api.get("/caja/reportes/balance-general", {
+    params: cleanQueryParams(params),
+  });
+
+  return response.data.data;
+}
+
 export async function closeMonthlyCajaReport(payload = {}) {
   const response = await api.post("/caja/reportes/cierre", payload);
 
@@ -51,4 +59,16 @@ export async function listComprobantesCaja(params = {}) {
   });
 
   return response.data;
+}
+
+export async function getComprobanteArchivo(archivoUrl) {
+  const response = await api.get(archivoUrl, {
+    responseType: "blob",
+    skipGlobalLoading: true,
+  });
+
+  return {
+    blob: response.data,
+    mimeType: response.headers["content-type"] || response.data?.type,
+  };
 }

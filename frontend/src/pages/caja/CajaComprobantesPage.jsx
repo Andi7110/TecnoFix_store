@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, FilePdf, Image, Receipt } from "../../icons/phosphor";
-import { listComprobantesCaja } from "../../api/caja";
+import { getComprobanteArchivo, listComprobantesCaja } from "../../api/caja";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import { notifyError } from "../../utils/toasts";
+import { openProtectedFile } from "../../utils/openProtectedFile";
 
 const today = new Date().toISOString().slice(0, 10);
 const currentMonth = today.slice(0, 7);
@@ -82,6 +83,15 @@ function CajaComprobantesPage() {
     setFilters(initialFilters);
   }
 
+  function openReceipt(event, item) {
+    event.preventDefault();
+
+    openProtectedFile(
+      () => getComprobanteArchivo(item.archivo_url),
+      (error) => notifyError(error?.response?.data?.message ?? "No se pudo abrir el comprobante."),
+    );
+  }
+
   return (
     <section className="products-page products-page--minimal cash-receipts-page">
       <div className="products-page__header products-page__header--minimal">
@@ -114,7 +124,7 @@ function CajaComprobantesPage() {
               const isPdf = item.mime_type === "application/pdf";
               return (
                 <article className="cash-receipt-card" key={item.id}>
-                  <a className="cash-receipt-card__preview" href={item.archivo_url} target="_blank" rel="noreferrer">
+                  <a className="cash-receipt-card__preview" href={item.archivo_url} onClick={(event) => openReceipt(event, item)}>
                     {isPdf ? <FilePdf size={38} weight="duotone" /> : <Image size={38} weight="duotone" />}
                     <span>{isPdf ? "Abrir PDF" : "Ver fotografía"}</span>
                   </a>

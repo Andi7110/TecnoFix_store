@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Calculator, Info, Package, Plus, Receipt, TrendDown, TrendUp } from "../../icons/phosphor";
 import { createCompraInventario, createCosto, listCostos } from "../../api/costos";
+import { getComprobanteArchivo } from "../../api/caja";
 import { listModulos } from "../../api/inventarioCatalogos";
 import { listProductos } from "../../api/productos";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import { notifyError, notifySuccess } from "../../utils/toasts";
 import AppModal from "../../components/common/AppModal";
+import { openProtectedFile } from "../../utils/openProtectedFile";
 
 const today = new Date().toISOString().slice(0, 10);
 const monthStart = `${today.slice(0, 7)}-01`;
@@ -320,6 +322,15 @@ function CostosPage() {
       ...current,
       page,
     }));
+  }
+
+  function openReceipt(event, comprobante) {
+    event.preventDefault();
+
+    openProtectedFile(
+      () => getComprobanteArchivo(comprobante.archivo_url),
+      (error) => notifyError(error?.response?.data?.message ?? "No se pudo abrir el comprobante."),
+    );
   }
 
   const netTone = Number(summary?.utilidad_neta ?? 0) >= 0 ? "positive" : "negative";
@@ -667,7 +678,7 @@ function CostosPage() {
                   <td>{labelFrom(categories, costo.categoria)}</td>
                   <td>{labelFrom(types, costo.tipo_costo)}</td>
                   <td>{costo.producto?.nombre ?? "General"}</td>
-                  <td>{costo.comprobantes?.length ? <a className="costs-receipt-link" href={costo.comprobantes[0].archivo_url} target="_blank" rel="noreferrer">Ver archivo</a> : <span className="muted-text">Sin archivo</span>}</td>
+                  <td>{costo.comprobantes?.length ? <a className="costs-receipt-link" href={costo.comprobantes[0].archivo_url} onClick={(event) => openReceipt(event, costo.comprobantes[0])}>Ver archivo</a> : <span className="muted-text">Sin archivo</span>}</td>
                   <td className="text-end product-name">{money(costo.monto)}</td>
                 </tr>
               )) : (

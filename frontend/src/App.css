@@ -627,14 +627,20 @@
   grid-template-columns: minmax(120px, 0.72fr) minmax(0, 1fr);
   justify-content: end;
   align-self: end;
-  width: min(100%, 390px);
-  margin: 0.85rem 0 0 auto;
-  padding: 0;
-  border: 0;
+  width: 100%;
+  margin: 0.85rem 0 0;
+  padding: 0.85rem 1.15rem;
+  border: 1px solid rgba(22, 163, 74, 0.18);
+  border-radius: 7px;
+  background:
+    linear-gradient(100deg, rgba(22, 163, 74, 0.09), rgba(255, 255, 255, 0.96) 44%),
+    #ffffff;
 }
 
 .user-admin-modal__actions .btn {
+  justify-self: end;
   width: 100%;
+  max-width: 152px;
   min-height: 44px !important;
   height: 44px !important;
   max-height: 44px !important;

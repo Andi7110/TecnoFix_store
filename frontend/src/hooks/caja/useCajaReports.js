@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   closeMonthlyCajaReport,
+  getBalanceGeneralCajaReport,
   getMonthlyCajaReport,
   listMonthlyCajaClosures,
 } from "../../api/caja";
@@ -19,8 +20,11 @@ export function useCajaReports() {
   const [filters, setFilters] = useState(currentPeriod);
   const [query, setQuery] = useState(currentPeriod);
   const [report, setReport] = useState(null);
+  const [balanceGeneral, setBalanceGeneral] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [balanceLoading, setBalanceLoading] = useState(true);
   const [error, setError] = useState("");
+  const [balanceError, setBalanceError] = useState("");
   const [closing, setClosing] = useState(false);
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -69,6 +73,34 @@ export function useCajaReports() {
   }, [query]);
 
   useEffect(() => {
+    let ignore = false;
+
+    async function loadBalanceGeneral() {
+      setBalanceLoading(true);
+      setBalanceError("");
+
+      try {
+        const data = await getBalanceGeneralCajaReport(query);
+        if (!ignore) setBalanceGeneral(data);
+      } catch (requestError) {
+        if (!ignore) {
+          const message = requestError?.response?.data?.message || "No se pudo generar el balance general.";
+          setBalanceError(message);
+          notifyError(message);
+        }
+      } finally {
+        if (!ignore) setBalanceLoading(false);
+      }
+    }
+
+    loadBalanceGeneral();
+
+    return () => {
+      ignore = true;
+    };
+  }, [query]);
+
+  useEffect(() => {
     loadHistory();
   }, [loadHistory]);
 
@@ -87,6 +119,8 @@ export function useCajaReports() {
       await closeMonthlyCajaReport(query);
       const updated = await getMonthlyCajaReport(query);
       setReport(updated);
+      const updatedBalance = await getBalanceGeneralCajaReport(query);
+      setBalanceGeneral(updatedBalance);
       await loadHistory();
       notifySuccess("Cierre mensual guardado en el historial.");
     } catch (requestError) {
@@ -113,9 +147,12 @@ export function useCajaReports() {
     updateFilter,
     generate,
     report,
+    balanceGeneral,
     showSavedClosure,
     loading,
+    balanceLoading,
     error,
+    balanceError,
     closing,
     closeMonth,
     history,
