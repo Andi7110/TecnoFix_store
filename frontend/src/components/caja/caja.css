@@ -689,6 +689,79 @@
   text-align: center;
 }
 
+.balance-sheet-workspace {
+  gap: 1rem;
+}
+
+.balance-sheet-result strong {
+  color: #2563eb;
+}
+
+.balance-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.balance-sheet-panel .cash-report-panel__header {
+  align-items: flex-start;
+}
+
+.balance-sheet-panel .cash-report-panel__header > strong {
+  color: var(--app-ink);
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+.balance-sheet-table td {
+  vertical-align: top;
+}
+
+.balance-sheet-table td:first-child {
+  min-width: 12rem;
+}
+
+.balance-sheet-table tfoot td {
+  border-top: 1px solid var(--app-surface-border);
+  color: var(--app-ink);
+  font-weight: 800;
+}
+
+.balance-sheet-check {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.balance-sheet-check > div {
+  padding: 0.85rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: 0.75rem;
+}
+
+.balance-sheet-check span,
+.balance-sheet-check small {
+  display: block;
+  color: var(--app-muted);
+  font-size: 0.74rem;
+}
+
+.balance-sheet-check strong {
+  display: block;
+  margin: 0.1rem 0;
+  color: var(--app-ink);
+  font-size: 1.12rem;
+}
+
+.balance-sheet-notes ul {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--app-muted);
+  font-size: 0.82rem;
+}
+
 :root[data-theme="dark"] .cash-report-closed {
   color: #86efac;
 }
@@ -706,7 +779,8 @@
   }
 
   .cash-report-metrics,
-  .cash-report-grid {
+  .cash-report-grid,
+  .balance-sheet-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -725,7 +799,9 @@
   }
 
   .cash-report-metrics,
-  .cash-report-grid {
+  .cash-report-grid,
+  .balance-sheet-grid,
+  .balance-sheet-check {
     grid-template-columns: 1fr;
   }
 }

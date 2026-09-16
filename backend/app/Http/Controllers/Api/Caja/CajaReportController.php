@@ -21,6 +21,11 @@ class CajaReportController extends Controller
         return response()->json(['data' => $this->service->monthly($request->validated())]);
     }
 
+    public function balanceSheet(MonthlyCajaReportRequest $request): JsonResponse
+    {
+        return response()->json(['data' => $this->service->balanceSheet($request->validated())]);
+    }
+
     public function close(MonthlyCajaReportRequest $request): ReporteFinancieroResource
     {
         return new ReporteFinancieroResource(

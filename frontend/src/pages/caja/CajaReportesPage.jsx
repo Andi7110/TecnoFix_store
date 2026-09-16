@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Archive, CalendarBlank, ChartBar, CheckCircle, TrendDown, TrendUp, Wallet } from "../../icons/phosphor";
+import { Archive, CalendarBlank, ChartBar, CheckCircle, Scales, TrendDown, TrendUp, Wallet } from "../../icons/phosphor";
 import { useCajaReports } from "../../hooks/caja/useCajaReports";
 
 const MONTHS = [
@@ -120,6 +120,123 @@ function ReportContent({ report }) {
   );
 }
 
+function BalanceLine({ item }) {
+  return (
+    <tr>
+      <td>
+        <strong>{item.nombre}</strong>
+        <small>{item.descripcion}</small>
+      </td>
+      <td className="text-end"><strong>{money(item.monto)}</strong></td>
+    </tr>
+  );
+}
+
+function BalanceSection({ title, items, total, emptyText }) {
+  return (
+    <section className="surface-card cash-report-panel balance-sheet-panel">
+      <div className="cash-report-panel__header">
+        <div>
+          <h3>{title}</h3>
+          <p>{items.length > 0 ? "Partidas incluidas en el corte seleccionado." : emptyText}</p>
+        </div>
+        <strong>{money(total)}</strong>
+      </div>
+      <div className="table-responsive">
+        <table className="table cash-report-table balance-sheet-table">
+          <tbody>
+            {items.length > 0 ? items.map((item) => (
+              <BalanceLine item={item} key={item.codigo} />
+            )) : (
+              <tr>
+                <td className="muted-text">{emptyText}</td>
+                <td className="text-end"><strong>{money(0)}</strong></td>
+              </tr>
+            )}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total {title.toLowerCase()}</td>
+              <td className="text-end">{money(total)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function BalanceGeneralContent({ balance }) {
+  const assets = balance?.activos ?? {};
+  const liabilities = balance?.pasivos ?? {};
+  const equity = balance?.patrimonio ?? {};
+  const summary = balance?.resumen ?? {};
+
+  if (!balance) return null;
+
+  return (
+    <div className="cash-report-workspace balance-sheet-workspace">
+      <div className="cash-report-result balance-sheet-result">
+        <div>
+          <span>Balance general</span>
+          <strong>{money(summary.total_activos)}</strong>
+        </div>
+        <p>
+          Corte al {balance.periodo?.fecha_corte}. Activos comparados contra pasivos y patrimonio calculado del sistema.
+        </p>
+      </div>
+
+      <div className="cash-report-metrics">
+        <MetricCard icon={<Wallet size={22} />} label="Activos" value={money(summary.total_activos)} help="Caja, cuentas por cobrar e inventario" tone="positive" />
+        <MetricCard icon={<TrendDown size={22} />} label="Pasivos" value={money(summary.total_pasivos)} help="Sin pasivos registrados todavía" />
+        <MetricCard icon={<Scales size={22} />} label="Patrimonio" value={money(summary.total_patrimonio)} help="Activos menos pasivos registrados" />
+        <MetricCard icon={<Archive size={22} />} label="Inventario" value={`${summary.unidades_inventario ?? 0} uds.`} help="Unidades consideradas al costo" />
+      </div>
+
+      <div className="balance-sheet-grid">
+        <BalanceSection
+          title="Activos"
+          items={assets.corrientes ?? []}
+          total={assets.total ?? 0}
+          emptyText="No hay activos registrados para este corte."
+        />
+        <BalanceSection
+          title="Pasivos"
+          items={liabilities.corrientes ?? []}
+          total={liabilities.total ?? 0}
+          emptyText="El sistema aun no registra deudas, prestamos ni cuentas por pagar."
+        />
+        <BalanceSection
+          title="Patrimonio"
+          items={equity.partidas ?? []}
+          total={equity.total ?? 0}
+          emptyText="No hay partidas de patrimonio registradas."
+        />
+      </div>
+
+      <section className="surface-card cash-report-panel balance-sheet-check">
+        <div>
+          <span>Comprobacion</span>
+          <strong>{money(summary.pasivo_mas_patrimonio)}</strong>
+          <small>Pasivo + patrimonio</small>
+        </div>
+        <div>
+          <span>Diferencia</span>
+          <strong>{money(summary.diferencia)}</strong>
+          <small>Debe quedar en cero</small>
+        </div>
+      </section>
+
+      <section className="surface-card cash-report-panel balance-sheet-notes">
+        <h3>Notas del balance</h3>
+        <ul>
+          {(balance.notas ?? []).map((note) => <li key={note}>{note}</li>)}
+        </ul>
+      </section>
+    </div>
+  );
+}
+
 function CajaReportesPage() {
   const reports = useCajaReports();
   const [section, setSection] = useState("report");
@@ -138,6 +255,7 @@ function CajaReportesPage() {
 
       <div className="cash-report-tabs">
         <button type="button" className={section === "report" ? "is-active" : ""} onClick={() => setSection("report")}>Reporte mensual</button>
+        <button type="button" className={section === "balance" ? "is-active" : ""} onClick={() => setSection("balance")}>Balance general</button>
         <button type="button" className={section === "history" ? "is-active" : ""} onClick={() => setSection("history")}>Historial de cierres</button>
       </div>
 
@@ -165,6 +283,27 @@ function CajaReportesPage() {
           {reports.report?.cierre ? <div className="cash-report-closed"><CheckCircle size={19} weight="fill" /> Cierre guardado el {dateTime(reports.report.cierre.cerrado_en)}. El historial conserva la fotografía de ese momento.</div> : null}
           {reports.error ? <div className="alert alert-danger">{reports.error}</div> : null}
           {reports.loading ? <div className="cash-report-loading">Generando reporte mensual...</div> : <ReportContent report={reports.report} />}
+        </>
+      ) : section === "balance" ? (
+        <>
+          <section className="surface-card cash-report-controls">
+            <div className="cash-report-controls__title"><Scales size={24} /><div><h3>Selecciona el corte</h3><p>Genera el balance general al cierre del mes.</p></div></div>
+            <div className="cash-report-controls__fields">
+              <select className="form-select" value={reports.filters.mes} onChange={(event) => reports.updateFilter("mes", event.target.value)}>
+                {MONTHS.map((month, index) => <option key={month} value={index + 1}>{month}</option>)}
+              </select>
+              <select className="form-select" value={reports.filters.anio} onChange={(event) => reports.updateFilter("anio", event.target.value)}>
+                {years.map((year) => <option key={year} value={year}>{year}</option>)}
+              </select>
+              <button type="button" className="btn cash-report-action cash-report-action--generate" onClick={reports.generate}>
+                <ChartBar size={17} weight="bold" aria-hidden="true" />
+                <span>Generar</span>
+              </button>
+            </div>
+          </section>
+
+          {reports.balanceError ? <div className="alert alert-danger">{reports.balanceError}</div> : null}
+          {reports.balanceLoading ? <div className="cash-report-loading">Generando balance general...</div> : <BalanceGeneralContent balance={reports.balanceGeneral} />}
         </>
       ) : (
         <section className="surface-card cash-report-panel cash-report-history">

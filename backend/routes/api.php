@@ -89,6 +89,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('comprobantes', [ComprobanteController::class, 'index'])->name('caja.comprobantes.index');
         Route::get('comprobantes/{comprobante}/archivo', [ComprobanteController::class, 'archivo'])->name('caja.comprobantes.archivo');
         Route::get('reportes/mensual', [CajaReportController::class, 'monthly'])->name('caja.reportes.mensual');
+        Route::get('reportes/balance-general', [CajaReportController::class, 'balanceSheet'])->name('caja.reportes.balance-general');
         Route::post('reportes/cierre', [CajaReportController::class, 'close'])->name('caja.reportes.cierre');
         Route::get('reportes/historial', [CajaReportController::class, 'history'])->name('caja.reportes.historial');
         Route::apiResource('movimientos', MovimientoCajaController::class)->only(['index', 'store', 'show']);

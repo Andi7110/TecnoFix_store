@@ -130,6 +130,84 @@ class CajaReportService
         ];
     }
 
+    public function balanceSheet(array $filters): array
+    {
+        $year = (int) $filters['anio'];
+        $month = (int) $filters['mes'];
+        $date = Carbon::create($year, $month, 1)->startOfMonth()->endOfMonth();
+
+        $cashBalance = $this->cashBalanceUntil($date);
+        $accountsReceivable = $this->accountsReceivableUntil($date);
+        $inventory = $this->inventoryValueUntil($date);
+
+        $totalAssets = round($cashBalance + $accountsReceivable + $inventory['valor'], 2);
+        $totalLiabilities = 0.0;
+        $equity = round($totalAssets - $totalLiabilities, 2);
+
+        return [
+            'periodo' => [
+                'anio' => $year,
+                'mes' => $month,
+                'etiqueta' => ucfirst($date->locale('es')->translatedFormat('F \d\e Y')),
+                'fecha_corte' => $date->toDateString(),
+            ],
+            'activos' => [
+                'corrientes' => [
+                    [
+                        'codigo' => 'caja_bancos',
+                        'nombre' => 'Caja y bancos',
+                        'monto' => $cashBalance,
+                        'descripcion' => 'Entradas menos salidas registradas en caja hasta la fecha de corte.',
+                    ],
+                    [
+                        'codigo' => 'cuentas_por_cobrar',
+                        'nombre' => 'Cuentas por cobrar',
+                        'monto' => $accountsReceivable,
+                        'descripcion' => 'Saldo pendiente de cuentas creadas hasta la fecha de corte menos abonos aplicados.',
+                    ],
+                    [
+                        'codigo' => 'inventario',
+                        'nombre' => 'Inventario al costo',
+                        'monto' => $inventory['valor'],
+                        'descripcion' => 'Unidades disponibles valorizadas al precio de compra.',
+                    ],
+                ],
+                'total_corrientes' => $totalAssets,
+                'total' => $totalAssets,
+            ],
+            'pasivos' => [
+                'corrientes' => [],
+                'total_corrientes' => $totalLiabilities,
+                'total' => $totalLiabilities,
+            ],
+            'patrimonio' => [
+                'partidas' => [
+                    [
+                        'codigo' => 'patrimonio_calculado',
+                        'nombre' => 'Patrimonio calculado',
+                        'monto' => $equity,
+                        'descripcion' => 'Diferencia entre activos y pasivos registrados en el sistema.',
+                    ],
+                ],
+                'total' => $equity,
+            ],
+            'resumen' => [
+                'total_activos' => $totalAssets,
+                'total_pasivos' => $totalLiabilities,
+                'total_patrimonio' => $equity,
+                'pasivo_mas_patrimonio' => round($totalLiabilities + $equity, 2),
+                'diferencia' => round($totalAssets - ($totalLiabilities + $equity), 2),
+                'unidades_inventario' => $inventory['unidades'],
+            ],
+            'notas' => [
+                'El sistema aun no registra cuentas por pagar, prestamos, impuestos por pagar ni capital aportado; por eso los pasivos quedan en cero.',
+                'El patrimonio se calcula como activos menos pasivos registrados.',
+                'El inventario se reconstruye con el ultimo movimiento de cada producto hasta la fecha de corte; si un producto no tiene movimientos previos, se usa su stock actual como referencia.',
+            ],
+            'generated_at' => now(),
+        ];
+    }
+
     public function closeMonth(array $filters, ?User $user): ReporteFinanciero
     {
         $report = $this->monthly($filters);
@@ -152,6 +230,80 @@ class CajaReportService
         );
 
         return $closure->load(['generadoPor:id,name,username,email']);
+    }
+
+    private function cashBalanceUntil(Carbon $date): float
+    {
+        $totals = DB::table('movimientos_caja')
+            ->where('fecha_movimiento', '<=', $date)
+            ->selectRaw("COALESCE(SUM(CASE WHEN tipo_movimiento = 'entrada' THEN monto ELSE 0 END), 0) AS entradas")
+            ->selectRaw("COALESCE(SUM(CASE WHEN tipo_movimiento = 'salida' THEN monto ELSE 0 END), 0) AS salidas")
+            ->first();
+
+        return round((float) ($totals->entradas ?? 0) - (float) ($totals->salidas ?? 0), 2);
+    }
+
+    private function accountsReceivableUntil(Carbon $date): float
+    {
+        $abonos = DB::table('abonos_cuentas_por_cobrar')
+            ->select('cuenta_por_cobrar_id')
+            ->selectRaw('COALESCE(SUM(monto), 0) AS total_abonado')
+            ->where('fecha_abono', '<=', $date)
+            ->groupBy('cuenta_por_cobrar_id');
+
+        $total = DB::table('cuentas_por_cobrar as cxc')
+            ->leftJoinSub($abonos, 'abonos', function ($join): void {
+                $join->on('abonos.cuenta_por_cobrar_id', '=', 'cxc.id');
+            })
+            ->where('cxc.fecha_cuenta', '<=', $date)
+            ->selectRaw('COALESCE(SUM(GREATEST(cxc.monto_original - COALESCE(abonos.total_abonado, 0), 0)), 0) AS saldo')
+            ->value('saldo');
+
+        return round((float) $total, 2);
+    }
+
+    private function inventoryValueUntil(Carbon $date): array
+    {
+        $dateValue = $date->toDateTimeString();
+
+        $row = DB::table('productos as p')
+            ->selectRaw(
+                "
+                COALESCE(SUM(
+                    COALESCE(
+                        (
+                            SELECT mi.stock_nuevo
+                            FROM movimientos_inventario mi
+                            WHERE mi.producto_id = p.id
+                                AND mi.fecha_movimiento <= ?
+                            ORDER BY mi.fecha_movimiento DESC, mi.id DESC
+                            LIMIT 1
+                        ),
+                        CASE WHEN p.created_at <= ? THEN p.stock ELSE 0 END
+                    )
+                ), 0) AS unidades,
+                COALESCE(SUM(
+                    COALESCE(
+                        (
+                            SELECT mi.stock_nuevo
+                            FROM movimientos_inventario mi
+                            WHERE mi.producto_id = p.id
+                                AND mi.fecha_movimiento <= ?
+                            ORDER BY mi.fecha_movimiento DESC, mi.id DESC
+                            LIMIT 1
+                        ),
+                        CASE WHEN p.created_at <= ? THEN p.stock ELSE 0 END
+                    ) * p.precio_compra
+                ), 0) AS valor
+                ",
+                [$dateValue, $dateValue, $dateValue, $dateValue],
+            )
+            ->first();
+
+        return [
+            'unidades' => (int) ($row->unidades ?? 0),
+            'valor' => round((float) ($row->valor ?? 0), 2),
+        ];
     }
 
     public function history(array $filters): LengthAwarePaginator

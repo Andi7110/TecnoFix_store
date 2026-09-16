@@ -2163,9 +2163,24 @@
 /* Costos posteriores de reparacion. */
 .repair-create-modal__content.repair-create-page {
   width: min(96vw, 1180px);
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.repair-create-modal__content.repair-create-page .repair-create-modal__body {
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  background: transparent;
 }
 
 .repair-wizard {
+  width: 100%;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--app-surface-border);
   border-radius: 10px;
@@ -2311,7 +2326,9 @@
 }
 
 .repair-wizard__content {
+  flex: 1 1 auto;
   min-height: 355px;
+  overflow-y: auto;
   padding: 1.25rem 1.4rem;
 }
 
@@ -2492,6 +2509,7 @@
 }
 
 .repair-wizard__actions {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
