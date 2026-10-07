@@ -118,3 +118,4 @@ function VentasPage() {
 }
 
 export default VentasPage;
+import "../../components/ventas/ventas.css";

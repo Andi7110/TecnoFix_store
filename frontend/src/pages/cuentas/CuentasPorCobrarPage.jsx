@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CheckCircle, CurrencyDollar, HandCoins, Info, Receipt, Users } from "../../icons/phosphor";
 import { createAbonoCuentaPorCobrar, listCuentasPorCobrar } from "../../api/cuentasPorCobrar";
 import ProductosPagination from "../../components/productos/ProductosPagination";
@@ -51,7 +51,7 @@ function CuentasPorCobrarPage() {
   const [abono, setAbono] = useState(initialAbono);
   const [saving, setSaving] = useState(false);
 
-  async function loadCuentas(nextFilters = filters) {
+  const loadCuentas = useCallback(async (nextFilters) => {
     setLoading(true);
 
     try {
@@ -64,11 +64,11 @@ function CuentasPorCobrarPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     loadCuentas(filters);
-  }, [filters]);
+  }, [filters, loadCuentas]);
 
   function updateDraft(field, value) {
     setDraftFilters((current) => ({
@@ -356,3 +356,4 @@ function CuentasPorCobrarPage() {
 }
 
 export default CuentasPorCobrarPage;
+import "../../components/cuentas/cuentas.css";

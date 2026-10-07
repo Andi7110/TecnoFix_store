@@ -30,3 +30,4 @@ function LoginPage() {
 }
 
 export default LoginPage;
+import "../../components/auth/auth.css";

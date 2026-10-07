@@ -51,3 +51,4 @@ function BitacoraPage() {
 }
 
 export default BitacoraPage;
+import "../../components/bitacora/bitacora.css";

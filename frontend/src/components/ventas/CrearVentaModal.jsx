@@ -1,5 +1,6 @@
 import AppModal from "../common/AppModal";
 import VentaFormContainer from "./VentaFormContainer";
+import "./styles/crear-venta.css";
 
 function CrearVentaModal({ onClose, onCreated }) {
   function handleSuccess(venta, nextTicketConfig) {

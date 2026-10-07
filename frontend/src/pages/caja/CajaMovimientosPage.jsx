@@ -107,3 +107,4 @@ function CajaMovimientosPage() {
 }
 
 export default CajaMovimientosPage;
+import "../../components/caja/caja.css";

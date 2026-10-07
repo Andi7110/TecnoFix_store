@@ -67,3 +67,4 @@ function ReparacionesReportesPage() {
 }
 
 export default ReparacionesReportesPage;
+import "../../components/reparaciones/reparaciones.css";

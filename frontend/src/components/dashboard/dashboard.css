@@ -495,36 +495,6 @@
   background: var(--app-table-row-hover);
 }
 
-
-/* ==========================================================================
-   Resumen diario opcional
-   Se aplica a DashboardDaySummary.jsx si el componente vuelve a usarse.
-   ========================================================================== */
-
-.dashboard-day-summary {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding: 0 1rem 1rem;
-}
-
-.dashboard-day-summary div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.9rem 1rem;
-  border-radius: 1rem;
-  background: transparent;
-  border: 1px solid var(--app-surface-border);
-}
-
-.dashboard-day-summary strong {
-  color: var(--app-ink);
-  font-size: 1.02rem;
-}
-
-
 /* ==========================================================================
    Estado de carga
    Se aplica a DashboardLoadingSkeleton dentro de Dashboard.jsx.

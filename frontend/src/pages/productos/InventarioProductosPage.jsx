@@ -287,3 +287,4 @@ function InventarioProductosPage() {
 }
 
 export default InventarioProductosPage;
+import "../../components/productos/productos.css";

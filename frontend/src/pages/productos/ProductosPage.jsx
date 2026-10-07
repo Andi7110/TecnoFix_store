@@ -213,3 +213,4 @@ function ProductosPage() {
 }
 
 export default ProductosPage;
+import "../../components/productos/productos.css";
