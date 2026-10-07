@@ -1,5 +1,5 @@
 import { Check, Copy, CreditCard, ShareNetwork } from "../../icons/phosphor";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AppModal from "../common/AppModal";
 
 function fieldError(errors, name) {
@@ -39,7 +39,6 @@ function VentaForm({
   cambio,
   faltante,
   productosCriticos,
-  productosSugeridos,
   resumenVenta,
   transferAccounts,
   transferAccount,
@@ -115,7 +114,7 @@ function VentaForm({
     }
   }
 
-  function handleQuickSearchSubmit(rawValue = searchTerm) {
+  const handleQuickSearchSubmit = useCallback((rawValue = searchTerm) => {
     const normalizedValue = String(rawValue ?? "").trim().toLocaleLowerCase("es");
     const exactProduct = productos.find((producto) => (
       String(producto.codigo ?? "").trim().toLocaleLowerCase("es") === normalizedValue
@@ -134,7 +133,7 @@ function VentaForm({
 
     onSearchSubmit(rawValue);
     focusSearchInput();
-  }
+  }, [onSearchSubmit, productos, searchTerm]);
 
   function openProductPhoto(producto) {
     if (!producto?.foto_url) {

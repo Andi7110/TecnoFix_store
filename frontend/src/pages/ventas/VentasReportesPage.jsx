@@ -66,3 +66,4 @@ function VentasReportesPage() {
 }
 
 export default VentasReportesPage;
+import "../../components/ventas/ventas.css";

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { formatMoneyInput, normalizeMoneyInput } from "../../utils/currencyInput";
 import { localDateTimeInput } from "../../utils/dateTime";
 import AppModal from "../common/AppModal";
@@ -7,7 +7,7 @@ function money(value) {
   return Number(value ?? 0).toFixed(2);
 }
 
-function EntregarReparacionModal({
+function EntregarReparacionModalContent({
   reparacion,
   saving,
   error,
@@ -23,7 +23,7 @@ function EntregarReparacionModal({
     () => Number(reparacion?.saldo_pendiente ?? 0),
     [reparacion],
   );
-  const [montoRecibido, setMontoRecibido] = useState("0.00");
+  const [montoRecibido, setMontoRecibido] = useState(() => money(reparacion.saldo_pendiente));
   const [metodoPago, setMetodoPago] = useState("efectivo");
   const [montoTransferencia, setMontoTransferencia] = useState("");
   const [referenciaTransferencia, setReferenciaTransferencia] = useState("");
@@ -39,24 +39,6 @@ function EntregarReparacionModal({
       : montoEfectivoNumber + montoTransferenciaNumber;
   const cambio = Math.max(0, totalPagado - saldoPendiente);
   const faltante = Math.max(0, saldoPendiente - totalPagado);
-
-  useEffect(() => {
-    if (!reparacion) {
-      return;
-    }
-
-    setMontoRecibido(money(reparacion.saldo_pendiente));
-    setMetodoPago("efectivo");
-    setMontoTransferencia("");
-    setReferenciaTransferencia("");
-    setFechaMovimiento(localDateTimeInput());
-    setComentario("");
-    setValidationError("");
-  }, [reparacion]);
-
-  if (!reparacion) {
-    return null;
-  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -263,6 +245,20 @@ function EntregarReparacionModal({
         </div>
       </form>
     </AppModal>
+  );
+}
+
+function EntregarReparacionModal({ reparacion, ...props }) {
+  if (!reparacion) {
+    return null;
+  }
+
+  return (
+    <EntregarReparacionModalContent
+      key={`${reparacion.id}:${props.title ?? "Entregar y cobrar"}`}
+      reparacion={reparacion}
+      {...props}
+    />
   );
 }
 

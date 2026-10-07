@@ -33,7 +33,6 @@ function VentaFormContainer({ onCancel, onSuccess }) {
       cambio={form.cambio}
       faltante={form.faltante}
       productosCriticos={form.productosCriticos}
-      productosSugeridos={form.productosSugeridos}
       resumenVenta={form.resumenVenta}
       ticketConfig={form.ticketConfig}
       transferAccounts={form.transferAccounts}

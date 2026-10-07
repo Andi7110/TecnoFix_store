@@ -427,3 +427,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+import "../components/dashboard/dashboard.css";

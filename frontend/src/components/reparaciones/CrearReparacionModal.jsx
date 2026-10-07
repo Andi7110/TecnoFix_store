@@ -1,5 +1,6 @@
 import AppModal from "../common/AppModal";
 import ReparacionFormContainer from "./ReparacionFormContainer";
+import "./reparaciones.css";
 
 function CrearReparacionModal({ onClose, onCreated }) {
   function handleSuccess(reparacion) {

@@ -1476,9 +1476,7 @@
 /* Caja registradora: mismo encabezado verde que el resto de formularios. */
 .venta-create-modal .ventas-create-page .venta-pos-hero {
   border-color: rgba(21, 128, 61, 0.38) !important;
-  background:
-    radial-gradient(circle at 86% 10%, rgba(255, 255, 255, 0.14), transparent 25%),
-    linear-gradient(125deg, #126b3a 0%, #168447 56%, #0f766e 100%) !important;
+  background: linear-gradient(125deg, #126b3a 0%, #168447 56%, #0f766e 100%) !important;
 }
 
 .venta-create-modal .ventas-create-page .venta-pos-hero::before {

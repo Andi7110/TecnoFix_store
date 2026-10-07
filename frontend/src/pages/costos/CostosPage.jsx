@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Calculator, Info, Package, Plus, Receipt, TrendDown, TrendUp } from "../../icons/phosphor";
 import { createCompraInventario, createCosto, listCostos } from "../../api/costos";
 import { getComprobanteArchivo } from "../../api/caja";
@@ -130,7 +130,7 @@ function CostosPage() {
     [productos],
   );
 
-  async function loadCostos(nextFilters = filters) {
+  const loadCostos = useCallback(async (nextFilters) => {
     setLoading(true);
 
     try {
@@ -143,11 +143,11 @@ function CostosPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     loadCostos(filters);
-  }, [filters]);
+  }, [filters, loadCostos]);
 
   useEffect(() => {
     let ignore = false;
@@ -737,3 +737,4 @@ function CostosPage() {
 }
 
 export default CostosPage;
+import "../../components/costos/costos.css";

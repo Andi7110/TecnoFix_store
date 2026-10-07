@@ -1,13 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
 import { getDashboardSummary } from "../../api/dashboard";
 import { getMenu } from "../../api/menu";
-import ProductoDetalleModal from "../productos/ProductoDetalleModal";
-import ReparacionDetalleModal from "../reparaciones/ReparacionDetalleModal";
 import GlobalSearch from "./GlobalSearch";
 import { canAccessModule } from "../../utils/accessControl";
 import { confirmDanger } from "../../utils/alerts";
+import { GlobalLoadingOverlay } from "../interactions/GlobalInteractions";
+
+const ProductoDetalleModal = lazy(() => import("../productos/ProductoDetalleModal"));
+const ReparacionDetalleModal = lazy(() => import("../reparaciones/ReparacionDetalleModal"));
 
 const THEME_MODE_KEY = "tecnofix-theme-mode";
 const NOTIFICATIONS_READ_KEY = "tecnofix-notifications-read";
@@ -865,25 +867,27 @@ function AppLayout() {
         </main>
       </div>
 
-      {selectedProduct ? (
-        <ProductoDetalleModal
-          producto={selectedProduct}
-          onClose={() => {
-            setSelectedProduct(null);
-            setSearchResetToken((current) => current + 1);
-          }}
-        />
-      ) : null}
+      <Suspense fallback={<GlobalLoadingOverlay active message="Cargando detalle..." />}>
+        {selectedProduct ? (
+          <ProductoDetalleModal
+            producto={selectedProduct}
+            onClose={() => {
+              setSelectedProduct(null);
+              setSearchResetToken((current) => current + 1);
+            }}
+          />
+        ) : null}
 
-      {selectedRepairId ? (
-        <ReparacionDetalleModal
-          reparacionId={selectedRepairId}
-          onClose={() => {
-            setSelectedRepairId(null);
-            setSearchResetToken((current) => current + 1);
-          }}
-        />
-      ) : null}
+        {selectedRepairId ? (
+          <ReparacionDetalleModal
+            reparacionId={selectedRepairId}
+            onClose={() => {
+              setSelectedRepairId(null);
+              setSearchResetToken((current) => current + 1);
+            }}
+          />
+        ) : null}
+      </Suspense>
     </div>
   );
 }

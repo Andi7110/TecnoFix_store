@@ -149,3 +149,4 @@ function ReparacionDetalleModal({ reparacionId, onClose, onUpdated }) {
 }
 
 export default ReparacionDetalleModal;
+import "./reparaciones.css";

@@ -228,3 +228,4 @@ function ReparacionesPage() {
 }
 
 export default ReparacionesPage;
+import "../../components/reparaciones/reparaciones.css";

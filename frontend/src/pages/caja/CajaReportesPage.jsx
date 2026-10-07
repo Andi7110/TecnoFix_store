@@ -323,3 +323,4 @@ function CajaReportesPage() {
 }
 
 export default CajaReportesPage;
+import "../../components/caja/caja.css";

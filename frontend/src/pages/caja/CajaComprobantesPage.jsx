@@ -152,3 +152,4 @@ function CajaComprobantesPage() {
 }
 
 export default CajaComprobantesPage;
+import "../../components/caja/caja.css";

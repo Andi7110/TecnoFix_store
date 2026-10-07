@@ -1,34 +1,30 @@
 # TecnoFix frontend
 
-## Environment modes
+SPA React/Vite del sistema TecnoFix.
 
-- **Local development:** copy `.env.example` to `.env.local`. The documented
-  defaults use `127.0.0.1` for Vite and Laravel.
-- **Temporary test tunnel:** keep its values in `.env.local` (never commit that
-  file). Set `VITE_DEV_HOST`, add the exact tunnel hostname to
-  `VITE_DEV_ALLOWED_HOSTS`, and set `VITE_DEV_PROXY_ORIGIN` when Laravel must
-  receive the local frontend origin. `/api` and `/sanctum` are proxied to
-  `VITE_DEV_PROXY_TARGET`.
-- **Production:** set `VITE_BACKEND_URL` and `VITE_API_URL` in the deployment
-  environment. If they are omitted on a non-local host, Axios uses the browser's
-  current origin. Development-server tunnel settings are not production
-  defaults.
+## Desarrollo local
 
-Do not add temporary tunnel domains to tracked files.
+```bash
+npm ci
+copy .env.example .env.local
+npm run dev
+```
 
-## Vite notes
+Las variables `VITE_DEV_*` controlan exclusivamente el servidor local y su
+proxy hacia Laravel. No agregues dominios temporales al repositorio.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Validacion
 
-Currently, two official plugins are available:
+```bash
+npm run lint
+npm run build
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Produccion
 
-## React Compiler
+Copia `.env.production.example` como `.env.production`, reemplaza los dominios
+y ejecuta `npm run build`. Las variables `VITE_*` quedan integradas en el
+JavaScript generado, por lo que cualquier cambio requiere compilar nuevamente.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Consulta [`../DEPLOY_HOSTINGER.md`](../DEPLOY_HOSTINGER.md) para el despliegue
+completo.

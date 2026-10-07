@@ -3,6 +3,8 @@
 .env.*
 !.env.example
 !**/.env.example
+!.env.production.example
+!**/.env.production.example
 
 # Installed dependencies and generated builds
 node_modules/
@@ -11,7 +13,7 @@ dist/
 public/build/
 
 # Logs, caches, temporary files, and backups
-logs/
+/logs/
 *.log
 *.tmp
 *.temp
@@ -26,8 +28,8 @@ backups/
 tmp/
 temp/
 
-# Private uploaded product images
-backend/storage/Imagenes/
+# Private uploaded product images (case-insensitive for legacy Windows copies)
+backend/storage/[Ii]magenes/
 
 # Operating-system and editor metadata
 .DS_Store

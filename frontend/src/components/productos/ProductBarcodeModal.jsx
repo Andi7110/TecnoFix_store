@@ -1,28 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Printer } from "../../icons/phosphor";
 import BarcodePreviewModal from "../reportes/BarcodePreviewModal";
 import AppModal from "../common/AppModal";
 
-function ProductBarcodeModal({
-  isOpen,
+function ProductBarcodeModalContent({
   productos,
   onClose,
 }) {
-  const [quantities, setQuantities] = useState({});
+  const [quantities, setQuantities] = useState(() => Object.fromEntries(
+    productos.map((producto) => [String(producto.id), 1]),
+  ));
   const [errorMessage, setErrorMessage] = useState("");
   const [previewItems, setPreviewItems] = useState(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    setQuantities(Object.fromEntries(
-      productos.map((producto) => [String(producto.id), 1]),
-    ));
-    setErrorMessage("");
-    setPreviewItems(null);
-  }, [isOpen, productos]);
 
   const selectedProducts = useMemo(
     () => productos.filter((producto) => Number(quantities[String(producto.id)] ?? 0) > 0),
@@ -36,10 +25,6 @@ function ProductBarcodeModal({
     ),
     [quantities, selectedProducts],
   );
-
-  if (!isOpen) {
-    return null;
-  }
 
   function handleQuantityChange(productId, value) {
     const digitsOnly = String(value ?? "").replace(/\D/g, "");
@@ -176,6 +161,19 @@ function ProductBarcodeModal({
       />
     ) : null}
     </>
+  );
+}
+
+function ProductBarcodeModal({ isOpen, productos, onClose }) {
+  if (!isOpen) {
+    return null;
+  }
+
+  return (
+    <ProductBarcodeModalContent
+      productos={productos}
+      onClose={onClose}
+    />
   );
 }
 
